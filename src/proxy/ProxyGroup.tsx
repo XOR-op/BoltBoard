@@ -1,31 +1,69 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {Grid} from "@material-ui/core";
 import ProxyWidget from "./ProxyWidget";
 import Typography from "@material-ui/core/Typography";
+import {makeStyles} from '@material-ui/styles'
 
+const proxyGroupStyle = makeStyles({
+    titleBar: {
+        marginTop: '16px',
+        marginBottom: '16px',
+    }
+})
 
-export interface ProxyGroupProps {
-    list: string[],
+export interface ProxyRpcData {
+    name: string,
+    proto: string,
+}
+
+export interface GroupRpcData {
+    list: ProxyRpcData[],
     name: string,
     selected: string
 }
 
-const ProxyGroup = ({list, name, selected}: ProxyGroupProps) => {
+export interface ProxyGroupProps {
+    endpoint: string,
+    data: GroupRpcData,
+}
+
+const ProxyGroup = ({endpoint, data}: ProxyGroupProps) => {
+    const style = proxyGroupStyle();
+    const [currentProxy, setCurrentProxy] = useState(data.selected);
+    const onClickHandler = (proxyName: string) => {
+        if (proxyName !== currentProxy) {
+            fetch(endpoint + '/groups', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'group': data.name,
+                    'selected': proxyName
+                })
+            }).then(res => {
+                if (res.status === 200) {
+                    setCurrentProxy(proxyName)
+                }
+            }).catch(e => console.log(e))
+        }
+    };
+
     return (
         <React.Fragment>
-            <Typography gutterBottom component="div" variant="h3">
-                {name}
+            <Typography gutterBottom component="div" variant="h2" className={style.titleBar}>
+                {data.name + ' [ ' + currentProxy + ' ]'}
             </Typography>
-            <Grid container spacing={2}>
-                {list.map(n =>
+            <Grid container spacing={4}>
+                {data.list.map(n =>
                     (<Grid item xs={6} md={3}>
-                            <ProxyWidget name={n} type={'ok'} selected={n===selected}/>
+                            <ProxyWidget proxy={n} selected={n.name === currentProxy}
+                                         onClickHandler={onClickHandler}/>
                         </Grid>
                     ))}
             </Grid>
         </React.Fragment>
-    )
-        ;
+    );
 }
 
 export default ProxyGroup
