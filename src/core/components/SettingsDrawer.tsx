@@ -1,10 +1,6 @@
 import Box from "@material-ui/core/Box";
 import Drawer from "@material-ui/core/Drawer";
-import FormControl from "@material-ui/core/FormControl";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 import IconButton from "@material-ui/core/IconButton";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
 import ToggleButton from "@material-ui/core/ToggleButton";
 import ToggleButtonGroup from "@material-ui/core/ToggleButtonGroup";
 import Typography from "@material-ui/core/Typography";
@@ -21,21 +17,12 @@ type SettingsDrawerProps = {
 const SettingsDrawer = ({ onDrawerToggle, open }: SettingsDrawerProps) => {
   const {
     changeCollapsed,
-    changeDirection,
     changeMode,
     collapsed,
-    direction,
     mode,
   } = useSettings();
-  const { i18n, t } = useTranslation();
+  const { t } = useTranslation();
 
-  const handleDirectionChange = (_: any, direction: "ltr" | "rtl") => {
-    changeDirection(direction);
-  };
-
-  const handleLanguageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    i18n.changeLanguage((event.target as HTMLInputElement).value);
-  };
 
   const handleModeChange = (_: any, mode: string) => {
     changeMode(mode);
@@ -71,33 +58,7 @@ const SettingsDrawer = ({ onDrawerToggle, open }: SettingsDrawerProps) => {
         </IconButton>
       </Box>
       <Box sx={{ pl: 2, pr: 2 }}>
-        <Typography
-          gutterBottom
-          id="settings-language"
-          marginTop={3}
-          variant="h6"
-        >
-          {t("settings.drawer.language.label")}
-        </Typography>
-        <FormControl>
-          <RadioGroup
-            aria-label="language"
-            name="language-radio-group"
-            onChange={handleLanguageChange}
-            value={i18n.language}
-          >
-            <FormControlLabel
-              value="en"
-              control={<Radio />}
-              label={t("settings.drawer.language.options.en")}
-            />
-            <FormControlLabel
-              value="fr"
-              control={<Radio />}
-              label={t("settings.drawer.language.options.fr")}
-            />
-          </RadioGroup>
-        </FormControl>
+
         <Typography gutterBottom id="settings-mode" marginTop={3} variant="h6">
           {t("settings.drawer.mode.label")}
         </Typography>
@@ -115,23 +76,7 @@ const SettingsDrawer = ({ onDrawerToggle, open }: SettingsDrawerProps) => {
             {t("settings.drawer.mode.options.dark")}
           </ToggleButton>
         </ToggleButtonGroup>
-        <Typography gutterBottom id="settings-mode" marginTop={3} variant="h6">
-          {t("settings.drawer.direction.label")}
-        </Typography>
-        <ToggleButtonGroup
-          color="primary"
-          value={direction}
-          exclusive
-          fullWidth
-          onChange={handleDirectionChange}
-        >
-          <ToggleButton value="ltr">
-            {t("settings.drawer.direction.options.ltr")}
-          </ToggleButton>
-          <ToggleButton value="rtl">
-            {t("settings.drawer.direction.options.rtl")}
-          </ToggleButton>
-        </ToggleButtonGroup>
+
         <Typography
           gutterBottom
           id="settings-sidebar"

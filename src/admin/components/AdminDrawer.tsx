@@ -7,8 +7,6 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import AccountTreeIcon from "@material-ui/icons/AccountTree";
 import BarChartIcon from "@material-ui/icons/BarChart";
-import EventIcon from "@material-ui/icons/Event";
-import HelpCenterIcon from "@material-ui/icons/HelpCenter";
 import HomeIcon from "@material-ui/icons/Home";
 import PeopleIcon from "@material-ui/icons/People";
 import PersonIcon from "@material-ui/icons/Person";
@@ -38,25 +36,17 @@ export const menuItems = [
     path: "/admin/dashboard",
   },
   {
+    icon: AccountTreeIcon,
+    key: "admin.drawer.menu.proxy",
+    path: "/admin/proxy",
+  },
+  {
     icon: PeopleIcon,
     key: "admin.drawer.menu.userManagement",
     path: "/admin/user-management",
   },
-  {
-    icon: EventIcon,
-    key: "admin.drawer.menu.calendar",
-    path: "/admin/calendar",
-  },
-  {
-    icon: AccountTreeIcon,
-    key: "admin.drawer.menu.projects",
-    path: "/admin/projects",
-  },
-  {
-    icon: HelpCenterIcon,
-    key: "admin.drawer.menu.help",
-    path: "/admin/help",
-  },
+
+
 ];
 
 const AdminDrawer = ({

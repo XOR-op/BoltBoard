@@ -4,6 +4,7 @@
       "menu": {
         "calendar": "Calendar",
         "dashboard": "Dashboard",
+        "proxy": "Proxy",
         "help": "Help",
         "home": "Home",
         "projects": "Projects",
