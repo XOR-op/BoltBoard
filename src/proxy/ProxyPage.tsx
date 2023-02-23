@@ -3,6 +3,7 @@ import AdminAppBar from "../admin/components/AdminAppBar";
 import AdminToolbar from "../admin/components/AdminToolbar";
 import Grid from "@material-ui/core/Grid";
 import ProxyGroup, {GroupRpcData, ProxyGroupProps} from "./ProxyGroup";
+import {useLocalStorage} from "../core/hooks/useLocalStorage";
 
 export interface ProxyPageProps {
     endpoint: string
@@ -10,8 +11,13 @@ export interface ProxyPageProps {
 
 const ProxyPage = ({endpoint}: ProxyPageProps) => {
     const [groupList, setGroupList] = useState<Array<GroupRpcData>>([]);
+    const [authKey, _setAuthKey] = useLocalStorage<string | undefined>('authkey', undefined);
     const refresh = useCallback(() => {
-        fetch(endpoint + '/groups').then(res => res.json()).then(p => {
+        const headers: HeadersInit = {};
+        if (authKey) {
+            headers['api-key'] = authKey;
+        }
+        fetch(endpoint + '/groups', {headers: headers}).then(res => res.json()).then(p => {
             setGroupList(p)
         }).catch(e => console.log(e))
     }, [endpoint]);

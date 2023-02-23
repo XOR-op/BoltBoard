@@ -3,6 +3,7 @@ import {Grid} from "@material-ui/core";
 import ProxyWidget from "./ProxyWidget";
 import Typography from "@material-ui/core/Typography";
 import {makeStyles} from '@material-ui/styles'
+import {useLocalStorage} from "../core/hooks/useLocalStorage";
 
 const proxyGroupStyle = makeStyles({
     titleBar: {
@@ -30,13 +31,16 @@ export interface ProxyGroupProps {
 const ProxyGroup = ({endpoint, data}: ProxyGroupProps) => {
     const style = proxyGroupStyle();
     const [currentProxy, setCurrentProxy] = useState(data.selected);
+    const [authKey, _setAuthKey] = useLocalStorage<string | undefined>('authkey', undefined);
     const onClickHandler = (proxyName: string) => {
         if (proxyName !== currentProxy) {
+            const headers: HeadersInit = {'Content-Type': 'application/json'};
+            if (authKey) {
+                headers['api-key'] = authKey;
+            }
             fetch(endpoint + '/groups', {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: headers,
                 body: JSON.stringify({
                     'group': data.name,
                     'selected': proxyName

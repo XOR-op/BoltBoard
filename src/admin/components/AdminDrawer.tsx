@@ -8,12 +8,9 @@ import ListItemText from "@material-ui/core/ListItemText";
 import AccountTreeIcon from "@material-ui/icons/AccountTree";
 import BarChartIcon from "@material-ui/icons/BarChart";
 import HomeIcon from "@material-ui/icons/Home";
-import PeopleIcon from "@material-ui/icons/People";
-import PersonIcon from "@material-ui/icons/Person";
 import SettingsIcon from "@material-ui/icons/Settings";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
-import { useAuth } from "../../auth/contexts/AuthProvider";
 import Logo from "../../core/components/Logo";
 import { drawerCollapsedWidth, drawerWidth } from "../../core/config/layout";
 
@@ -40,13 +37,6 @@ export const menuItems = [
     key: "admin.drawer.menu.proxy",
     path: "/admin/proxy",
   },
-  {
-    icon: PeopleIcon,
-    key: "admin.drawer.menu.userManagement",
-    path: "/admin/user-management",
-  },
-
-
 ];
 
 const AdminDrawer = ({
@@ -55,7 +45,6 @@ const AdminDrawer = ({
   onDrawerToggle,
   onSettingsToggle,
 }: AdminDrawerProps) => {
-  const { userInfo } = useAuth();
   const { t } = useTranslation();
 
   const width = collapsed ? drawerCollapsedWidth : drawerWidth;
@@ -89,25 +78,6 @@ const AdminDrawer = ({
       </List>
       <Box sx={{ flexGrow: 1 }} />
       <List component="nav" sx={{ p: 2 }}>
-        <ListItem
-          button
-          component={NavLink}
-          to={`/${process.env.PUBLIC_URL}/admin/profile`}
-        >
-          <ListItemAvatar>
-            <Avatar>
-              <PersonIcon />
-            </Avatar>
-          </ListItemAvatar>
-          {userInfo && (
-            <ListItemText
-              primary={`${userInfo.firstName} ${userInfo.lastName}`}
-              sx={{
-                display: collapsed ? "none" : "block",
-              }}
-            />
-          )}
-        </ListItem>
         <ListItem button onClick={onSettingsToggle}>
           <ListItemAvatar>
             <Avatar>
