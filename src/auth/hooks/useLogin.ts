@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useMutation } from "react-query";
 
 const login = async ({
@@ -8,8 +7,7 @@ const login = async ({
   email: string;
   password: string;
 }): Promise<string> => {
-  const { data } = await axios.post("/api/login", { email, password });
-  return data;
+  return password;
 };
 
 export function useLogin() {

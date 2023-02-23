@@ -25,16 +25,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const { isLoggingIn, login } = useLogin();
   const { isLoggingOut, logout } = useLogout();
-  const { data: userInfo } = useUserInfo(authKey);
+  const userInfo: UserInfo = {email: "", firstName: "", id: "", job: "", lastName: "", progress: 0, role: ""}
 
-  const hasRole = (roles?: string[]) => {
-    if (!roles || roles.length === 0) {
-      return true;
-    }
-    if (!userInfo) {
-      return false;
-    }
-    return roles.includes(userInfo.role);
+  const hasRole = (_roles?: string[]) => {
+    return true;
   };
 
   const handleLogin = async (email: string, password: string) => {

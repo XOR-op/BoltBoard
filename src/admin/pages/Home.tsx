@@ -2,7 +2,6 @@ import Grid from "@material-ui/core/Grid";
 import React from "react";
 import AdminAppBar from "../components/AdminAppBar";
 import AdminToolbar from "../components/AdminToolbar";
-import RecentNotifications from "../components/RecentNotifications";
 import AchievementWidget from "../widgets/AchievementWidget";
 import FollowersWidget from "../widgets/FollowersWidget";
 import MeetingWidgets from "../widgets/MeetingWidgets";
@@ -15,7 +14,6 @@ const Home = () => {
     <React.Fragment>
       <AdminAppBar>
         <AdminToolbar>
-          <RecentNotifications />
         </AdminToolbar>
       </AdminAppBar>
       <Grid container spacing={2}>
