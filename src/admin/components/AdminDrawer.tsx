@@ -6,6 +6,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import AccountTreeIcon from "@material-ui/icons/AccountTree";
+import ViewStreamIcon from "@material-ui/icons/ViewStream";
 import BarChartIcon from "@material-ui/icons/BarChart";
 import HomeIcon from "@material-ui/icons/Home";
 import SettingsIcon from "@material-ui/icons/Settings";
@@ -36,6 +37,11 @@ export const menuItems = [
     icon: AccountTreeIcon,
     key: "admin.drawer.menu.proxy",
     path: "/admin/proxy",
+  },
+  {
+    icon: ViewStreamIcon,
+    key: "Connection",
+    path: "/admin/connection",
   },
 ];
 

@@ -15,7 +15,7 @@ const Forbidden = lazy(() => import("./core/pages/Forbidden"));
 const NotFound = lazy(() => import("./core/pages/NotFound"));
 
 // Landing
-const Landing = lazy(() => import("./landing/pages/Landing"));
+const ConnectionPage = lazy(() => import("./connection/ConnectionPage"));
 
 // Users
 const ProxyPage = lazy(() => import("./proxy/ProxyPage"));
@@ -27,8 +27,9 @@ const AppRoutes = () => {
             <Route path="/" element={<Login/>}/>
             <PrivateRoute path="admin" element={<Admin/>}>
                 <PrivateRoute path="/" element={<Home/>}/>
-                <PrivateRoute path="proxy" element={<ProxyPage endpoint={endpoint}/>}/>
                 <PrivateRoute path="dashboard" element={<Dashboard/>}/>
+                <PrivateRoute path="proxy" element={<ProxyPage endpoint={endpoint}/>}/>
+                <PrivateRoute path="connection" element={<ConnectionPage endpoint={endpoint}/>}/>
             </PrivateRoute>
             {/*<Route path="login" element={<Login/>}/>*/}
             <Route path="403" element={<Forbidden/>}/>
