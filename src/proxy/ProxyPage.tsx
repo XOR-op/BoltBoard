@@ -32,7 +32,7 @@ const ProxyPage = ({endpoint}: ProxyPageProps) => {
             </AdminAppBar>
             <Grid container>
                 {groupList.map(item => (
-                    <ProxyGroup endpoint={endpoint} data={item}/>
+                    <ProxyGroup key={item.name} endpoint={endpoint} data={item}/>
                 ))}
             </Grid>
         </React.Fragment>

@@ -24,6 +24,7 @@ export interface GroupRpcData {
 }
 
 export interface ProxyGroupProps {
+    key: string,
     endpoint: string,
     data: GroupRpcData,
 }
@@ -55,12 +56,12 @@ const ProxyGroup = ({endpoint, data}: ProxyGroupProps) => {
 
     return (
         <React.Fragment>
-            <Typography gutterBottom component="div" variant="h2" className={style.titleBar}>
+            <Typography gutterBottom component="h2" variant="h3" className={style.titleBar}>
                 {data.name + ' [ ' + currentProxy + ' ]'}
             </Typography>
             <Grid container spacing={4}>
-                {data.list.map(n =>
-                    (<Grid item xs={6} md={3}>
+                {data.list.map((n,idx) =>
+                    (<Grid item xs={6} md={3} key={idx}>
                             <ProxyWidget proxy={n} selected={n.name === currentProxy}
                                          onClickHandler={onClickHandler}/>
                         </Grid>

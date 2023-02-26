@@ -10,6 +10,20 @@ export interface ConnectionPageProps {
     endpoint: string
 }
 
+function groupBy(list: Array<any>, key: string): Map<string, Array<any>> {
+    const map = new Map();
+    list.forEach(item => {
+        let realKey = item[key];
+        const collection = map.get(realKey);
+        if (!collection) {
+            map.set(realKey, [item]);
+        } else {
+            collection.push(item);
+        }
+    })
+    return map
+}
+
 const ConnectionPage = ({endpoint}: ConnectionPageProps) => {
     const [connList, setConnList] = useState<Array<ConnectionEntryData>>([])
     const [authKey, _setAuthKey] = useLocalStorage<string | undefined>('authkey', undefined);
@@ -34,8 +48,15 @@ const ConnectionPage = ({endpoint}: ConnectionPageProps) => {
             <AdminAppBar>
                 <AdminToolbar title={'Connection'}/>
             </AdminAppBar>
-            <Grid container>
-                <ConnectionGroup entries={connList}/>
+            <Grid container>{
+                Array.from(groupBy(connList, 'process')).sort(([a, av], [b, bv]) => {
+                    if (a.toLowerCase() > b.toLowerCase()) return 1;
+                    if (a.toLowerCase() < b.toLowerCase()) return -1;
+                    return 0;
+                }).map(([key,val]) => (
+                    <ConnectionGroup key={key} name={key} entries={val.reverse()}/>
+                ))
+            }
             </Grid>
         </React.Fragment>
     )

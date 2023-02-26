@@ -1,6 +1,8 @@
 import React from "react";
-import {Grid, TableCell, TableRow} from "@material-ui/core";
+import {TableCell, TableRow} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
+import LinkIcon from "@material-ui/icons/Link"
+import LinkOffIcon from "@material-ui/icons/LinkOff"
 
 export interface ConnectionEntryData {
     destination: string,
@@ -14,6 +16,7 @@ export interface ConnectionEntryData {
 }
 
 export interface ConnectionEntryProps {
+    key: number
     data: ConnectionEntryData
 }
 
@@ -29,9 +32,29 @@ function pretty_size(n: number) {
     }
 }
 
+function pretty_time(n: number) {
+    const diff = Math.floor(Date.now() / 1000) - n;
+    if (diff < 0) {
+        return "N/A";
+    } else {
+        if (diff < 60) {
+            return diff.toString() + ' seconds ago'
+        } else if (diff < 60 * 60) {
+            return Math.floor(diff / 60).toString() + ' minutes ago'
+        } else if (diff < 24 * 60 * 60) {
+            return Math.floor(diff / 60 / 60).toString() + ' hours ago'
+        } else {
+            return Math.floor(diff / 24 / 60 / 60).toString() + ' days ago'
+        }
+    }
+}
+
 const ConnectionEntry = ({data}: ConnectionEntryProps) => {
     return (
         <TableRow>
+            <TableCell>
+                {data.active ? (<LinkIcon/>) : (<LinkOffIcon/>)}
+            </TableCell>
             <TableCell>
                 <Typography component='div'>
                     {data.destination}
@@ -64,7 +87,7 @@ const ConnectionEntry = ({data}: ConnectionEntryProps) => {
             </TableCell>
             <TableCell>
                 <Typography component='div'>
-                    {data.active ? 'open' : 'close'}
+                    {pretty_time(data.start_time)}
                 </Typography>
             </TableCell>
         </TableRow>
