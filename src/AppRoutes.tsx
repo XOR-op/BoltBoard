@@ -1,6 +1,7 @@
 import {lazy} from "react";
 import {Navigate, Route, Routes} from "react-router-dom";
 import PrivateRoute from "./core/components/PrivateRoute";
+import MitmPage from "./mitm/MitmPage";
 
 // Admin
 const Admin = lazy(() => import("./admin/pages/Admin"));
@@ -30,6 +31,7 @@ const AppRoutes = () => {
                 <PrivateRoute path="dashboard" element={<Dashboard/>}/>
                 <PrivateRoute path="proxy" element={<ProxyPage endpoint={endpoint}/>}/>
                 <PrivateRoute path="connection" element={<ConnectionPage endpoint={endpoint}/>}/>
+                <PrivateRoute path="mitm" element={<MitmPage endpoint={endpoint}/>}/>
             </PrivateRoute>
             {/*<Route path="login" element={<Login/>}/>*/}
             <Route path="403" element={<Forbidden/>}/>

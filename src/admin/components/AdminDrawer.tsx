@@ -43,6 +43,11 @@ export const menuItems = [
     key: "Connection",
     path: "/admin/connection",
   },
+  {
+    icon: ViewStreamIcon,
+    key: "MitM",
+    path: "/admin/mitm",
+  },
 ];
 
 const AdminDrawer = ({

@@ -5,6 +5,7 @@ import LinkIcon from "@material-ui/icons/Link"
 import LinkOffIcon from "@material-ui/icons/LinkOff"
 
 export interface ConnectionEntryData {
+    conn_id: number,
     destination: string,
     protocol: string,
     proxy: string,

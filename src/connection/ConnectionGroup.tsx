@@ -4,7 +4,7 @@ import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "
 import Typography from "@material-ui/core/Typography";
 import {makeStyles} from '@material-ui/styles'
 import {Collapse} from '@material-ui/core'
-import { IconButton } from "@material-ui/core";
+import {IconButton} from "@material-ui/core";
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 
@@ -33,7 +33,7 @@ const ConnectionGroup = ({name, entries}: ConnectionGroupProps) => {
             <Typography gutterBottom component="h2" variant="h3" className={style.titleBar}>
                 {name}
                 <IconButton onClick={handleOpen} disableFocusRipple={true} size='medium' edge={false}>
-                    {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                    {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
                 </IconButton>
             </Typography>
 
@@ -58,10 +58,11 @@ const ConnectionGroup = ({name, entries}: ConnectionGroupProps) => {
                                 <TableCell>Upload</TableCell>
                                 <TableCell>Download</TableCell>
                                 <TableCell>Time</TableCell>
+                                <TableCell></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {entries.map((item, id) => (<ConnectionEntry key={id} data={item}/>))}
+                            {entries.map(item => (<ConnectionEntry key={item.conn_id} data={item}/>))}
                         </TableBody>
                     </Table>
                 </Collapse>
