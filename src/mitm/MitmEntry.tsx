@@ -4,6 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import {useLocalStorage} from "../core/hooks/useLocalStorage";
+import MitmData from "./MitmData";
 
 export interface MitmEntryData {
     mitm_id: number,
@@ -100,13 +101,16 @@ const MitmEntry = ({endpoint, data}: MitmEntryProps) => {
                     </IconButton>
                 </TableCell>
             </TableRow>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-                { payload===undefined?(<div></div>):(
-                <Typography gutterBottom component="h2" variant="h3">
-                    TEST
-                </Typography>
-                )}
-            </Collapse>
+            <TableRow>
+                <TableCell/>
+                <TableCell colSpan={6}>
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                        {payload === undefined ? (<div/>) : (
+                            <MitmData key={data.mitm_id} data={payload}/>
+                        )}
+                    </Collapse>
+                </TableCell>
+            </TableRow>
         </React.Fragment>
     )
 }
