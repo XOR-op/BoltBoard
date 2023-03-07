@@ -11,7 +11,7 @@ const mitmDataStyle = makeStyles({
     header: {
         height: '300px',
         overflowY: 'scroll',
-        wordBreak: 'break-all'
+        wordBreak: 'break-word'
     },
 
     body: {

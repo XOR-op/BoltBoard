@@ -27,8 +27,7 @@ const AppRoutes = () => {
         <Routes basename={process.env.PUBLIC_URL}>
             <Route path="/" element={<Login/>}/>
             <PrivateRoute path="/admin" element={<Admin/>}>
-                <PrivateRoute path="/" element={<Home/>}/>
-                <PrivateRoute path="dashboard" element={<Dashboard/>}/>
+                <PrivateRoute path="/" element={<Dashboard/>}/>
                 <PrivateRoute path="proxy" element={<ProxyPage endpoint={endpoint}/>}/>
                 <PrivateRoute path="connection" element={<ConnectionPage endpoint={endpoint}/>}/>
                 <PrivateRoute path="mitm" element={<MitmPage endpoint={endpoint}/>}/>

@@ -8,12 +8,12 @@ import ListItemText from "@material-ui/core/ListItemText";
 import AccountTreeIcon from "@material-ui/icons/AccountTree";
 import ViewStreamIcon from "@material-ui/icons/ViewStream";
 import BarChartIcon from "@material-ui/icons/BarChart";
-import HomeIcon from "@material-ui/icons/Home";
 import SettingsIcon from "@material-ui/icons/Settings";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 import Logo from "../../core/components/Logo";
 import { drawerCollapsedWidth, drawerWidth } from "../../core/config/layout";
+import {Anchor} from "@material-ui/icons";
 
 type AdminDrawerProps = {
   collapsed: boolean;
@@ -24,14 +24,9 @@ type AdminDrawerProps = {
 
 export const menuItems = [
   {
-    icon: HomeIcon,
-    key: "admin.drawer.menu.home",
-    path: "/admin",
-  },
-  {
     icon: BarChartIcon,
     key: "admin.drawer.menu.dashboard",
-    path: "/admin/dashboard",
+    path: "/admin",
   },
   {
     icon: AccountTreeIcon,
@@ -44,7 +39,7 @@ export const menuItems = [
     path: "/admin/connection",
   },
   {
-    icon: ViewStreamIcon,
+    icon: Anchor,
     key: "MitM",
     path: "/admin/mitm",
   },

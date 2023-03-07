@@ -102,8 +102,8 @@ const MitmEntry = ({endpoint, data}: MitmEntryProps) => {
                 </TableCell>
             </TableRow>
             <TableRow>
-                <TableCell colSpan={6}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
+                <TableCell colSpan={6}  style={{paddingTop: '0px',paddingBottom: '0px'}}>
+                    <Collapse in={open} timeout={200} >
                         {payload === undefined ? (<div/>) : (
                             <MitmData key={data.mitm_id} data={payload}/>
                         )}

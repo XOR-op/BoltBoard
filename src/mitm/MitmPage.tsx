@@ -5,10 +5,24 @@ import React, {useCallback, useEffect, useState} from "react";
 import {MitmEntryData} from "./MitmEntry";
 import {useLocalStorage} from "../core/hooks/useLocalStorage";
 import MitmGroup from "./MitmGroup";
+import {Box} from "@material-ui/core";
+import {makeStyles} from "@material-ui/styles";
 
 export interface MitmPageProps {
     endpoint: string
 }
+
+const scrollbarFixStyles = makeStyles({
+    root: {
+        display: 'flex',
+        flexDirection: 'column',
+        overflowY: 'auto',
+        height: '100%',
+    },
+    content: {
+        flex: 1,
+    },
+});
 
 function groupBy(list: Array<any>, key: string): Map<string, Array<any>> {
     const map = new Map();
@@ -44,7 +58,7 @@ const MitmPage = ({endpoint}: MitmPageProps) => {
     }, [refresh]);
 
     return (
-        <React.Fragment>
+        <Box>
             <AdminAppBar>
                 <AdminToolbar title={'MitM Packets'}/>
             </AdminAppBar>
@@ -52,7 +66,7 @@ const MitmPage = ({endpoint}: MitmPageProps) => {
                 <MitmGroup key='0' name='All' endpoint={endpoint} entries={mitmList.reverse()}/>
             }
             </Grid>
-        </React.Fragment>
+        </Box>
     )
 }
 

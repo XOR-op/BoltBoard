@@ -17,12 +17,12 @@ const connGroupStyle = makeStyles({
 
 export interface MitmGroupProps {
     key: string,
-    endpoint:string,
+    endpoint: string,
     name: string,
     entries: Array<MitmEntryData>
 }
 
-const MitmGroup = ({endpoint,entries}: MitmGroupProps) => {
+const MitmGroup = ({endpoint, entries}: MitmGroupProps) => {
     return (
         <React.Fragment>
             <TableContainer>
