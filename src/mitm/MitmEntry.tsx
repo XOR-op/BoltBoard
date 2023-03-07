@@ -102,7 +102,6 @@ const MitmEntry = ({endpoint, data}: MitmEntryProps) => {
                 </TableCell>
             </TableRow>
             <TableRow>
-                <TableCell/>
                 <TableCell colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         {payload === undefined ? (<div/>) : (

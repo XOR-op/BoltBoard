@@ -1,13 +1,15 @@
 import React, {useState} from "react";
-import { Grid, TableRow} from "@material-ui/core";
+import {Grid, TableRow} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import {MitmPayloadData} from "./MitmEntry";
 import {makeStyles} from "@material-ui/styles";
+import ToggleButtonGroup from "@material-ui/core/ToggleButtonGroup";
+import ToggleButton from "@material-ui/core/ToggleButton";
 
 
 const mitmDataStyle = makeStyles({
     header: {
-        maxHeight: '300px',
+        height: '300px',
         overflowY: 'scroll',
         wordBreak: 'break-all'
     },
@@ -32,7 +34,22 @@ interface PacketProps {
 
 const MitmPacket = ({header, body}: PacketProps) => {
     const [view, setView] = useState("base64");
+    const [data, setData] = useState(body);
     const style = mitmDataStyle();
+
+    const viewChangeHandler = (_:any, viewType: string) => {
+        if (viewType === view) {
+            return
+        }
+        setView(viewType);
+        if (viewType === "base64") {
+            setData(body);
+        } else if (viewType === "text") {
+            let decoded = atob(body);
+            setData(decoded);
+        }
+    };
+
     return (
         <React.Fragment>
             <Grid item xs={12} sm={6}>
@@ -40,9 +57,23 @@ const MitmPacket = ({header, body}: PacketProps) => {
                     {header.map(l => (<TableRow>{l}</TableRow>))}
                 </Typography>
                 <br/>
+                <ToggleButtonGroup
+                    color="primary"
+                    value={view}
+                    exclusive
+                    fullWidth
+                    onChange={viewChangeHandler}
+                >
+                    <ToggleButton value="text">
+                        Text
+                    </ToggleButton>
+                    <ToggleButton value="base64">
+                        Base64
+                    </ToggleButton>
+                </ToggleButtonGroup>
                 <br/>
                 <Typography variant="body1" className={style.body}>
-                    {body}
+                    {data}
                 </Typography>
             </Grid>
         </React.Fragment>
