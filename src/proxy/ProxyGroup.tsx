@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Collapse, Grid, IconButton} from "@mui/material";
+import {Grid, IconButton} from "@mui/material";
 import ProxyWidget from "./ProxyWidget";
 import Typography from "@mui/material/Typography";
 import {makeStyles} from '@mui/styles'

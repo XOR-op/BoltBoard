@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import AdminAppBar from "../admin/components/AdminAppBar";
 import AdminToolbar from "../admin/components/AdminToolbar";
 import Grid from "@mui/material/Grid";
-import ProxyGroup, {GroupRpcData, ProxyGroupProps} from "./ProxyGroup";
+import ProxyGroup, {GroupRpcData} from "./ProxyGroup";
 import {useLocalStorage} from "../core/hooks/useLocalStorage";
 
 export interface ProxyPageProps {

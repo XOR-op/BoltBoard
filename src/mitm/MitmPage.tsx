@@ -24,19 +24,6 @@ const scrollbarFixStyles = makeStyles({
     },
 });
 
-function groupBy(list: Array<any>, key: string): Map<string, Array<any>> {
-    const map = new Map();
-    list.forEach(item => {
-        let realKey = item[key];
-        const collection = map.get(realKey);
-        if (!collection) {
-            map.set(realKey, [item]);
-        } else {
-            collection.push(item);
-        }
-    })
-    return map
-}
 
 const MitmPage = ({endpoint}: MitmPageProps) => {
     const [mitmList, setMitmList] = useState<Array<MitmEntryData>>([])

@@ -2,7 +2,6 @@ import React, { createContext, useContext } from "react";
 import { useLocalStorage } from "../../core/hooks/useLocalStorage";
 import { useLogin } from "../hooks/useLogin";
 import { useLogout } from "../hooks/useLogout";
-import { useUserInfo } from "../hooks/useUserInfo";
 import { UserInfo } from "../types/userInfo";
 
 interface AuthContextInterface {
@@ -21,7 +20,7 @@ type AuthProviderProps = {
 };
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [authKey, setAuthKey] = useLocalStorage<string>("authkey", "");
+  const [_authKey, setAuthKey] = useLocalStorage<string>("authkey", "");
 
   const { isLoggingIn, login } = useLogin();
   const { isLoggingOut, logout } = useLogout();
