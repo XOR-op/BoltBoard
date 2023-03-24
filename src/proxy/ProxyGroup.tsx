@@ -1,11 +1,11 @@
 import React, {useState} from 'react'
-import {Collapse, Grid, IconButton} from "@material-ui/core";
+import {Collapse, Grid, IconButton} from "@mui/material";
 import ProxyWidget from "./ProxyWidget";
-import Typography from "@material-ui/core/Typography";
-import {makeStyles} from '@material-ui/styles'
+import Typography from "@mui/material/Typography";
+import {makeStyles} from '@mui/styles'
 import {useLocalStorage} from "../core/hooks/useLocalStorage";
-import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 const proxyGroupStyle = makeStyles({
     titleBar: {
