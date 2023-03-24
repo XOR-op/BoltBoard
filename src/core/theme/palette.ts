@@ -1,4 +1,4 @@
-import { PaletteMode } from "@material-ui/core";
+import { PaletteMode } from "@mui/material";
 
 const palette = {
   grey: {

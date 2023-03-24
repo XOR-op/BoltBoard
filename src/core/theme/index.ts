@@ -1,4 +1,4 @@
-import { createTheme as createMuiTheme } from "@material-ui/core";
+import { createTheme as createMuiTheme } from "@mui/material";
 import { createThemeComponents } from "./components";
 import mixins from "./mixins";
 import { darkPalette, lightPalette } from "./palette";

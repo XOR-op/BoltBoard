@@ -1,7 +1,7 @@
-import { Theme } from "@material-ui/core";
-import CheckCircle from "@material-ui/icons/CheckCircle";
-import RadioButtonUnchecked from "@material-ui/icons/RadioButtonUnchecked";
-import RemoveCircle from "@material-ui/icons/RemoveCircle";
+import { Theme } from "@mui/material";
+import CheckCircle from "@mui/icons-material/CheckCircle";
+import RadioButtonUnchecked from "@mui/icons-material/RadioButtonUnchecked";
+import RemoveCircle from "@mui/icons-material/RemoveCircle";
 
 export const createThemeComponents = (theme: Theme) => ({
   MuiAccordion: {
