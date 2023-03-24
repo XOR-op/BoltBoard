@@ -1,10 +1,10 @@
 import React, {useState} from "react";
-import {Grid, TableRow} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
+import {Grid, TableRow} from "@mui/material";
+import Typography from "@mui/material/Typography";
 import {MitmPayloadData} from "./MitmEntry";
-import {makeStyles} from "@material-ui/styles";
-import ToggleButtonGroup from "@material-ui/core/ToggleButtonGroup";
-import ToggleButton from "@material-ui/core/ToggleButton";
+import {makeStyles} from "@mui/styles";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import ToggleButton from "@mui/material/ToggleButton";
 
 
 const mitmDataStyle = makeStyles({

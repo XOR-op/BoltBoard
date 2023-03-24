@@ -1,8 +1,8 @@
 import React, {useState} from "react";
-import {Collapse, IconButton, TableCell, TableRow} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
-import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
+import {Collapse, IconButton, TableCell, TableRow} from "@mui/material";
+import Typography from "@mui/material/Typography";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {useLocalStorage} from "../core/hooks/useLocalStorage";
 import MitmData from "./MitmData";
 

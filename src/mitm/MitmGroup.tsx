@@ -1,19 +1,6 @@
-import React, {useState} from "react";
+import React from "react";
 import MitmEntry, {MitmEntryData} from "./MitmEntry";
-import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
-import {makeStyles} from '@material-ui/styles'
-import {Collapse} from '@material-ui/core'
-import {IconButton} from "@material-ui/core";
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-
-const connGroupStyle = makeStyles({
-    titleBar: {
-        marginTop: '16px',
-        marginBottom: '16px',
-    }
-})
+import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 
 export interface MitmGroupProps {
     key: string,
