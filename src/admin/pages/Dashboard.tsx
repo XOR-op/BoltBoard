@@ -1,7 +1,7 @@
-import Grid from "@material-ui/core/Grid";
-import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
-import ShoppingBasketIcon from "@material-ui/icons/ShoppingBasket";
-import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
+import Grid from "@mui/material/Grid";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
+import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import AdminAppBar from "../components/AdminAppBar";

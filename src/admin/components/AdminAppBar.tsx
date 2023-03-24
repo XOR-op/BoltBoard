@@ -1,4 +1,4 @@
-import AppBar from "@material-ui/core/AppBar";
+import AppBar from "@mui/material/AppBar";
 import { drawerCollapsedWidth, drawerWidth } from "../../core/config/layout";
 import { useSettings } from "../../core/contexts/SettingsProvider";
 
@@ -13,8 +13,9 @@ const AdminAppBar = ({ children }: AdminAppBarProps) => {
   return (
     <AppBar
       color="default"
-      position="fixed"
+      position="absolute"
       sx={{
+          boxShadow: 'none',
         width: { lg: `calc(100% - ${width}px)` },
         marginLeft: { lg: width },
       }}

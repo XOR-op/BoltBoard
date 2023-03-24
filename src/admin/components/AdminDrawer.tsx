@@ -1,19 +1,19 @@
-import Avatar from "@material-ui/core/Avatar";
-import Box from "@material-ui/core/Box";
-import Drawer from "@material-ui/core/Drawer";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemText from "@material-ui/core/ListItemText";
-import AccountTreeIcon from "@material-ui/icons/AccountTree";
-import ViewStreamIcon from "@material-ui/icons/ViewStream";
-import BarChartIcon from "@material-ui/icons/BarChart";
-import SettingsIcon from "@material-ui/icons/Settings";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import ListItemText from "@mui/material/ListItemText";
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
+import ViewStreamIcon from "@mui/icons-material/ViewStream";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 import Logo from "../../core/components/Logo";
 import { drawerCollapsedWidth, drawerWidth } from "../../core/config/layout";
-import {Anchor} from "@material-ui/icons";
+import {Anchor} from "@mui/icons-material";
 
 type AdminDrawerProps = {
   collapsed: boolean;
