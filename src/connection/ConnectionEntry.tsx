@@ -1,8 +1,8 @@
 import React from "react";
-import {TableCell, TableRow} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
-import LinkIcon from "@material-ui/icons/Link"
-import LinkOffIcon from "@material-ui/icons/LinkOff"
+import {TableCell, TableRow} from "@mui/material";
+import Typography from "@mui/material/Typography";
+import LinkIcon from "@mui/icons-material/Link"
+import LinkOffIcon from "@mui/icons-material/LinkOff"
 
 export interface ConnectionEntryData {
     conn_id: number,

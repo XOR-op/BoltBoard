@@ -1,12 +1,12 @@
 import React, {useState} from "react";
 import ConnectionEntry, {ConnectionEntryData} from "./ConnectionEntry";
-import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
-import {makeStyles} from '@material-ui/styles'
-import {Collapse} from '@material-ui/core'
-import {IconButton} from "@material-ui/core";
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import Typography from "@mui/material/Typography";
+import {makeStyles} from '@mui/styles'
+import {Collapse} from '@mui/material'
+import {IconButton} from "@mui/material";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 const connGroupStyle = makeStyles({
     titleBar: {

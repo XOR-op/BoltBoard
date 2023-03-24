@@ -1,6 +1,6 @@
 import AdminAppBar from "../admin/components/AdminAppBar";
 import AdminToolbar from "../admin/components/AdminToolbar";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import React, {useCallback, useEffect, useState} from "react";
 import {ConnectionEntryData} from "./ConnectionEntry";
 import {useLocalStorage} from "../core/hooks/useLocalStorage";
