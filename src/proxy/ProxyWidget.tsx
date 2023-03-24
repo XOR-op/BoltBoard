@@ -23,7 +23,7 @@ export interface ProxyWidgetProps {
 const ProxyWidget = ({proxy, selected, onClickHandler}: ProxyWidgetProps) => {
     const style = proxyWidgetStyle();
     return (
-        <Card>
+        <Card elevation={0}>
             <Button fullWidth color='inherit' onClick={() => onClickHandler(proxy.name)}>
                 <CardContent sx={{textAlign: "center"}}>
                     <Typography gutterBottom component="div" variant='h3'

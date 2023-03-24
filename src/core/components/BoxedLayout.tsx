@@ -27,7 +27,7 @@ const BoxedLayout = ({ children }: BoxedLayoutProps) => {
       <GlobalStyles
         styles={{ body: { backgroundColor: theme.palette.background.paper } }}
       />
-      <AppBar color="transparent" position="relative" sx={{boxShadow: 'none'}}>
+      <AppBar color="transparent" position="relative" elevation={0} sx={{boxShadow: 'none'}}>
         <Toolbar>
           <Box sx={{ flexGrow: 1 }} />
           <IconButton

@@ -14,6 +14,7 @@ const AdminAppBar = ({ children }: AdminAppBarProps) => {
     <AppBar
       color="default"
       position="absolute"
+      elevation={0}
       sx={{
           boxShadow: 'none',
         width: { lg: `calc(100% - ${width}px)` },

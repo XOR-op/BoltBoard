@@ -10,7 +10,7 @@ type OverviewWidgetProps = {
 
 const OverviewWidget = ({ description, title }: OverviewWidgetProps) => {
   return (
-    <Card>
+    <Card elevation={0}>
       <CardContent sx={{ textAlign: "center" }}>
         <Typography gutterBottom component="div" variant="h3">
           {title}
