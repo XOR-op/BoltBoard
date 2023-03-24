@@ -1,7 +1,6 @@
 import * as Sentry from "@sentry/react";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
 import AppRoutes from "./AppRoutes";
 import AuthProvider from "./auth/contexts/AuthProvider";
 import Loader from "./core/components/Loader";
@@ -43,7 +42,6 @@ function App() {
               </SnackbarProvider>
             </QueryWrapper>
           </SettingsProvider>
-          <ReactQueryDevtools initialIsOpen />
         </QueryClientProvider>
       </Sentry.ErrorBoundary>
     </React.Suspense>

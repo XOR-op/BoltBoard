@@ -17,7 +17,7 @@ const ProxyPage = ({endpoint}: ProxyPageProps) => {
         if (authKey) {
             headers['api-key'] = authKey;
         }
-        fetch(endpoint + '/groups', {headers: headers}).then(res => res.json()).then(p => {
+        fetch(endpoint + '/proxies', {headers: headers}).then(res => res.json()).then(p => {
             setGroupList(p)
         }).catch(e => console.log(e))
     }, [endpoint]);

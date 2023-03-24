@@ -1,9 +1,11 @@
 import React, {useState} from 'react'
-import {Grid} from "@material-ui/core";
+import {Collapse, Grid, IconButton} from "@material-ui/core";
 import ProxyWidget from "./ProxyWidget";
 import Typography from "@material-ui/core/Typography";
 import {makeStyles} from '@material-ui/styles'
 import {useLocalStorage} from "../core/hooks/useLocalStorage";
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 
 const proxyGroupStyle = makeStyles({
     titleBar: {
@@ -39,11 +41,10 @@ const ProxyGroup = ({endpoint, data}: ProxyGroupProps) => {
             if (authKey) {
                 headers['api-key'] = authKey;
             }
-            fetch(endpoint + '/groups', {
+            fetch(endpoint + '/proxies/' + data.name, {
                 method: 'PUT',
                 headers: headers,
                 body: JSON.stringify({
-                    'group': data.name,
                     'selected': proxyName
                 })
             }).then(res => {
@@ -54,13 +55,23 @@ const ProxyGroup = ({endpoint, data}: ProxyGroupProps) => {
         }
     };
 
+    const [open, setOpen] = useState(true);
+
+    const handleOpen = () => {
+        setOpen(!open);
+    };
+
     return (
         <React.Fragment>
             <Typography gutterBottom component="h2" variant="h3" className={style.titleBar}>
                 {data.name + ' [ ' + currentProxy + ' ]'}
+                <IconButton onClick={handleOpen} disableFocusRipple={true} size='medium' edge={false}>
+                    {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
+                </IconButton>
             </Typography>
+
             <Grid container spacing={4}>
-                {data.list.map((n,idx) =>
+                {data.list.map((n, idx) =>
                     (<Grid item xs={6} md={3} key={idx}>
                             <ProxyWidget proxy={n} selected={n.name === currentProxy}
                                          onClickHandler={onClickHandler}/>
