@@ -1,10 +1,10 @@
-import Box from "@material-ui/core/Box";
-import Drawer from "@material-ui/core/Drawer";
-import IconButton from "@material-ui/core/IconButton";
-import ToggleButton from "@material-ui/core/ToggleButton";
-import ToggleButtonGroup from "@material-ui/core/ToggleButtonGroup";
-import Typography from "@material-ui/core/Typography";
-import CloseIcon from "@material-ui/icons/Close";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import Typography from "@mui/material/Typography";
+import CloseIcon from "@mui/icons-material/Close";
 import { useTranslation } from "react-i18next";
 import { drawerWidth } from "../config/layout";
 import { useSettings } from "../contexts/SettingsProvider";
@@ -53,7 +53,7 @@ const SettingsDrawer = ({ onDrawerToggle, open }: SettingsDrawerProps) => {
         }}
       >
         <Typography variant="h5">{t("settings.drawer.title")}</Typography>
-        <IconButton color="inherit" onClick={onDrawerToggle} edge="end">
+        <IconButton color="inherit" onClick={onDrawerToggle} edge="end" size="large">
           <CloseIcon />
         </IconButton>
       </Box>

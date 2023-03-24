@@ -1,4 +1,4 @@
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import React from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useTranslation } from "react-i18next";

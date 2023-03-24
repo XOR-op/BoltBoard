@@ -1,4 +1,4 @@
-import Box, { BoxProps } from "@material-ui/core/Box";
+import Box, { BoxProps } from "@mui/material/Box";
 import { ReactComponent as LogoSvg } from "../assets/logo.svg";
 
 type LogoProps = {

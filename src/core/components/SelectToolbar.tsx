@@ -1,9 +1,9 @@
-import Box from "@material-ui/core/Box";
-import Fab from "@material-ui/core/Fab";
-import Toolbar from "@material-ui/core/Toolbar";
-import Tooltip from "@material-ui/core/Tooltip";
-import CloseIcon from "@material-ui/icons/Close";
-import DeleteIcon from "@material-ui/icons/Delete";
+import Box from "@mui/material/Box";
+import Fab from "@mui/material/Fab";
+import Toolbar from "@mui/material/Toolbar";
+import Tooltip from "@mui/material/Tooltip";
+import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "react-i18next";
 
 interface SelectToolbarProps {
