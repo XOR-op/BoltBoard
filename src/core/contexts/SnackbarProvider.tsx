@@ -1,6 +1,6 @@
-import Alert, { Color } from "@material-ui/core/Alert";
-import AlertTitle from "@material-ui/core/AlertTitle";
-import Snackbar from "@material-ui/core/Snackbar";
+import Alert, { AlertColor } from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import Snackbar from "@mui/material/Snackbar";
 import React, { createContext, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -20,10 +20,10 @@ const SnackbarProvider = ({ children }: SnackbarProviderProps) => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState("");
-  const [severity, setSeverity] = useState<Color | undefined>(undefined);
+  const [severity, setSeverity] = useState<AlertColor | undefined>(undefined);
 
   const handleClose = (
-    event: React.SyntheticEvent | React.MouseEvent,
+    event: any,
     reason?: string
   ) => {
     if (reason === "clickaway") {
