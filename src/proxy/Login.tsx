@@ -1,9 +1,9 @@
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import LoadingButton from "@material-ui/lab/LoadingButton";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import LoadingButton from "@mui/lab/LoadingButton";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import BoxedLayout from "../core/components/BoxedLayout";
@@ -78,6 +78,7 @@ const Login = () => {
                             onChange={formik.handleChange}
                             error={formik.touched.email && Boolean(formik.errors.email)}
                             helperText={formik.touched.email && formik.errors.email}
+                            InputProps={{ disableUnderline: true }}
                         />
                         <TextField
                             margin="normal"
@@ -94,6 +95,7 @@ const Login = () => {
                             onChange={formik.handleChange}
                             error={formik.touched.password && Boolean(formik.errors.password)}
                             helperText={formik.touched.password && formik.errors.password}
+                            InputProps={{ disableUnderline: true }}
                         />
 
                         <LoadingButton
@@ -101,6 +103,7 @@ const Login = () => {
                             fullWidth
                             loading={isLoggingIn}
                             variant="contained"
+                            disableElevation={true}
                             sx={{mt: 3}}
                         >
                             {'Sign in'}
