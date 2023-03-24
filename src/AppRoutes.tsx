@@ -6,7 +6,6 @@ import MitmPage from "./mitm/MitmPage";
 // Admin
 const Admin = lazy(() => import("./admin/pages/Admin"));
 const Dashboard = lazy(() => import("./admin/pages/Dashboard"));
-const Home = lazy(() => import("./admin/pages/Home"));
 
 // Auth
 const Login = lazy(() => import("./proxy/Login"));
