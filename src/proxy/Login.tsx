@@ -46,7 +46,6 @@ const Login = () => {
                 sm={4}
                 md={7}
                 sx={{
-                    backgroundImage: "url(./img/startup.svg)",
                     backgroundRepeat: "no-repeat",
                     bgcolor: "background.default",
                     backgroundSize: "cover",
