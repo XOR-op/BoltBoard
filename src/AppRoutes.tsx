@@ -8,7 +8,7 @@ const Admin = lazy(() => import("./admin/pages/Admin"));
 const Dashboard = lazy(() => import("./admin/pages/Dashboard"));
 
 // Auth
-const Login = lazy(() => import("./proxy/Login"));
+const Login = lazy(() => import("./admin/pages/Login"));
 
 // Core
 const Forbidden = lazy(() => import("./core/pages/Forbidden"));

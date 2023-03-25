@@ -6,9 +6,9 @@ import Typography from "@mui/material/Typography";
 import LoadingButton from "@mui/lab/LoadingButton";
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import BoxedLayout from "../core/components/BoxedLayout";
-import {useAuth} from "../auth/contexts/AuthProvider";
-import {useLocalStorage} from "../core/hooks/useLocalStorage";
+import BoxedLayout from "../../core/components/BoxedLayout";
+import {useAuth} from "../../auth/contexts/AuthProvider";
+import {useLocalStorage} from "../../core/hooks/useLocalStorage";
 import {useNavigate} from "react-router-dom";
 
 const Login = () => {
