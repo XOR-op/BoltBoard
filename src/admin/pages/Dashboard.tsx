@@ -6,6 +6,8 @@ import useWebSocket from 'react-use-websocket';
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import {Button} from "@mui/material";
+import {useLocalStorage} from "../../core/hooks/useLocalStorage";
 
 interface TrafficData {
     upload: number,
@@ -60,6 +62,63 @@ const DataWidget = ({data, title}: DataWidgetProps) => {
     );
 };
 
+interface TunStatus {
+    enabled: boolean
+}
+
+type OptionState = "Loading..." | "on" | "off"
+
+const OptionWidget = () => {
+    const [state, setState] = useState<OptionState>("Loading...")
+    const [authKey, _setAuthKey] = useLocalStorage<string | undefined>('authkey', undefined);
+
+    const onClickHandler = () => {
+        if (state !== "Loading...") {
+            const target = state !== "on"
+            const headers: HeadersInit = {'Content-Type': 'application/json'};
+            if (authKey) {
+                headers['api-key'] = authKey;
+            }
+            fetch("http://localhost:18086" + '/tun', {
+                headers: headers, method: 'PUT', body: JSON.stringify({
+                    enabled: target
+                })
+            }).then(res => {
+                if (res.status === 200) {
+                    setState(target ? "on" : "off")
+                }
+            }).catch(e => console.log(e))
+        }
+    }
+
+    useEffect(() => {
+        const headers: HeadersInit = {};
+        if (authKey) {
+            headers['api-key'] = authKey;
+        }
+        fetch("http://localhost:18086" + '/tun', {headers: headers}).then(res => res.json()).then(p => {
+            if ("enabled" in p) {
+                setState(p.enabled ? "on" : "off")
+            }
+        }).catch(e => console.log(e))
+    }, [authKey])
+
+    return (
+        <Card elevation={0}>
+            <Button fullWidth color='inherit' onClick={onClickHandler}>
+                <CardContent sx={{textAlign: "center"}}>
+                    <Typography gutterBottom component="div" variant='h3'>
+                        {"TUN"}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                        {state}
+                    </Typography>
+                </CardContent>
+            </Button>
+        </Card>
+    )
+}
+
 
 const Dashboard = ({endpoint}: DashboardProps) => {
 
@@ -94,10 +153,13 @@ const Dashboard = ({endpoint}: DashboardProps) => {
                     <DataWidget data={bytes_to_string(traffic.download)} title={"Download"}/>
                 </Grid>
                 <Grid item xs={6} md={3}>
-                    <DataWidget data={bytes_to_string(traffic.upload_speed) + '/S'} title={"Upload Speed"}/>
+                    <DataWidget data={bytes_to_string(traffic.upload_speed) + '/s'} title={"Upload Speed"}/>
                 </Grid>
                 <Grid item xs={6} md={3}>
-                    <DataWidget data={bytes_to_string(traffic.download_speed) + '/S'} title={"Download Speed"}/>
+                    <DataWidget data={bytes_to_string(traffic.download_speed) + '/s'} title={"Download Speed"}/>
+                </Grid>
+                <Grid item xs={6} md={3}>
+                    <OptionWidget/>
                 </Grid>
             </Grid>
         </React.Fragment>
