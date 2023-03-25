@@ -7,7 +7,7 @@ import {useLocalStorage} from "../core/hooks/useLocalStorage";
 import MitmData from "./MitmData";
 
 export interface MitmEntryData {
-    mitm_id: number,
+    eavesdrop_id: number,
     client: string | undefined,
     uri: string,
     method: string,
@@ -53,7 +53,7 @@ const MitmEntry = ({endpoint, data}: MitmEntryProps) => {
             if (authKey) {
                 headers['api-key'] = authKey;
             }
-            fetch(endpoint + '/mitm/payload/' + data.mitm_id, {
+            fetch(endpoint + '/eavesdrop/payload/' + data.eavesdrop_id, {
                 method: 'GET',
                 headers: headers,
             }).then(res => res.json()).then(pl => setPayload(pl))
@@ -105,7 +105,7 @@ const MitmEntry = ({endpoint, data}: MitmEntryProps) => {
                 <TableCell colSpan={6}  style={{paddingTop: '0px',paddingBottom: '0px'}}>
                     <Collapse in={open} timeout={200} >
                         {payload === undefined ? (<div/>) : (
-                            <MitmData key={data.mitm_id} data={payload}/>
+                            <MitmData key={data.eavesdrop_id} data={payload}/>
                         )}
                     </Collapse>
                 </TableCell>

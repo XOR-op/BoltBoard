@@ -34,7 +34,7 @@ const MitmPage = ({endpoint}: MitmPageProps) => {
         if (authKey) {
             headers['api-key'] = authKey;
         }
-        fetch(endpoint + '/mitm/all', {
+        fetch(endpoint + '/eavesdrop/all', {
             method: 'GET',
             headers: headers,
         }).then(res => res.json()).then(list => setMitmList(list))

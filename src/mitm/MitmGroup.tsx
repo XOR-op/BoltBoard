@@ -33,7 +33,7 @@ const MitmGroup = ({endpoint, entries}: MitmGroupProps) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {entries.map(item => (<MitmEntry key={item.mitm_id} endpoint={endpoint} data={item}/>))}
+                        {entries.map(item => (<MitmEntry key={item.eavesdrop_id} endpoint={endpoint} data={item}/>))}
                     </TableBody>
                 </Table>
             </TableContainer>

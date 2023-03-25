@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {Grid, TableRow} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import {MitmPayloadData} from "./MitmEntry";
@@ -32,12 +32,14 @@ interface PacketProps {
     body: string
 }
 
+type PayloadType = 'base64' | 'text' | 'img'
+
 const MitmPacket = ({header, body}: PacketProps) => {
-    const [view, setView] = useState("base64");
+    const [view, setView] = useState<PayloadType>("base64");
     const [data, setData] = useState(body);
     const style = mitmDataStyle();
 
-    const viewChangeHandler = (_:any, viewType: string) => {
+    const viewChangeHandler = (_: any, viewType: PayloadType) => {
         if (viewType === view) {
             return
         }
@@ -49,6 +51,18 @@ const MitmPacket = ({header, body}: PacketProps) => {
             setData(decoded);
         }
     };
+
+    useEffect(() => {
+        for (const idx in header) {
+            let l = header[idx].toLowerCase()
+            if (l.startsWith('content-type:')) {
+                if (l.includes('text')) {
+                    viewChangeHandler(0, 'text')
+                }
+                break
+            }
+        }
+    }, [header])
 
     return (
         <React.Fragment>
