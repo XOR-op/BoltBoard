@@ -25,12 +25,12 @@ type AdminDrawerProps = {
 export const menuItems = [
   {
     icon: BarChartIcon,
-    key: "admin.drawer.menu.dashboard",
+    key: "Dashboard",
     path: "/admin",
   },
   {
     icon: AccountTreeIcon,
-    key: "admin.drawer.menu.proxy",
+    key: "Proxy",
     path: "/admin/proxy",
   },
   {
@@ -66,7 +66,7 @@ const AdminDrawer = ({
             key={item.path}
             activeClassName="Mui-selected"
             end={true}
-            to={`/${process.env.PUBLIC_URL}${item.path}`}
+            to={`${item.path}`}
           >
             <ListItemAvatar>
               <Avatar sx={{ color: "inherit", bgcolor: "transparent" }}>
@@ -91,7 +91,7 @@ const AdminDrawer = ({
             </Avatar>
           </ListItemAvatar>
           <ListItemText
-            primary={t("admin.drawer.menu.settings")}
+            primary={t("Settings")}
             sx={{
               display: collapsed ? "none" : "block",
             }}

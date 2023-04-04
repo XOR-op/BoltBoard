@@ -23,7 +23,7 @@ const ProxyPage = lazy(() => import("./proxy/ProxyPage"));
 const AppRoutes = () => {
     const endpoint = 'http://localhost:18086'
     return (
-        <Routes basename={process.env.PUBLIC_URL}>
+        <Routes basename="/">
             <Route path="/" element={<Login/>}/>
             <PrivateRoute path="/admin" element={<Admin/>}>
                 <PrivateRoute path="/" element={<Dashboard endpoint={endpoint}/>}/>
@@ -36,7 +36,7 @@ const AppRoutes = () => {
             <Route path="404" element={<NotFound/>}/>
             <Route
                 path="*"
-                element={<Navigate to={`/${process.env.PUBLIC_URL}/404`} replace/>}
+                element={<Navigate to={`/404`} replace/>}
             />
         </Routes>
     );

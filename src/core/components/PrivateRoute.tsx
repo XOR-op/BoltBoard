@@ -14,11 +14,11 @@ const PrivateRoute = ({
 
   if (userInfo) {
     if (!hasRole(roles)) {
-      return <Navigate to={`/${process.env.PUBLIC_URL}/403`} />;
+      return <Navigate to={`/403`} />;
     }
     return <Route {...routeProps} />;
   } else {
-    return <Navigate to={`/${process.env.PUBLIC_URL}/login`} />;
+    return <Navigate to={`/login`} />;
   }
 };
 

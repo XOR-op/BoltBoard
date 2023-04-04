@@ -22,7 +22,7 @@ const Login = () => {
         setEndpoint(email);
         setAuthKey(password);
         login(email, password).then(() => {
-            navigate(`/${process.env.PUBLIC_URL}/admin`, {replace: true})
+            navigate(`/admin`, {replace: true})
         });
     };
 

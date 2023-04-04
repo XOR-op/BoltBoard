@@ -13,7 +13,7 @@ const Forbidden = () => {
         <Button
           color="secondary"
           component={RouterLink}
-          to={`/${process.env.PUBLIC_URL}/admin`}
+          to={`/admin`}
           variant="contained"
         >
           {t("common.backHome")}
