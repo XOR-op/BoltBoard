@@ -7,12 +7,10 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import BoxedLayout from "../../core/components/BoxedLayout";
-import {useAuth} from "../../auth/contexts/AuthProvider";
 import {useLocalStorage} from "../../core/hooks/useLocalStorage";
 import {useNavigate} from "react-router-dom";
 
 const Login = () => {
-    const {isLoggingIn, login} = useAuth();
     const navigate = useNavigate();
     const [_api_key, setApiKey] = useLocalStorage<string>("api-key", "");
     const [_url, setUrl] = useLocalStorage<string>("url", "");
@@ -71,7 +69,6 @@ const Login = () => {
                             name="url"
                             autoComplete="url"
                             autoFocus
-                            disabled={isLoggingIn}
                             value={formik.values.url}
                             onChange={formik.handleChange}
                             error={formik.touched.url && Boolean(formik.errors.url)}
@@ -88,7 +85,6 @@ const Login = () => {
                             type="password"
                             id="password"
                             autoComplete="current-password"
-                            disabled={isLoggingIn}
                             value={formik.values['api-key']}
                             onChange={formik.handleChange}
                             error={formik.touched['api-key'] && Boolean(formik.errors['api-key'])}
@@ -99,7 +95,6 @@ const Login = () => {
                         <LoadingButton
                             type="submit"
                             fullWidth
-                            loading={isLoggingIn}
                             variant="contained"
                             disableElevation={true}
                             sx={{mt: 3}}

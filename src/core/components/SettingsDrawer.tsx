@@ -52,7 +52,7 @@ const SettingsDrawer = ({ onDrawerToggle, open }: SettingsDrawerProps) => {
           p: 2,
         }}
       >
-        <Typography variant="h5">{t("settings.drawer.title")}</Typography>
+        <Typography variant="h5">{t("Settings")}</Typography>
         <IconButton color="inherit" onClick={onDrawerToggle} edge="end" size="large">
           <CloseIcon />
         </IconButton>
@@ -60,7 +60,7 @@ const SettingsDrawer = ({ onDrawerToggle, open }: SettingsDrawerProps) => {
       <Box sx={{ pl: 2, pr: 2 }}>
 
         <Typography gutterBottom id="settings-mode" marginTop={3} variant="h6">
-          {t("settings.drawer.mode.label")}
+          {"Mode"}
         </Typography>
         <ToggleButtonGroup
           color="primary"
@@ -70,10 +70,10 @@ const SettingsDrawer = ({ onDrawerToggle, open }: SettingsDrawerProps) => {
           onChange={handleModeChange}
         >
           <ToggleButton value="light">
-            {t("settings.drawer.mode.options.light")}
+            {"Light"}
           </ToggleButton>
           <ToggleButton value="dark">
-            {t("settings.drawer.mode.options.dark")}
+            {"Dark"}
           </ToggleButton>
         </ToggleButtonGroup>
 
@@ -83,7 +83,7 @@ const SettingsDrawer = ({ onDrawerToggle, open }: SettingsDrawerProps) => {
           marginTop={3}
           variant="h6"
         >
-          {t("settings.drawer.sidebar.label")}
+          {"Sidebar"}
         </Typography>
         <ToggleButtonGroup
           color="primary"
@@ -93,10 +93,10 @@ const SettingsDrawer = ({ onDrawerToggle, open }: SettingsDrawerProps) => {
           onChange={handleSidebarChange}
         >
           <ToggleButton value={true}>
-            {t("settings.drawer.sidebar.options.collapsed")}
+            {"Collapsed"}
           </ToggleButton>
           <ToggleButton value={false}>
-            {t("settings.drawer.sidebar.options.full")}
+            {"Full"}
           </ToggleButton>
         </ToggleButtonGroup>
       </Box>

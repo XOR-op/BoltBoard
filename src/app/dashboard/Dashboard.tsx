@@ -7,7 +7,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import {Button} from "@mui/material";
-import {api_call} from "../../misc/request";
+import {api_call, websocket_url} from "../../misc/request";
 
 interface TrafficData {
     upload: number,
@@ -97,10 +97,10 @@ const OptionWidget = () => {
         <Card elevation={0}>
             <Button fullWidth color='inherit' onClick={onClickHandler}>
                 <CardContent sx={{textAlign: "center"}}>
-                    <Typography gutterBottom component="div" variant='h3'>
+                    <Typography gutterBottom component="div" variant='h4'>
                         {"TUN"}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p">
+                    <Typography variant="h4" color="primary" component="p">
                         {state}
                     </Typography>
                 </CardContent>
@@ -114,7 +114,7 @@ const Dashboard = () => {
 
     const [traffic, setTraffic] = useState<TrafficData>({upload: 0, download: 0, upload_speed: 0, download_speed: 0})
 
-    const {lastMessage} = useWebSocket('ws://localhost:18086' + '/ws/traffic')
+    const {lastMessage} = useWebSocket(websocket_url('/ws/traffic'))
     useEffect(() => {
         if (lastMessage != null) {
             const message = JSON.parse(lastMessage.data);
@@ -135,20 +135,20 @@ const Dashboard = () => {
             <AdminAppBar>
                 <AdminToolbar title={"DashBoard"}/>
             </AdminAppBar>
-            <Grid container spacing={10}>
-                <Grid item xs={6} md={3}>
+            <Grid container spacing={5}>
+                <Grid item xs={3} md={1.5}>
                     <DataWidget data={bytes_to_string(traffic.upload)} title={"Upload"}/>
                 </Grid>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={3} md={1.5}>
                     <DataWidget data={bytes_to_string(traffic.download)} title={"Download"}/>
                 </Grid>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={3} md={1.5}>
                     <DataWidget data={bytes_to_string(traffic.upload_speed) + '/s'} title={"Upload Speed"}/>
                 </Grid>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={3} md={1.5}>
                     <DataWidget data={bytes_to_string(traffic.download_speed) + '/s'} title={"Download Speed"}/>
                 </Grid>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={3} md={1.5}>
                     <OptionWidget/>
                 </Grid>
             </Grid>
