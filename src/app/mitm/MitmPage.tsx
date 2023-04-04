@@ -1,9 +1,9 @@
-import AdminAppBar from "../admin/components/AdminAppBar";
-import AdminToolbar from "../admin/components/AdminToolbar";
+import AdminAppBar from "../../admin/components/AdminAppBar";
+import AdminToolbar from "../../admin/components/AdminToolbar";
 import Grid from "@mui/material/Grid";
 import React, {useCallback, useEffect, useState} from "react";
 import {MitmEntryData} from "./MitmEntry";
-import {useLocalStorage} from "../core/hooks/useLocalStorage";
+import {useLocalStorage} from "../../core/hooks/useLocalStorage";
 import MitmGroup from "./MitmGroup";
 import {Box} from "@mui/material";
 import {makeStyles} from "@mui/styles";

@@ -3,7 +3,7 @@ import {Collapse, Grid, IconButton} from "@mui/material";
 import ProxyWidget from "./ProxyWidget";
 import Typography from "@mui/material/Typography";
 import {makeStyles} from '@mui/styles'
-import {useLocalStorage} from "../core/hooks/useLocalStorage";
+import {useLocalStorage} from "../../core/hooks/useLocalStorage";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 

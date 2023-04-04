@@ -3,7 +3,7 @@ import {Collapse, IconButton, TableCell, TableRow} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import {useLocalStorage} from "../core/hooks/useLocalStorage";
+import {useLocalStorage} from "../../core/hooks/useLocalStorage";
 import MitmData from "./MitmData";
 
 export interface MitmEntryData {

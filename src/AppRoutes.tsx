@@ -1,11 +1,11 @@
 import {lazy} from "react";
 import {Navigate, Route, Routes} from "react-router-dom";
 import PrivateRoute from "./core/components/PrivateRoute";
-import MitmPage from "./mitm/MitmPage";
+import MitmPage from "./app/mitm/MitmPage";
 
 // Admin
 const Admin = lazy(() => import("./admin/pages/Admin"));
-const Dashboard = lazy(() => import("./admin/pages/Dashboard"));
+const Dashboard = lazy(() => import("./app/dashboard/Dashboard"));
 
 // Auth
 const Login = lazy(() => import("./admin/pages/Login"));
@@ -15,10 +15,10 @@ const Forbidden = lazy(() => import("./core/pages/Forbidden"));
 const NotFound = lazy(() => import("./core/pages/NotFound"));
 
 // Landing
-const ConnectionPage = lazy(() => import("./connection/ConnectionPage"));
+const ConnectionPage = lazy(() => import("./app/connection/ConnectionPage"));
 
 // Users
-const ProxyPage = lazy(() => import("./proxy/ProxyPage"));
+const ProxyPage = lazy(() => import("./app/proxy/ProxyPage"));
 
 const AppRoutes = () => {
     const endpoint = 'http://localhost:18086'

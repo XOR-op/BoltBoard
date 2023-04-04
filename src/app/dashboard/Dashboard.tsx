@@ -1,7 +1,7 @@
 import Grid from "@mui/material/Grid";
 import React, {useEffect, useState} from "react";
-import AdminAppBar from "../components/AdminAppBar";
-import AdminToolbar from "../components/AdminToolbar";
+import AdminAppBar from "../../admin/components/AdminAppBar";
+import AdminToolbar from "../../admin/components/AdminToolbar";
 import useWebSocket from 'react-use-websocket';
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";

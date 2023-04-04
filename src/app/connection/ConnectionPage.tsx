@@ -1,9 +1,9 @@
-import AdminAppBar from "../admin/components/AdminAppBar";
-import AdminToolbar from "../admin/components/AdminToolbar";
+import AdminAppBar from "../../admin/components/AdminAppBar";
+import AdminToolbar from "../../admin/components/AdminToolbar";
 import Grid from "@mui/material/Grid";
 import React, {useCallback, useEffect, useState} from "react";
 import {ConnectionEntryData} from "./ConnectionEntry";
-import {useLocalStorage} from "../core/hooks/useLocalStorage";
+import {useLocalStorage} from "../../core/hooks/useLocalStorage";
 import ConnectionGroup from "./ConnectionGroup";
 
 export interface ConnectionPageProps {
