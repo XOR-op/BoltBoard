@@ -14,28 +14,26 @@ import {useNavigate} from "react-router-dom";
 const Login = () => {
     const {isLoggingIn, login} = useAuth();
     const navigate = useNavigate();
-    const [_authKey, setAuthKey] = useLocalStorage<string>("authkey", "");
-    const [_endPoint, setEndpoint] = useLocalStorage<string>("endpoint", "");
+    const [_api_key, setApiKey] = useLocalStorage<string>("api-key", "");
+    const [_url, setUrl] = useLocalStorage<string>("url", "");
 
 
-    const handleLogin = (email: string, password: string) => {
-        setEndpoint(email);
-        setAuthKey(password);
-        login(email, password).then(() => {
-            navigate(`/admin`, {replace: true})
-        });
+    const handleLogin = (url: string, api_key: string) => {
+        setUrl(url);
+        setApiKey(api_key);
+        navigate(`/admin`, {replace: true});
     };
 
     const formik = useFormik({
         initialValues: {
-            email: "http://127.0.0.1:18086",
-            password: "",
+            url: "localhost:18086",
+            'api-key': "",
         },
         validationSchema: Yup.object({
-            email: Yup.string(),
-            password: Yup.string()
+            url: Yup.string(),
+            'api-key': Yup.string()
         }),
-        onSubmit: (values) => handleLogin(values.email, values.password),
+        onSubmit: (values) => handleLogin(values.url, values['api-key']),
     });
 
     return (
@@ -68,17 +66,17 @@ const Login = () => {
                             variant="filled"
                             required
                             fullWidth
-                            id="email"
+                            id="url"
                             label={'API Endpoint'}
-                            name="email"
-                            autoComplete="email"
+                            name="url"
+                            autoComplete="url"
                             autoFocus
                             disabled={isLoggingIn}
-                            value={formik.values.email}
+                            value={formik.values.url}
                             onChange={formik.handleChange}
-                            error={formik.touched.email && Boolean(formik.errors.email)}
-                            helperText={formik.touched.email && formik.errors.email}
-                            InputProps={{ disableUnderline: true }}
+                            error={formik.touched.url && Boolean(formik.errors.url)}
+                            helperText={formik.touched.url && formik.errors.url}
+                            InputProps={{disableUnderline: true}}
                         />
                         <TextField
                             margin="normal"
@@ -91,11 +89,11 @@ const Login = () => {
                             id="password"
                             autoComplete="current-password"
                             disabled={isLoggingIn}
-                            value={formik.values.password}
+                            value={formik.values['api-key']}
                             onChange={formik.handleChange}
-                            error={formik.touched.password && Boolean(formik.errors.password)}
-                            helperText={formik.touched.password && formik.errors.password}
-                            InputProps={{ disableUnderline: true }}
+                            error={formik.touched['api-key'] && Boolean(formik.errors['api-key'])}
+                            helperText={formik.touched['api-key'] && formik.errors['api-key']}
+                            InputProps={{disableUnderline: true}}
                         />
 
                         <LoadingButton

@@ -26,10 +26,10 @@ const AppRoutes = () => {
         <Routes basename="/">
             <Route path="/" element={<Login/>}/>
             <PrivateRoute path="/admin" element={<Admin/>}>
-                <PrivateRoute path="/" element={<Dashboard endpoint={endpoint}/>}/>
-                <PrivateRoute path="proxy" element={<ProxyPage endpoint={endpoint}/>}/>
-                <PrivateRoute path="connection" element={<ConnectionPage endpoint={endpoint}/>}/>
-                <PrivateRoute path="mitm" element={<MitmPage endpoint={endpoint}/>}/>
+                <PrivateRoute path="/" element={<Dashboard/>}/>
+                <PrivateRoute path="proxy" element={<ProxyPage/>}/>
+                <PrivateRoute path="connection" element={<ConnectionPage/>}/>
+                <PrivateRoute path="mitm" element={<MitmPage/>}/>
             </PrivateRoute>
             {/*<Route path="login" element={<Login/>}/>*/}
             <Route path="403" element={<Forbidden/>}/>

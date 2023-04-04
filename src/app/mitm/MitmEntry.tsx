@@ -3,8 +3,8 @@ import {Collapse, IconButton, TableCell, TableRow} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import {useLocalStorage} from "../../core/hooks/useLocalStorage";
 import MitmData from "./MitmData";
+import {api_call} from "../../misc/request";
 
 export interface MitmEntryData {
     eavesdrop_id: number,
@@ -25,7 +25,6 @@ export interface MitmPayloadData {
 
 export interface MitmEntryProps {
     key: number
-    endpoint: string,
     data: MitmEntryData
 }
 
@@ -42,21 +41,14 @@ function pretty_size(n: number) {
 }
 
 
-const MitmEntry = ({endpoint, data}: MitmEntryProps) => {
+const MitmEntry = ({data}: MitmEntryProps) => {
     const [open, setOpen] = useState(false);
     const [payload, setPayload] = useState<MitmPayloadData | undefined>(undefined);
-    const [authKey, _setAuthKey] = useLocalStorage<string | undefined>('authkey', undefined);
 
     const handleOpen = () => {
         if (!open && payload === undefined) {
-            const headers: HeadersInit = {};
-            if (authKey) {
-                headers['api-key'] = authKey;
-            }
-            fetch(endpoint + '/eavesdrop/payload/' + data.eavesdrop_id, {
-                method: 'GET',
-                headers: headers,
-            }).then(res => res.json()).then(pl => setPayload(pl))
+            api_call('GET', '/eavesdrop/payload/' + data.eavesdrop_id)
+                .then(res => res.json()).then(pl => setPayload(pl))
                 .catch(e => console.log(e))
         }
         setOpen(!open);
@@ -102,8 +94,8 @@ const MitmEntry = ({endpoint, data}: MitmEntryProps) => {
                 </TableCell>
             </TableRow>
             <TableRow>
-                <TableCell colSpan={6}  style={{paddingTop: '0px',paddingBottom: '0px'}}>
-                    <Collapse in={open} timeout={200} >
+                <TableCell colSpan={6} style={{paddingTop: '0px', paddingBottom: '0px'}}>
+                    <Collapse in={open} timeout={200}>
                         {payload === undefined ? (<div/>) : (
                             <MitmData key={data.eavesdrop_id} data={payload}/>
                         )}

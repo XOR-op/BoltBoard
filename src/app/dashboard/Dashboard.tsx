@@ -7,7 +7,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import {Button} from "@mui/material";
-import {useLocalStorage} from "../../core/hooks/useLocalStorage";
+import {api_call} from "../../misc/request";
 
 interface TrafficData {
     upload: number,
@@ -70,20 +70,14 @@ type OptionState = "Loading..." | "on" | "off"
 
 const OptionWidget = () => {
     const [state, setState] = useState<OptionState>("Loading...")
-    const [authKey, _setAuthKey] = useLocalStorage<string | undefined>('authkey', undefined);
 
     const onClickHandler = () => {
+        const target = state !== "on";
         if (state !== "Loading...") {
-            const target = state !== "on"
-            const headers: HeadersInit = {'Content-Type': 'application/json'};
-            if (authKey) {
-                headers['api-key'] = authKey;
-            }
-            fetch("http://localhost:18086" + '/tun', {
-                headers: headers, method: 'PUT', body: JSON.stringify({
+            api_call('PUT', '/tun', JSON.stringify({
                     enabled: target
                 })
-            }).then(res => {
+            ).then(res => {
                 if (res.status === 200) {
                     setState(target ? "on" : "off")
                 }
@@ -92,16 +86,12 @@ const OptionWidget = () => {
     }
 
     useEffect(() => {
-        const headers: HeadersInit = {};
-        if (authKey) {
-            headers['api-key'] = authKey;
-        }
-        fetch("http://localhost:18086" + '/tun', {headers: headers}).then(res => res.json()).then(p => {
+        api_call('GET', '/tun').then(res => res.json()).then(p => {
             if ("enabled" in p) {
                 setState(p.enabled ? "on" : "off")
             }
         }).catch(e => console.log(e))
-    }, [authKey])
+    }, [])
 
     return (
         <Card elevation={0}>
@@ -120,7 +110,7 @@ const OptionWidget = () => {
 }
 
 
-const Dashboard = ({endpoint}: DashboardProps) => {
+const Dashboard = () => {
 
     const [traffic, setTraffic] = useState<TrafficData>({upload: 0, download: 0, upload_speed: 0, download_speed: 0})
 

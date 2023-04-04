@@ -5,10 +5,10 @@ export function url_and_header() {
         'Content-Type': 'application/json'
     };
     if (api_key) {
-        header['api-key'] = api_key
+        header['api-key'] = JSON.parse(api_key)
     }
     return {
-        url: url ? url : "127.0.0.1:18086",
+        url: url ? JSON.parse(url) : "localhost:18086",
         header: header
     }
 }

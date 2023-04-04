@@ -3,9 +3,9 @@ import {Collapse, Grid, IconButton} from "@mui/material";
 import ProxyWidget from "./ProxyWidget";
 import Typography from "@mui/material/Typography";
 import {makeStyles} from '@mui/styles'
-import {useLocalStorage} from "../../core/hooks/useLocalStorage";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import {api_call} from "../../misc/request";
 
 const proxyGroupStyle = makeStyles({
     titleBar: {
@@ -27,27 +27,19 @@ export interface GroupRpcData {
 
 export interface ProxyGroupProps {
     key: string,
-    endpoint: string,
     data: GroupRpcData,
 }
 
-const ProxyGroup = ({endpoint, data}: ProxyGroupProps) => {
+const ProxyGroup = ({data}: ProxyGroupProps) => {
     const style = proxyGroupStyle();
     const [currentProxy, setCurrentProxy] = useState(data.selected);
-    const [authKey, _setAuthKey] = useLocalStorage<string | undefined>('authkey', undefined);
     const onClickHandler = (proxyName: string) => {
         if (proxyName !== currentProxy) {
-            const headers: HeadersInit = {'Content-Type': 'application/json'};
-            if (authKey) {
-                headers['api-key'] = authKey;
-            }
-            fetch(endpoint + '/proxies/' + data.name, {
-                method: 'PUT',
-                headers: headers,
-                body: JSON.stringify({
+            api_call('PUT', '/proxies',
+                JSON.stringify({
                     'selected': proxyName
                 })
-            }).then(res => {
+            ).then(res => {
                 if (res.status === 200) {
                     setCurrentProxy(proxyName)
                 }

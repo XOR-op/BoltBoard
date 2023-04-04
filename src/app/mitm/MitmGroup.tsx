@@ -4,12 +4,11 @@ import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "
 
 export interface MitmGroupProps {
     key: string,
-    endpoint: string,
     name: string,
     entries: Array<MitmEntryData>
 }
 
-const MitmGroup = ({endpoint, entries}: MitmGroupProps) => {
+const MitmGroup = ({entries}: MitmGroupProps) => {
     return (
         <React.Fragment>
             <TableContainer>
@@ -33,7 +32,7 @@ const MitmGroup = ({endpoint, entries}: MitmGroupProps) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {entries.map(item => (<MitmEntry key={item.eavesdrop_id} endpoint={endpoint} data={item}/>))}
+                        {entries.map(item => (<MitmEntry key={item.eavesdrop_id} data={item}/>))}
                     </TableBody>
                 </Table>
             </TableContainer>

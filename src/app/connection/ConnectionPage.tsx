@@ -3,8 +3,8 @@ import AdminToolbar from "../../admin/components/AdminToolbar";
 import Grid from "@mui/material/Grid";
 import React, {useCallback, useEffect, useState} from "react";
 import {ConnectionEntryData} from "./ConnectionEntry";
-import {useLocalStorage} from "../../core/hooks/useLocalStorage";
 import ConnectionGroup from "./ConnectionGroup";
+import {api_call} from "../../misc/request";
 
 export interface ConnectionPageProps {
     endpoint: string
@@ -24,21 +24,13 @@ function groupBy(list: Array<any>, key: string): Map<string, Array<any>> {
     return map
 }
 
-const ConnectionPage = ({endpoint}: ConnectionPageProps) => {
+const ConnectionPage = () => {
     const [connList, setConnList] = useState<Array<ConnectionEntryData>>([])
-    const [authKey, _setAuthKey] = useLocalStorage<string | undefined>('authkey', undefined);
 
     const refresh = useCallback(() => {
-        const headers: HeadersInit = {};
-        if (authKey) {
-            headers['api-key'] = authKey;
-        }
-        fetch(endpoint + '/connections', {
-            method: 'GET',
-            headers: headers,
-        }).then(res => res.json()).then(list => setConnList(list))
+        api_call('GET', '/connections').then(res => res.json()).then(list => setConnList(list))
             .catch(e => console.log(e))
-    }, [endpoint])
+    }, [])
     useEffect(() => {
         refresh()
     }, [refresh]);
@@ -53,7 +45,7 @@ const ConnectionPage = ({endpoint}: ConnectionPageProps) => {
                     if (a.toLowerCase() > b.toLowerCase()) return 1;
                     if (a.toLowerCase() < b.toLowerCase()) return -1;
                     return 0;
-                }).map(([key,val]) => (
+                }).map(([key, val]) => (
                     <ConnectionGroup key={key} name={key} entries={val.reverse()}/>
                 ))
             }
