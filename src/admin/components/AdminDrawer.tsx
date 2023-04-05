@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 import Logo from "../../core/components/Logo";
 import { drawerCollapsedWidth, drawerWidth } from "../../core/config/layout";
-import {Anchor} from "@mui/icons-material";
+import {Anchor, Notes} from "@mui/icons-material";
 
 type AdminDrawerProps = {
   collapsed: boolean;
@@ -42,6 +42,11 @@ export const menuItems = [
     icon: Anchor,
     key: "Intercept",
     path: "/admin/intercept",
+  },
+  {
+    icon: Notes,
+    key: "Logs",
+    path: "/admin/logs",
   },
 ];
 

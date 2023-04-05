@@ -37,7 +37,7 @@ const InterceptPage = () => {
     return (
         <Box>
             <AdminAppBar>
-                <AdminToolbar title={'Intercept Packets'}/>
+                <AdminToolbar title={'Intercepted Packets'}/>
             </AdminAppBar>
             <Grid container>{
                 <InterceptGroup key='0' name='All' entries={interceptEntryData.reverse()}/>

@@ -20,6 +20,8 @@ const ConnectionPage = lazy(() => import("./app/connection/ConnectionPage"));
 // Users
 const ProxyPage = lazy(() => import("./app/proxy/ProxyPage"));
 
+const LogsPage = lazy(() => import("./app/logs/LogsPage"))
+
 const AppRoutes = () => {
     const endpoint = 'http://localhost:18086'
     return (
@@ -30,6 +32,7 @@ const AppRoutes = () => {
                 <PrivateRoute path="proxy" element={<ProxyPage/>}/>
                 <PrivateRoute path="connection" element={<ConnectionPage/>}/>
                 <PrivateRoute path="intercept" element={<InterceptPage/>}/>
+                <PrivateRoute path="logs" element={<LogsPage/>}/>
             </PrivateRoute>
             {/*<Route path="login" element={<Login/>}/>*/}
             <Route path="403" element={<Forbidden/>}/>
