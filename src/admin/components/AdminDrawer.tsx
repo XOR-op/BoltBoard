@@ -40,8 +40,8 @@ export const menuItems = [
   },
   {
     icon: Anchor,
-    key: "MitM",
-    path: "/admin/mitm",
+    key: "Intercept",
+    path: "/admin/intercept",
   },
 ];
 

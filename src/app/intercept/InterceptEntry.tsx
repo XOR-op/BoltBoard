@@ -3,11 +3,11 @@ import {Collapse, IconButton, TableCell, TableRow} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import MitmData from "./MitmData";
+import InterceptData from "./InterceptData";
 import {api_call} from "../../misc/request";
 
-export interface MitmEntryData {
-    eavesdrop_id: number,
+export interface InterceptEntryData {
+    intercept_id: number,
     client: string | undefined,
     uri: string,
     method: string,
@@ -16,16 +16,16 @@ export interface MitmEntryData {
     time: string,
 }
 
-export interface MitmPayloadData {
+export interface InterceptPayloadData {
     req_header: string[],
     req_body: string,
     resp_header: string[],
     resp_body: string,
 }
 
-export interface MitmEntryProps {
+export interface InterceptEntryProps {
     key: number
-    data: MitmEntryData
+    data: InterceptEntryData
 }
 
 function pretty_size(n: number) {
@@ -41,13 +41,13 @@ function pretty_size(n: number) {
 }
 
 
-const MitmEntry = ({data}: MitmEntryProps) => {
+const InterceptEntry = ({data}: InterceptEntryProps) => {
     const [open, setOpen] = useState(false);
-    const [payload, setPayload] = useState<MitmPayloadData | undefined>(undefined);
+    const [payload, setPayload] = useState<InterceptPayloadData | undefined>(undefined);
 
     const handleOpen = () => {
         if (!open && payload === undefined) {
-            api_call('GET', '/eavesdrop/payload/' + data.eavesdrop_id)
+            api_call('GET', '/intercept/payload/' + data.intercept_id)
                 .then(res => res.json()).then(pl => setPayload(pl))
                 .catch(e => console.log(e))
         }
@@ -97,7 +97,7 @@ const MitmEntry = ({data}: MitmEntryProps) => {
                 <TableCell colSpan={6} style={{paddingTop: '0px', paddingBottom: '0px'}}>
                     <Collapse in={open} timeout={200}>
                         {payload === undefined ? (<div/>) : (
-                            <MitmData key={data.eavesdrop_id} data={payload}/>
+                            <InterceptData key={data.intercept_id} data={payload}/>
                         )}
                     </Collapse>
                 </TableCell>
@@ -105,4 +105,4 @@ const MitmEntry = ({data}: MitmEntryProps) => {
         </React.Fragment>
     )
 }
-export default MitmEntry
+export default InterceptEntry

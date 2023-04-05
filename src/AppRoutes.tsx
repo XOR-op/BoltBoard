@@ -1,7 +1,7 @@
 import {lazy} from "react";
 import {Navigate, Route, Routes} from "react-router-dom";
 import PrivateRoute from "./core/components/PrivateRoute";
-import MitmPage from "./app/mitm/MitmPage";
+import InterceptPage from "./app/intercept/InterceptPage";
 
 // Admin
 const Admin = lazy(() => import("./admin/pages/Admin"));
@@ -29,7 +29,7 @@ const AppRoutes = () => {
                 <PrivateRoute path="/" element={<Dashboard/>}/>
                 <PrivateRoute path="proxy" element={<ProxyPage/>}/>
                 <PrivateRoute path="connection" element={<ConnectionPage/>}/>
-                <PrivateRoute path="mitm" element={<MitmPage/>}/>
+                <PrivateRoute path="intercept" element={<InterceptPage/>}/>
             </PrivateRoute>
             {/*<Route path="login" element={<Login/>}/>*/}
             <Route path="403" element={<Forbidden/>}/>

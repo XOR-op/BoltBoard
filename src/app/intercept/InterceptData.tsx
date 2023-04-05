@@ -1,13 +1,13 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {Grid, TableRow} from "@mui/material";
 import Typography from "@mui/material/Typography";
-import {MitmPayloadData} from "./MitmEntry";
+import {InterceptPayloadData} from "./InterceptEntry";
 import {makeStyles} from "@mui/styles";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ToggleButton from "@mui/material/ToggleButton";
 
 
-const mitmDataStyle = makeStyles({
+const interceptDataStyle = makeStyles({
     header: {
         height: '300px',
         overflowY: 'scroll',
@@ -22,9 +22,9 @@ const mitmDataStyle = makeStyles({
 })
 
 
-export interface MitmDataProps {
+export interface InterceptDataProps {
     key: number
-    data: MitmPayloadData
+    data: InterceptPayloadData
 }
 
 interface PacketProps {
@@ -34,10 +34,10 @@ interface PacketProps {
 
 type PayloadType = 'base64' | 'text' | 'img'
 
-const MitmPacket = ({header, body}: PacketProps) => {
+const InterceptPacket = ({header, body}: PacketProps) => {
     const [view, setView] = useState<PayloadType>("base64");
     const [data, setData] = useState(body);
-    const style = mitmDataStyle();
+    const style = interceptDataStyle();
 
     const viewChangeHandler = (_: any, viewType: PayloadType) => {
         if (viewType === view) {
@@ -94,15 +94,15 @@ const MitmPacket = ({header, body}: PacketProps) => {
     )
 }
 
-const MitmData = ({data}: MitmDataProps) => {
+const InterceptData = ({data}: InterceptDataProps) => {
     return (
         <React.Fragment>
             <Grid container spacing={2} item={true}>
-                <MitmPacket header={data.req_header} body={data.req_body}/>
-                <MitmPacket header={data.resp_header} body={data.resp_body}/>
+                <InterceptPacket header={data.req_header} body={data.req_body}/>
+                <InterceptPacket header={data.resp_header} body={data.resp_body}/>
             </Grid>
         </React.Fragment>
     )
 }
 
-export default MitmData
+export default InterceptData

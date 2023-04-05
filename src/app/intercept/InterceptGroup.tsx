@@ -1,14 +1,14 @@
 import React from "react";
-import MitmEntry, {MitmEntryData} from "./MitmEntry";
+import InterceptEntry, {InterceptEntryData} from "./InterceptEntry";
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 
-export interface MitmGroupProps {
+export interface InterceptGroupProps {
     key: string,
     name: string,
-    entries: Array<MitmEntryData>
+    entries: Array<InterceptEntryData>
 }
 
-const MitmGroup = ({entries}: MitmGroupProps) => {
+const InterceptGroup = ({entries}: InterceptGroupProps) => {
     return (
         <React.Fragment>
             <TableContainer>
@@ -32,7 +32,7 @@ const MitmGroup = ({entries}: MitmGroupProps) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {entries.map(item => (<MitmEntry key={item.eavesdrop_id} data={item}/>))}
+                        {entries.map(item => (<InterceptEntry key={item.intercept_id} data={item}/>))}
                     </TableBody>
                 </Table>
             </TableContainer>
@@ -40,4 +40,4 @@ const MitmGroup = ({entries}: MitmGroupProps) => {
     )
 }
 
-export default MitmGroup
+export default InterceptGroup

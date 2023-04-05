@@ -2,15 +2,12 @@ import AdminAppBar from "../../admin/components/AdminAppBar";
 import AdminToolbar from "../../admin/components/AdminToolbar";
 import Grid from "@mui/material/Grid";
 import React, {useCallback, useEffect, useState} from "react";
-import {MitmEntryData} from "./MitmEntry";
-import MitmGroup from "./MitmGroup";
+import {InterceptEntryData} from "./InterceptEntry";
+import InterceptGroup from "./InterceptGroup";
 import {Box} from "@mui/material";
 import {makeStyles} from "@mui/styles";
 import {api_call} from "../../misc/request";
 
-export interface MitmPageProps {
-    endpoint: string
-}
 
 const scrollbarFixStyles = makeStyles({
     root: {
@@ -25,12 +22,12 @@ const scrollbarFixStyles = makeStyles({
 });
 
 
-const MitmPage = () => {
-    const [mitmList, setMitmList] = useState<Array<MitmEntryData>>([])
+const InterceptPage = () => {
+    const [interceptEntryData, setInterceptEntryData] = useState<Array<InterceptEntryData>>([])
 
     const refresh = useCallback(() => {
-        api_call('GET', '/eavesdrop/all')
-            .then(res => res.json()).then(list => setMitmList(list))
+        api_call('GET', '/intercept/all')
+            .then(res => res.json()).then(list => setInterceptEntryData(list))
             .catch(e => console.log(e))
     }, []);
     useEffect(() => {
@@ -40,14 +37,14 @@ const MitmPage = () => {
     return (
         <Box>
             <AdminAppBar>
-                <AdminToolbar title={'MitM Packets'}/>
+                <AdminToolbar title={'Intercept Packets'}/>
             </AdminAppBar>
             <Grid container>{
-                <MitmGroup key='0' name='All' entries={mitmList.reverse()}/>
+                <InterceptGroup key='0' name='All' entries={interceptEntryData.reverse()}/>
             }
             </Grid>
         </Box>
     )
 }
 
-export default MitmPage
+export default InterceptPage
