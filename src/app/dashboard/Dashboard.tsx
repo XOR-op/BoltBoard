@@ -6,7 +6,7 @@ import useWebSocket from 'react-use-websocket';
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import {Button} from "@mui/material";
+import {Box, Button} from "@mui/material";
 import {api_call, websocket_url} from "../../misc/request";
 
 interface TrafficData {
@@ -135,23 +135,25 @@ const Dashboard = () => {
             <AdminAppBar>
                 <AdminToolbar title={"DashBoard"}/>
             </AdminAppBar>
-            <Grid container spacing={5}>
-                <Grid item xs={3} md={1.5}>
-                    <DataWidget data={bytes_to_string(traffic.upload)} title={"Upload"}/>
+            <Box>
+                <Grid container spacing={5} alignItems='center' minWidth='100vw'>
+                    <Grid item xs={3} md={1.5}>
+                        <DataWidget data={bytes_to_string(traffic.upload)} title={"Upload"}/>
+                    </Grid>
+                    <Grid item xs={3} md={1.5}>
+                        <DataWidget data={bytes_to_string(traffic.download)} title={"Download"}/>
+                    </Grid>
+                    <Grid item xs={3} md={1.5}>
+                        <DataWidget data={bytes_to_string(traffic.upload_speed) + '/s'} title={"Upload Speed"}/>
+                    </Grid>
+                    <Grid item xs={3} md={1.5}>
+                        <DataWidget data={bytes_to_string(traffic.download_speed) + '/s'} title={"Download Speed"}/>
+                    </Grid>
+                    <Grid item xs={3} md={1.5}>
+                        <OptionWidget/>
+                    </Grid>
                 </Grid>
-                <Grid item xs={3} md={1.5}>
-                    <DataWidget data={bytes_to_string(traffic.download)} title={"Download"}/>
-                </Grid>
-                <Grid item xs={3} md={1.5}>
-                    <DataWidget data={bytes_to_string(traffic.upload_speed) + '/s'} title={"Upload Speed"}/>
-                </Grid>
-                <Grid item xs={3} md={1.5}>
-                    <DataWidget data={bytes_to_string(traffic.download_speed) + '/s'} title={"Download Speed"}/>
-                </Grid>
-                <Grid item xs={3} md={1.5}>
-                    <OptionWidget/>
-                </Grid>
-            </Grid>
+            </Box>
         </React.Fragment>
     );
 };
