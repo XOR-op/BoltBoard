@@ -6,14 +6,10 @@ import {ConnectionEntryData} from "./ConnectionEntry";
 import ConnectionGroup from "./ConnectionGroup";
 import {api_call} from "../../misc/request";
 
-export interface ConnectionPageProps {
-    endpoint: string
-}
-
 function groupBy(list: Array<any>, key: string): Map<string, Array<any>> {
     const map = new Map();
     list.forEach(item => {
-        let realKey = item[key];
+        let realKey = item[key] ?? 'Unknown Process';
         const collection = map.get(realKey);
         if (!collection) {
             map.set(realKey, [item]);

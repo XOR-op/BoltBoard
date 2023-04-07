@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import ConnectionEntry, {ConnectionEntryData} from "./ConnectionEntry";
-import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import {Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import {makeStyles} from '@mui/styles'
 import {Collapse} from '@mui/material'
@@ -24,6 +24,28 @@ export interface ConnectionGroupProps {
 const ConnectionGroup = ({name, entries}: ConnectionGroupProps) => {
     const style = connGroupStyle();
     const [open, setOpen] = useState(true);
+
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+
+    // Calculate the index of the first and last rows on the current page
+    const firstRowOnPage = page * rowsPerPage;
+    const lastRowOnPage = page * rowsPerPage + rowsPerPage;
+
+    // Get the rows to be displayed on the current page
+    const displayedRows = entries.slice(firstRowOnPage, lastRowOnPage);
+
+    // Handle page change
+    const handlePageChange = (event: any, newPage: number) => {
+        setPage(newPage);
+    };
+
+    // Handle rows per page change
+    const handleRowsPerPageChange = (event: { target: { value: string; }; }) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
 
     const handleOpen = () => {
         setOpen(!open);
@@ -62,9 +84,11 @@ const ConnectionGroup = ({name, entries}: ConnectionGroupProps) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {entries.map(item => (<ConnectionEntry key={item.conn_id} data={item}/>))}
+                            {displayedRows.map(item => (<ConnectionEntry key={item.conn_id} data={item}/>))}
                         </TableBody>
                     </Table>
+                    <TablePagination component="div" rowsPerPageOptions={[5, 10, 25, 100]} count={entries.length} page={page} rowsPerPage={rowsPerPage}
+                                     onPageChange={handlePageChange} onRowsPerPageChange={handleRowsPerPageChange}/>
                 </Collapse>
             </TableContainer>
         </React.Fragment>

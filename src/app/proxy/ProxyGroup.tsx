@@ -35,7 +35,7 @@ const ProxyGroup = ({data}: ProxyGroupProps) => {
     const [currentProxy, setCurrentProxy] = useState(data.selected);
     const onClickHandler = (proxyName: string) => {
         if (proxyName !== currentProxy) {
-            api_call('PUT', '/proxies',
+            api_call('PUT', '/proxies/' + data.name,
                 JSON.stringify({
                     'selected': proxyName
                 })

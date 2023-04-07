@@ -26,15 +26,15 @@ function bytes_to_string(data?: number) {
     } else if (data < 10 * KB) {
         return (data / KB).toFixed(2) + " KB"
     } else if (data < MB) {
-        return (data / KB).toFixed() + " KB"
+        return (data / KB).toFixed(1) + " KB"
     } else if (data < 10 * MB) {
         return (data / MB).toFixed(2) + " MB"
     } else if (data < GB) {
-        return (data / MB).toFixed() + " MB"
+        return (data / MB).toFixed(1) + " MB"
     } else if (data < 10 * GB) {
         return (data / GB).toFixed(2) + " GB"
     } else {
-        return (data / GB).toFixed() + " GB"
+        return (data / GB).toFixed(1) + " GB"
     }
 }
 
