@@ -9,6 +9,7 @@ import * as Yup from "yup";
 import BoxedLayout from "../../core/components/BoxedLayout";
 import {useLocalStorage} from "../../core/hooks/useLocalStorage";
 import {useNavigate} from "react-router-dom";
+import {homePath} from "../../app/Const";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -19,7 +20,7 @@ const Login = () => {
     const handleLogin = (url: string, api_key: string) => {
         setUrl(url);
         setApiKey(api_key);
-        navigate(`/admin`, {replace: true});
+        navigate(homePath, {replace: true});
     };
 
     const formik = useFormik({
