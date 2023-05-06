@@ -5,7 +5,6 @@ import AppRoutes from "./AppRoutes";
 import Loader from "./core/components/Loader";
 import QueryWrapper from "./core/components/QueryWrapper";
 import SettingsProvider from "./core/contexts/SettingsProvider";
-import SnackbarProvider from "./core/contexts/SnackbarProvider";
 
 
 // Create a client
@@ -27,9 +26,7 @@ function App() {
                 <QueryClientProvider client={queryClient}>
                     <SettingsProvider>
                         <QueryWrapper>
-                            <SnackbarProvider>
-                                <AppRoutes/>
-                            </SnackbarProvider>
+                            <AppRoutes/>
                         </QueryWrapper>
                     </SettingsProvider>
                 </QueryClientProvider>

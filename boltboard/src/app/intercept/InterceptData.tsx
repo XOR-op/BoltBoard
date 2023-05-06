@@ -47,7 +47,7 @@ const InterceptPacket = ({header, body}: PacketProps) => {
         if (viewType === "base64") {
             setData(body);
         } else if (viewType === "text") {
-            let decoded = atob(body);
+            let decoded = decodeURIComponent(escape(atob(body)));
             setData(decoded);
         }
     };
