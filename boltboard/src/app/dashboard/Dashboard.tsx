@@ -1,5 +1,5 @@
 import Grid from "@mui/material/Grid";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import AdminAppBar from "../../admin/components/AdminAppBar";
 import AdminToolbar from "../../admin/components/AdminToolbar";
 import useWebSocket from 'react-use-websocket';
@@ -8,6 +8,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import {Box, Button} from "@mui/material";
 import {api_call, websocket_url} from "../../misc/request";
+import {GroupRpcData} from "../proxy/ProxyGroup";
 
 interface TrafficData {
     upload: number,
@@ -129,6 +130,16 @@ const Dashboard = () => {
         }
     }, [lastMessage,])
 
+    const [groupList, setGroupList] = useState<Array<GroupRpcData>>([]);
+    const refresh = useCallback(() => {
+        api_call('GET', '/proxies').then(res => res.json()).then(p => {
+            setGroupList(p)
+        }).catch(e => console.log(e))
+    }, []);
+    useEffect(() => {
+        refresh()
+    }, [refresh]);
+
 
     return (
         <React.Fragment>
@@ -152,9 +163,28 @@ const Dashboard = () => {
                             </Grid>
                         ))
                     }
-                    <Grid item xs={12} md={8} xl={6}>
+                    <Grid item xs={12} md={8}>
                         <OptionWidget/>
                     </Grid>
+                </Grid>
+            </Box>
+            <Box sx={{my:'2rem'}}>
+                <Grid container spacing={{xs: 1, sm: 3}} alignItems='center' minWidth='100vw'>
+                    {
+                        groupList.map(({name, selected}) => (
+                            <Grid item xs={11} sm={9} md={8}>
+                                <Card>
+                                    <CardContent sx={{display: 'flex', justifyContent: 'space-between'}}>
+                                        <Typography variant="h4" sx={{textAlign: 'left'}}>
+                                            {name}
+                                        </Typography>
+                                        <Typography variant="h5" sx={{textAlign: 'right'}}>
+                                            {selected}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        ))}
                 </Grid>
             </Box>
         </React.Fragment>

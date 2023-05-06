@@ -21,7 +21,7 @@ const ProxyPage = () => {
             <AdminAppBar>
                 <AdminToolbar title={'Proxy'}/>
             </AdminAppBar>
-            <Grid container>
+            <Grid container spacing={2}>
                 {groupList.map(item => (
                     <ProxyGroup key={item.name} data={item}/>
                 ))}

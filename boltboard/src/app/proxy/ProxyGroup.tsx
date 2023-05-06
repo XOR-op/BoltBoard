@@ -6,6 +6,8 @@ import {makeStyles} from '@mui/styles'
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {api_call} from "../../misc/request";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
 
 const proxyGroupStyle = makeStyles({
     titleBar: {
@@ -55,16 +57,20 @@ const ProxyGroup = ({data}: ProxyGroupProps) => {
 
     return (
         <React.Fragment>
-            <Grid item xs={12}>
-                <Typography gutterBottom component="h2" variant="h3" className={style.titleBar}>
-                    {data.name + ' [ ' + currentProxy + ' ]'}
-                    <IconButton onClick={handleOpen} disableFocusRipple={true} size='medium' edge={false}>
-                        {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
-                    </IconButton>
-                </Typography>
+            <Grid item xs={12} md={8}>
+                <Card onClick={handleOpen}>
+                    <CardContent sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant="h4" sx={{textAlign: 'left'}}>
+                            {data.name}
+                        </Typography>
+                        <Typography variant="h5" sx={{textAlign: 'right'}}>
+                            {currentProxy}
+                        </Typography>
+                    </CardContent>
+                </Card>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} md={8}>
                 <Collapse in={open}>
                     <Grid container spacing={3} alignItems={'center'}>
                         {data.list.map((n, idx) =>
