@@ -8,7 +8,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import {Box, Button} from "@mui/material";
 import {api_call, websocket_url} from "../../misc/request";
-import {GroupRpcData} from "../proxy/ProxyGroup";
+import ProxyGroup, {GroupRpcData} from "../proxy/ProxyGroup";
 
 interface TrafficData {
     upload: number,
@@ -63,24 +63,20 @@ const DataWidget = ({data, title}: DataWidgetProps) => {
     );
 };
 
-interface TunStatus {
-    enabled: boolean
-}
-
-type OptionState = "Loading..." | "on" | "off"
+type OptionState = "Loading..." | "ON" | "OFF"
 
 const OptionWidget = () => {
     const [state, setState] = useState<OptionState>("Loading...")
 
     const onClickHandler = () => {
-        const target = state !== "on";
+        const target = state !== "ON";
         if (state !== "Loading...") {
             api_call('PUT', '/tun', JSON.stringify({
                     enabled: target
                 })
             ).then(res => {
                 if (res.status === 200) {
-                    setState(target ? "on" : "off")
+                    setState(target ? "ON" : "OFF")
                 }
             }).catch(e => console.log(e))
         }
@@ -89,23 +85,21 @@ const OptionWidget = () => {
     useEffect(() => {
         api_call('GET', '/tun').then(res => res.json()).then(p => {
             if ("enabled" in p) {
-                setState(p.enabled ? "on" : "off")
+                setState(p.enabled ? "ON" : "OFF")
             }
         }).catch(e => console.log(e))
     }, [])
 
     return (
-        <Card elevation={0}>
-            <Button fullWidth color='inherit' onClick={onClickHandler}>
-                <CardContent sx={{textAlign: "center"}}>
-                    <Typography gutterBottom component="div" variant='h4'>
-                        {"TUN"}
-                    </Typography>
-                    <Typography variant="h4" color="primary" component="p">
-                        {state}
-                    </Typography>
-                </CardContent>
-            </Button>
+        <Card onClick={onClickHandler} sx={{cursor: 'pointer'}}>
+            <CardContent sx={{display: 'flex', justifyContent: 'space-between'}}>
+                <Typography variant='h4' sx={{textAlign: 'left'}}>
+                    {"TUN"}
+                </Typography>
+                <Typography color="primary" variant="h5" sx={{textAlign: 'right'}}>
+                    {state}
+                </Typography>
+            </CardContent>
         </Card>
     )
 }
@@ -168,23 +162,11 @@ const Dashboard = () => {
                     </Grid>
                 </Grid>
             </Box>
-            <Box sx={{my:'2rem'}}>
-                <Grid container spacing={{xs: 1, sm: 3}} alignItems='center' minWidth='100vw'>
-                    {
-                        groupList.map(({name, selected}) => (
-                            <Grid item xs={11} sm={9} md={8}>
-                                <Card>
-                                    <CardContent sx={{display: 'flex', justifyContent: 'space-between'}}>
-                                        <Typography variant="h4" sx={{textAlign: 'left'}}>
-                                            {name}
-                                        </Typography>
-                                        <Typography variant="h5" sx={{textAlign: 'right'}}>
-                                            {selected}
-                                        </Typography>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
-                        ))}
+            <Box sx={{my: '2rem'}}>
+                <Grid container spacing={2}>
+                    {groupList.map(item => (
+                        <ProxyGroup key={item.name} data={item}/>
+                    ))}
                 </Grid>
             </Box>
         </React.Fragment>

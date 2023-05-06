@@ -3,6 +3,7 @@ import {TableCell, TableRow} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import LinkIcon from "@mui/icons-material/Link"
 import LinkOffIcon from "@mui/icons-material/LinkOff"
+import {CheckCircleOutlined, DoneOutlined, ImportExportOutlined} from "@mui/icons-material";
 
 export interface ConnectionEntryData {
     conn_id: number,
@@ -54,7 +55,7 @@ const ConnectionEntry = ({data}: ConnectionEntryProps) => {
     return (
         <TableRow>
             <TableCell>
-                {data.active ? (<LinkIcon/>) : (<LinkOffIcon/>)}
+                {data.active ? (<ImportExportOutlined/>) : (<CheckCircleOutlined/>)}
             </TableCell>
             <TableCell>
                 <Typography component='div'>

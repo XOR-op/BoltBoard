@@ -33,7 +33,6 @@ export interface ProxyGroupProps {
 }
 
 const ProxyGroup = ({data}: ProxyGroupProps) => {
-    const style = proxyGroupStyle();
     const [currentProxy, setCurrentProxy] = useState(data.selected);
     const onClickHandler = (proxyName: string) => {
         if (proxyName !== currentProxy) {
@@ -49,7 +48,7 @@ const ProxyGroup = ({data}: ProxyGroupProps) => {
         }
     };
 
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
 
     const handleOpen = () => {
         setOpen(!open);
@@ -58,7 +57,7 @@ const ProxyGroup = ({data}: ProxyGroupProps) => {
     return (
         <React.Fragment>
             <Grid item xs={12} md={8}>
-                <Card onClick={handleOpen}>
+                <Card onClick={handleOpen} sx={{cursor: 'pointer'}}>
                     <CardContent sx={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Typography variant="h4" sx={{textAlign: 'left'}}>
                             {data.name}

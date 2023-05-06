@@ -1,12 +1,11 @@
 import React, {useState} from "react";
 import ConnectionEntry, {ConnectionEntryData} from "./ConnectionEntry";
-import {Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow} from "@mui/material";
+import {Grid, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import {makeStyles} from '@mui/styles'
 import {Collapse} from '@mui/material'
-import {IconButton} from "@mui/material";
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
 
 const connGroupStyle = makeStyles({
     titleBar: {
@@ -52,15 +51,22 @@ const ConnectionGroup = ({name, entries}: ConnectionGroupProps) => {
     };
     return (
         <React.Fragment>
-            <Typography gutterBottom component="h2" variant="h3" className={style.titleBar}>
-                {name}
-                <IconButton onClick={handleOpen} disableFocusRipple={true} size='medium' edge={false}>
-                    {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
-                </IconButton>
-            </Typography>
+            <Grid item xs={12} md={8}>
+                <Card onClick={handleOpen} sx={{cursor: 'pointer'}}>
+                    <CardContent sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant="h4" sx={{textAlign: 'left'}}>
+                            {name}
+                        </Typography>
+                        <Typography variant="h5" sx={{textAlign: 'right'}}>
+                            {entries.length}
+                        </Typography>
+                    </CardContent>
+                </Card>
+            </Grid>
+
 
             <TableContainer>
-                <Collapse in={open} timeout="auto" unmountOnExit>
+                <Collapse in={open} timeout="auto" unmountOnExit >
                     <Table aria-label="Connection Group"
                            size="small"
                            sx={{
@@ -68,6 +74,7 @@ const ConnectionGroup = ({name, entries}: ConnectionGroupProps) => {
                                    border: 0,
                                    borderColor: 'grey.500'
                                },
+                               marginTop:'2rem'
                            }}
                     >
                         <TableHead>
@@ -88,7 +95,7 @@ const ConnectionGroup = ({name, entries}: ConnectionGroupProps) => {
                         </TableBody>
                     </Table>
                     <TablePagination component="div" rowsPerPageOptions={[5, 10, 25, 100]} count={entries.length} page={page} rowsPerPage={rowsPerPage}
-                                     onPageChange={handlePageChange} onRowsPerPageChange={handleRowsPerPageChange}/>
+                                     onPageChange={handlePageChange} onRowsPerPageChange={handleRowsPerPageChange} />
                 </Collapse>
             </TableContainer>
         </React.Fragment>

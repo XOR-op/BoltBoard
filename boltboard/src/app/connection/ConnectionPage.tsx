@@ -36,7 +36,7 @@ const ConnectionPage = () => {
             <AdminAppBar>
                 <AdminToolbar title={'Connection'}/>
             </AdminAppBar>
-            <Grid container>{
+            <Grid container spacing={2}>{
                 Array.from(groupBy(connList, 'process')).sort(([a, av], [b, bv]) => {
                     if (a.toLowerCase() > b.toLowerCase()) return 1;
                     if (a.toLowerCase() < b.toLowerCase()) return -1;

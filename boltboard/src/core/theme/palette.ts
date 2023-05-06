@@ -2,8 +2,8 @@ import {PaletteMode} from "@mui/material";
 
 const palette = {
     grey: {
-        "50": "#E7E9EB",
-        "100": "#CFD8DC",
+        "50": "#E7E8E9",
+        "100": "#D8DEE3",
         "200": "#B0BEC5",
         "300": "#909FA8",
         "400": "#738592",
@@ -84,8 +84,8 @@ export const lightPalette = {
     },
     divider: palette.grey[100],
     background: {
-        paper: "#F0F0F0",
-        default: palette.grey[50],
+        paper: palette.grey[50],
+        default: palette.grey[100],
     },
     action: {
         selectedOpacity: 0,

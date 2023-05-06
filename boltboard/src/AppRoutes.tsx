@@ -19,8 +19,6 @@ const NotFound = lazy(() => import("./core/pages/NotFound"));
 const ConnectionPage = lazy(() => import("./app/connection/ConnectionPage"));
 
 // Users
-const ProxyPage = lazy(() => import("./app/proxy/ProxyPage"));
-
 const LogsPage = lazy(() => import("./app/logs/LogsPage"))
 
 const AppRoutes = () => {
@@ -30,7 +28,6 @@ const AppRoutes = () => {
             <Route path={loginPath} element={<Login/>}/>
             <Route path={homePath} element={<Admin/>}>
                 <Route path="/" element={<Dashboard/>}/>
-                <Route path="proxy" element={<ProxyPage/>}/>
                 <Route path="connection" element={<ConnectionPage/>}/>
                 <Route path="intercept" element={<InterceptPage/>}/>
                 <Route path="logs" element={<LogsPage/>}/>

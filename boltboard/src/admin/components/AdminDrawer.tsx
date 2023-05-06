@@ -28,11 +28,6 @@ export const menuItems = [
         path: "/admin",
     },
     {
-        icon: AccountTreeIcon,
-        key: "Proxy",
-        path: "/admin/proxy",
-    },
-    {
         icon: ViewStreamIcon,
         key: "Connection",
         path: "/admin/connection",
