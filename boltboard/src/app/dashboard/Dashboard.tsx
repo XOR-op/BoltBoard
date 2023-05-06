@@ -136,20 +136,23 @@ const Dashboard = () => {
                 <AdminToolbar title={"DashBoard"}/>
             </AdminAppBar>
             <Box>
-                <Grid container spacing={{xs: 3, lg: 5}} alignItems='center' minWidth='100vw'>
-                    <Grid item xs={3} md={1.5}>
-                        <DataWidget data={bytes_to_string(traffic.upload)} title={"Upload"}/>
-                    </Grid>
-                    <Grid item xs={3} md={1.5}>
-                        <DataWidget data={bytes_to_string(traffic.download)} title={"Download"}/>
-                    </Grid>
-                    <Grid item xs={3} md={1.5}>
-                        <DataWidget data={bytes_to_string(traffic.upload_speed) + '/s'} title={"Upload Speed"}/>
-                    </Grid>
-                    <Grid item xs={3} md={1.5}>
-                        <DataWidget data={bytes_to_string(traffic.download_speed) + '/s'} title={"Download Speed"}/>
-                    </Grid>
-                    <Grid item xs={3} md={1.5}>
+                <Grid container spacing={{xs: 1, sm: 3}} alignItems='center' minWidth='100vw'>
+                    {
+                        [{
+                            data: bytes_to_string(traffic.upload),
+                            title: 'Upload'
+                        }, {data: bytes_to_string(traffic.download), title: "Download"},
+                            {data: bytes_to_string(traffic.upload_speed) + '/s', title: "Upload Speed"}
+                            , {
+                            data: bytes_to_string(traffic.download_speed) + '/s',
+                            title: "Download Speed"
+                        }].map(({data, title}) => (
+                            <Grid item xs={3} md={2} xl={1.5}>
+                                <DataWidget data={data} title={title}/>
+                            </Grid>
+                        ))
+                    }
+                    <Grid item xs={12} md={8} xl={6}>
                         <OptionWidget/>
                     </Grid>
                 </Grid>

@@ -68,7 +68,7 @@ const ProxyGroup = ({data}: ProxyGroupProps) => {
                 <Collapse in={open}>
                     <Grid container spacing={3} alignItems={'center'}>
                         {data.list.map((n, idx) =>
-                            (<Grid item xs={4} md={3} xl={1.5} key={idx}>
+                            (<Grid item xs={6} sm={4} md={3} xl={2} key={idx}>
                                     <ProxyWidget proxy={n} selected={n.name === currentProxy}
                                                  onClickHandler={onClickHandler}/>
                                 </Grid>
