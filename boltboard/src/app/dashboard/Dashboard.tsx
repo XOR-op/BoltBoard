@@ -136,7 +136,7 @@ const Dashboard = () => {
                 <AdminToolbar title={"DashBoard"}/>
             </AdminAppBar>
             <Box>
-                <Grid container spacing={5} alignItems='center' minWidth='100vw'>
+                <Grid container spacing={{xs: 3, lg: 5}} alignItems='center' minWidth='100vw'>
                     <Grid item xs={3} md={1.5}>
                         <DataWidget data={bytes_to_string(traffic.upload)} title={"Upload"}/>
                     </Grid>

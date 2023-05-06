@@ -41,6 +41,20 @@ const SettingsProvider = ({children}: SettingsProviderProps) => {
         document.body.dir = direction;
     }, [direction]);
 
+    useEffect(() => {
+        function handleResize() {
+            const width = window.innerWidth;
+            if (width < 1200) {
+                setCollapsed(true)
+            } else {
+                setCollapsed(false)
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const theme = useMemo(
         () => createTheme(direction as "ltr" | "rtl", mode as "dark" | "light"),
         [direction, mode]
