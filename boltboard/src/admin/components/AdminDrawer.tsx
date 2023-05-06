@@ -8,18 +8,17 @@ import ListItemText from "@mui/material/ListItemText";
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import ViewStreamIcon from "@mui/icons-material/ViewStream";
 import BarChartIcon from "@mui/icons-material/BarChart";
-import SettingsIcon from "@mui/icons-material/Settings";
-import {useTranslation} from "react-i18next";
 import {NavLink} from "react-router-dom";
 import Logo from "../../core/components/Logo";
 import {drawerCollapsedWidth, drawerWidth} from "../../core/config/layout";
-import {Anchor, Notes} from "@mui/icons-material";
+import {Anchor, DarkMode, LightMode, Notes} from "@mui/icons-material";
+import {useTheme} from "@mui/material/styles";
 
 type AdminDrawerProps = {
     collapsed: boolean;
     mobileOpen: boolean;
     onDrawerToggle: () => void;
-    onSettingsToggle: () => void;
+    onModeToggle: () => void;
 };
 
 export const menuItems = [
@@ -54,10 +53,12 @@ const AdminDrawer = ({
                          collapsed,
                          mobileOpen,
                          onDrawerToggle,
-                         onSettingsToggle,
+                         onModeToggle,
                      }: AdminDrawerProps) => {
 
     const width = collapsed ? drawerCollapsedWidth : drawerWidth;
+
+    const theme = useTheme();
 
     const drawer = (
         <Box sx={{display: "flex", flexDirection: "column", minHeight: "100%"}}>
@@ -88,14 +89,14 @@ const AdminDrawer = ({
             </List>
             <Box sx={{flexGrow: 1}}/>
             <List component="nav" sx={{p: 2}}>
-                <ListItem button onClick={onSettingsToggle}>
+                <ListItem button onClick={onModeToggle}>
                     <ListItemAvatar>
                         <Avatar>
-                            <SettingsIcon/>
+                            {theme.palette.mode === "light" ? <LightMode/> : <DarkMode/>}
                         </Avatar>
                     </ListItemAvatar>
                     <ListItemText
-                        primary={"Settings"}
+                        primary={theme.palette.mode === "light" ? "Light Mode" : "Dark Mode"}
                         sx={{
                             display: collapsed ? "none" : "block",
                         }}

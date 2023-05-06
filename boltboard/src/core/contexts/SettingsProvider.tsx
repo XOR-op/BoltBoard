@@ -2,8 +2,8 @@ import {
     ThemeProvider as MuiThemeProvider,
 } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
+import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import React, {
     createContext,
     useContext,
@@ -20,9 +20,9 @@ interface SettingsContextInterface {
     mode: string;
     open: boolean;
     changeCollapsed: (collapsed: boolean) => void;
-    changeDirection: (direction: "ltr" | "rtl") => void;
     changeMode: (mode: string) => void;
     toggleDrawer: () => void;
+    toggleMode: () => void;
 }
 
 export const SettingsContext = createContext({} as SettingsContextInterface);
@@ -33,13 +33,13 @@ type SettingsProviderProps = {
 
 const SettingsProvider = ({children}: SettingsProviderProps) => {
     const [collapsed, setCollapsed] = useLocalStorage("sidebarcollapsed", false);
-    const [direction, setDirection] = useLocalStorage("direction", "ltr");
+    const direction = "ltr";
     const [mode, setMode] = useLocalStorage("mode", "light");
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
         document.body.dir = direction;
-    }, [direction]);
+    }, []);
 
     useEffect(() => {
         function handleResize() {
@@ -66,11 +66,6 @@ const SettingsProvider = ({children}: SettingsProviderProps) => {
         }
     };
 
-    const changeDirection = (direction: "ltr" | "rtl") => {
-        if (direction) {
-            setDirection(direction);
-        }
-    };
 
     const changeMode = (mode: string) => {
         if (mode) {
@@ -82,6 +77,11 @@ const SettingsProvider = ({children}: SettingsProviderProps) => {
         setOpen(!open);
     };
 
+    const toggleMode = () => {
+        if (mode == 'light') setMode('dark')
+        else setMode('light')
+    };
+
     return (
         <SettingsContext.Provider
             value={{
@@ -90,9 +90,9 @@ const SettingsProvider = ({children}: SettingsProviderProps) => {
                 mode,
                 open,
                 changeCollapsed,
-                changeDirection,
                 changeMode,
                 toggleDrawer,
+                toggleMode,
             }}
         >
             <MuiThemeProvider theme={theme}>
