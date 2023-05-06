@@ -1,30 +1,28 @@
 import Button from "@mui/material/Button";
-import { useTranslation } from "react-i18next";
-import { Link as RouterLink } from "react-router-dom";
+import {Link as RouterLink} from "react-router-dom";
 import Result from "../../core/components/Result";
-import { ReactComponent as NotFoundSvg } from "../assets/404.svg";
+import {ReactComponent as NotFoundSvg} from "../assets/404.svg";
 
 const NotFound = () => {
-  const { t } = useTranslation();
 
-  return (
-    <Result
-      extra={
-        <Button
-          color="secondary"
-          component={RouterLink}
-          to={`/admin`}
-          variant="contained"
-        >
-          {t("common.backHome")}
-        </Button>
-      }
-      image={<NotFoundSvg />}
-      maxWidth="sm"
-      subTitle={t("common.errors.notFound.subTitle")}
-      title={t("common.errors.notFound.title")}
-    />
-  );
+    return (
+        <Result
+            extra={
+                <Button
+                    color="secondary"
+                    component={RouterLink}
+                    to={`/`}
+                    variant="contained"
+                >
+                    {"Back"}
+                </Button>
+            }
+            image={<NotFoundSvg/>}
+            maxWidth="sm"
+            subTitle={""}
+            title={"Not Found"}
+        />
+    );
 };
 
 export default NotFound;

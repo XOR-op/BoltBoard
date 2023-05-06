@@ -1,6 +1,5 @@
 import {lazy} from "react";
 import {Navigate, Route, Routes} from "react-router-dom";
-import PrivateRoute from "./core/components/PrivateRoute";
 import InterceptPage from "./app/intercept/InterceptPage";
 import {homePath, loginPath} from "./app/Const";
 
@@ -29,13 +28,13 @@ const AppRoutes = () => {
         <Routes basename="/">
             <Route path={"/"} element={<Entry/>}/>
             <Route path={loginPath} element={<Login/>}/>
-            <PrivateRoute path={homePath} element={<Admin/>}>
-                <PrivateRoute path="/" element={<Dashboard/>}/>
-                <PrivateRoute path="proxy" element={<ProxyPage/>}/>
-                <PrivateRoute path="connection" element={<ConnectionPage/>}/>
-                <PrivateRoute path="intercept" element={<InterceptPage/>}/>
-                <PrivateRoute path="logs" element={<LogsPage/>}/>
-            </PrivateRoute>
+            <Route path={homePath} element={<Admin/>}>
+                <Route path="/" element={<Dashboard/>}/>
+                <Route path="proxy" element={<ProxyPage/>}/>
+                <Route path="connection" element={<ConnectionPage/>}/>
+                <Route path="intercept" element={<InterceptPage/>}/>
+                <Route path="logs" element={<LogsPage/>}/>
+            </Route>
             <Route path="403" element={<Forbidden/>}/>
             <Route path="404" element={<NotFound/>}/>
             <Route

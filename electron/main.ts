@@ -5,7 +5,12 @@ const url = require('url')
 
 function createWindow() {
     // Create the browser window.
-    const appWindow = new BrowserWindow({width: 800, height: 600})
+    const appWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        minHeight: 400,
+        minWidth: 600
+    })
     appWindow.loadURL(url.format({
         pathname: 'index.html',    /* Attention here: origin is path.join(__dirname, 'index.html') */
         protocol: 'file',
