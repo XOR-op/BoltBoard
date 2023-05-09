@@ -165,7 +165,7 @@ const Dashboard = () => {
             <Box sx={{my: '2rem'}}>
                 <Grid container spacing={2}>
                     {groupList.map(item => (
-                        <ProxyGroup key={item.name} data={item}/>
+                        <ProxyGroup key={item.name} data={item} refresh={refresh}/>
                     ))}
                 </Grid>
             </Box>

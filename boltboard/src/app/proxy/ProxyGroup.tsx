@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Collapse, Grid, IconButton} from "@mui/material";
+import {Box, Button, CardActionArea, CardActions, Collapse, Grid, IconButton} from "@mui/material";
 import ProxyWidget from "./ProxyWidget";
 import Typography from "@mui/material/Typography";
 import {makeStyles} from '@mui/styles'
@@ -8,6 +8,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {api_call} from "../../misc/request";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import {Bolt, MoreHoriz} from "@mui/icons-material";
 
 const proxyGroupStyle = makeStyles({
     titleBar: {
@@ -19,6 +20,7 @@ const proxyGroupStyle = makeStyles({
 export interface ProxyRpcData {
     name: string,
     proto: string,
+    latency: string | null
 }
 
 export interface GroupRpcData {
@@ -30,9 +32,12 @@ export interface GroupRpcData {
 export interface ProxyGroupProps {
     key: string,
     data: GroupRpcData,
+
+    refresh(): void;
 }
 
-const ProxyGroup = ({data}: ProxyGroupProps) => {
+const ProxyGroup = ({data, refresh}: ProxyGroupProps) => {
+    const [isSpeedtesting, setIsSpeedtesting] = useState(false);
     const [currentProxy, setCurrentProxy] = useState(data.selected);
     const onClickHandler = (proxyName: string) => {
         if (proxyName !== currentProxy) {
@@ -48,6 +53,18 @@ const ProxyGroup = ({data}: ProxyGroupProps) => {
         }
     };
 
+    const onSpeedtestHandler = () => {
+        setIsSpeedtesting(true)
+        api_call('GET', '/speedtest/' + data.name).then(_ => {
+                setIsSpeedtesting(false)
+                refresh()
+            }
+        ).catch(e => {
+            setIsSpeedtesting(false)
+            console.log(e)
+        })
+    }
+
     const [open, setOpen] = useState(false);
 
     const handleOpen = () => {
@@ -57,20 +74,27 @@ const ProxyGroup = ({data}: ProxyGroupProps) => {
     return (
         <React.Fragment>
             <Grid item xs={12} md={8}>
-                <Card onClick={handleOpen} sx={{cursor: 'pointer'}}>
-                    <CardContent sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="h4" sx={{textAlign: 'left'}}>
-                            {data.name}
-                        </Typography>
-                        <Typography variant="h5" sx={{textAlign: 'right'}}>
-                            {currentProxy}
-                        </Typography>
-                    </CardContent>
-                </Card>
+                <Box>
+                    <Card sx={{display: 'flex', justifyContent: 'space-between'}}>
+                        <CardActionArea onClick={handleOpen} sx={{cursor: 'pointer'}}>
+                            <CardContent sx={{display: 'flex', justifyContent: 'space-between'}}>
+                                <Typography variant="h4" sx={{textAlign: 'left'}}>
+                                    {data.name}
+                                </Typography>
+                                <Typography variant="h5" sx={{textAlign: 'right'}}>
+                                    {currentProxy}
+                                </Typography>
+                            </CardContent>
+                        </CardActionArea>
+                        <CardActions onClick={onSpeedtestHandler} sx={{mt: 'auto', cursor: 'pointer'}}>
+                            {isSpeedtesting ? <MoreHoriz/> : <Bolt/>}
+                        </CardActions>
+                    </Card>
+                </Box>
             </Grid>
 
             <Grid item xs={12} md={8}>
-                <Collapse in={open}>
+                <Collapse in={open} timeout={'auto'} unmountOnExit>
                     <Grid container spacing={3} alignItems={'center'}>
                         {data.list.map((n, idx) =>
                             (<Grid item xs={6} sm={4} md={3} xl={2} key={idx}>
