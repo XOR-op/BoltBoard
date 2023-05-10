@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/XOR-op/BoltConn" rel="noopener" target="_blank"><img width="120" src="https://raw.githubusercontent.com/XOR-op/BoltConn/main/assets/icon.png" alt="BoltConn logo"></a>
+  <a href="https://github.com/XOR-op/BoltConn" rel="noopener" target="_blank"><img width="120" src="https://raw.githubusercontent.com/XOR-op/BoltConn/main/assets/icon.svg" alt="BoltConn logo"></a>
 </p>
 
 
