@@ -6,7 +6,7 @@ import useWebSocket from 'react-use-websocket';
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import {Box, Button} from "@mui/material";
+import {Box, Button, ButtonGroup} from "@mui/material";
 import {api_call, websocket_url} from "../../misc/request";
 import ProxyGroup, {GroupRpcData} from "../proxy/ProxyGroup";
 
@@ -92,13 +92,25 @@ const OptionWidget = () => {
 
     return (
         <Card onClick={onClickHandler} sx={{cursor: 'pointer'}}>
-            <CardContent sx={{display: 'flex', justifyContent: 'space-between'}}>
-                <Typography variant='h4' sx={{textAlign: 'left'}}>
+            <CardContent sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '8px',
+                paddingBottom: '8px !important',
+                paddingX: '8px'
+            }}>
+                <Typography variant='h4' sx={{textAlign: 'left', margin: 2}}>
                     {"TUN"}
                 </Typography>
-                <Typography color="primary" variant="h5" sx={{textAlign: 'right'}}>
-                    {state}
-                </Typography>
+                <ButtonGroup variant="contained" color={'secondary'} sx={{boxShadow: 'none'}}>
+                    <Button size={'small'} color={state === 'ON' ? 'primary' : 'secondary'}
+                            sx={{borderRadius: '12px'}}>ON</Button>
+                    <Button size={'small'} color={state === 'OFF' ? 'primary' : 'secondary'}>OFF</Button>
+                </ButtonGroup>
+                {/*<Typography color="primary" variant="h5" sx={{textAlign: 'right'}}>*/}
+                {/*    {state}*/}
+                {/*</Typography>*/}
             </CardContent>
         </Card>
     )
@@ -141,23 +153,32 @@ const Dashboard = () => {
                 <AdminToolbar title={"DashBoard"}/>
             </AdminAppBar>
             <Box>
-                <Grid container spacing={{xs: 1, sm: 3}} alignItems='center' minWidth='100vw'>
+                <Grid container spacing={{xs: 1, sm: 3}} alignItems='center'>
                     {
-                        [{
-                            data: bytes_to_string(traffic.upload),
-                            title: 'Upload'
-                        }, {data: bytes_to_string(traffic.download), title: "Download"},
-                            {data: bytes_to_string(traffic.upload_speed) + '/s', title: "Upload Speed"}
-                            , {
-                            data: bytes_to_string(traffic.download_speed) + '/s',
-                            title: "Download Speed"
-                        }].map(({data, title}) => (
-                            <Grid item xs={3} md={2} xl={1.5}>
+                        [
+                            {
+                                data: bytes_to_string(traffic.upload),
+                                title: 'Upload'
+                            },
+                            {
+                                data: bytes_to_string(traffic.download),
+                                title: "Download"
+                            },
+                            {
+                                data: bytes_to_string(traffic.upload_speed) + '/s',
+                                title: "Upload Speed"
+                            },
+                            {
+                                data: bytes_to_string(traffic.download_speed) + '/s',
+                                title: "Download Speed"
+                            }
+                        ].map(({data, title}) => (
+                            <Grid item xs={3} sm={2.8125} lg={2.5} xl={2.25}>
                                 <DataWidget data={data} title={title}/>
                             </Grid>
                         ))
                     }
-                    <Grid item xs={12} md={8}>
+                    <Grid item xs={12} sm={11.25} lg={10} xl={9}>
                         <OptionWidget/>
                     </Grid>
                 </Grid>

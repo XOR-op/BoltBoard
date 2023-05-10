@@ -73,7 +73,7 @@ const ProxyGroup = ({data, refresh}: ProxyGroupProps) => {
 
     return (
         <React.Fragment>
-            <Grid item xs={12} md={8}>
+            <Grid item xs={12} sm={11.25} lg={10} xl={9}>
                 <Box>
                     <Card sx={{display: 'flex', justifyContent: 'space-between'}}>
                         <CardActionArea onClick={handleOpen} sx={{cursor: 'pointer'}}>

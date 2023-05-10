@@ -30,13 +30,19 @@ export const darkPalette = {
         contrastText: palette.grey[900],
     },
     secondary: {
-        main: palette.grey[900],
+        main: palette.grey[800],
     },
     success: {
         main: "#81C784",
     },
     warning: {
         main: "#FFD54F",
+    },
+    textAsSecondary: {
+        main: palette.grey[200]
+    },
+    textAsDisabled: {
+        main: palette.grey[500]
     },
     text: {
         primary: palette.grey[50],
@@ -66,16 +72,22 @@ export const lightPalette = {
     },
     primary: {
         main: "#2962FF",
-        contrastText: "#FFF",
+        contrastText: palette.grey[50],
     },
     secondary: {
-        main: "#FFF",
+        main: palette.grey[100],
     },
     success: {
         main: "#00E676",
     },
     warning: {
         main: "#FFC400",
+    },
+    textAsSecondary: {
+        main: palette.grey[500]
+    },
+    textAsDisabled: {
+        main: palette.grey[300]
     },
     text: {
         primary: palette.grey[700],
