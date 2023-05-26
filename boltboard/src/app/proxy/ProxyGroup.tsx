@@ -93,11 +93,11 @@ const ProxyGroup = ({data, refresh}: ProxyGroupProps) => {
                 </Box>
             </Grid>
 
-            <Grid item xs={12} md={8}>
+            <Grid item xs={12} sm={11.25} lg={10} xl={9}>
                 <Collapse in={open} timeout={'auto'} unmountOnExit>
                     <Grid container spacing={3} alignItems={'center'}>
                         {data.list.map((n, idx) =>
-                            (<Grid item xs={6} sm={4} md={3} xl={2} key={idx}>
+                            (<Grid item xs={6} sm={4} md={3} xl={2.4} key={idx}>
                                     <ProxyWidget proxy={n} selected={n.name === currentProxy}
                                                  onClickHandler={onClickHandler}/>
                                 </Grid>

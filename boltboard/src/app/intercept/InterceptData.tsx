@@ -1,10 +1,12 @@
-import React, {useCallback, useEffect, useState} from "react";
-import {Grid, TableRow} from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {Grid} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import {InterceptPayloadData} from "./InterceptEntry";
 import {makeStyles} from "@mui/styles";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ToggleButton from "@mui/material/ToggleButton";
+import pako from 'pako'
+import brotliDecompress from 'brotli/decompress'
 
 
 const interceptDataStyle = makeStyles({
@@ -32,11 +34,51 @@ interface PacketProps {
     body: string
 }
 
+interface DataDisplayProps {
+    className: string,
+    compress: string,
+    view: PayloadType,
+    body: string
+}
+
 type PayloadType = 'base64' | 'text' | 'img'
+
+const DataDisplay = ({className, compress, view, body}: DataDisplayProps) => {
+    const [data, setData] = useState(body);
+    useEffect(() => {
+            if (view === "base64") {
+                setData(body);
+            } else if (view === "text") {
+                try {
+                    const rawData = window.atob(body);
+                    let bytes = new Uint8Array(rawData.length);
+                    for (let i = 0; i < rawData.length; i++) {
+                        bytes[i] = rawData.charCodeAt(i);
+                    }
+                    if (compress === "gzip" || compress === 'deflate') {
+                        setData(pako.inflate(bytes, {to: 'string'}))
+                    } else if (compress === 'br') {
+                        setData(new TextDecoder().decode(brotliDecompress(bytes)))
+                    } else {
+                        setData(rawData)
+                    }
+                } catch (e) {
+                    console.log(e)
+                    setData("Failed to decode text");
+                }
+            }
+        }
+        ,
+        [view]
+    )
+    return (<Typography variant="body1" className={className}>
+        {data}
+    </Typography>)
+}
 
 const InterceptPacket = ({header, body}: PacketProps) => {
     const [view, setView] = useState<PayloadType>("base64");
-    const [data, setData] = useState(body);
+    const [compress, setCompress] = useState("");
     const style = interceptDataStyle();
 
     const viewChangeHandler = (_: any, viewType: PayloadType) => {
@@ -44,22 +86,16 @@ const InterceptPacket = ({header, body}: PacketProps) => {
             return
         }
         setView(viewType);
-        if (viewType === "base64") {
-            setData(body);
-        } else if (viewType === "text") {
-            let decoded = decodeURIComponent(escape(atob(body)));
-            setData(decoded);
-        }
     };
 
     useEffect(() => {
         for (const idx in header) {
             let l = header[idx].toLowerCase()
-            if (l.startsWith('content-type:')) {
-                if (l.includes('text')) {
-                    viewChangeHandler(0, 'text')
-                }
-                break
+            if (l.startsWith('content-encoding:')) {
+                setCompress(l.split(': ')[1])
+            }
+            if (l.startsWith('content-type:') && (l.includes('text') || l.includes('json'))) {
+                viewChangeHandler(0, 'text')
             }
         }
     }, [header])
@@ -67,8 +103,9 @@ const InterceptPacket = ({header, body}: PacketProps) => {
     return (
         <React.Fragment>
             <Grid item xs={12} sm={6}>
-                <Typography variant="body1" className={style.header}>
-                    {header.map(l => (<TableRow>{l}</TableRow>))}
+                <Typography variant="body1" className={style.header} component="div">
+                    {header.map((l, idx) => (<div key={idx}>{l}</div>))}
+                    {/*{header.join('\na\n')}*/}
                 </Typography>
                 <br/>
                 <ToggleButtonGroup
@@ -86,9 +123,7 @@ const InterceptPacket = ({header, body}: PacketProps) => {
                     </ToggleButton>
                 </ToggleButtonGroup>
                 <br/>
-                <Typography variant="body1" className={style.body}>
-                    {data}
-                </Typography>
+                <DataDisplay className={style.body} compress={compress} view={view} body={body}/>
             </Grid>
         </React.Fragment>
     )
@@ -104,5 +139,6 @@ const InterceptData = ({data}: InterceptDataProps) => {
         </React.Fragment>
     )
 }
+
 
 export default InterceptData

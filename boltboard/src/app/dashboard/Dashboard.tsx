@@ -9,6 +9,7 @@ import Typography from "@mui/material/Typography";
 import {Box, Button, ButtonGroup} from "@mui/material";
 import {api_call, websocket_url} from "../../misc/request";
 import ProxyGroup, {GroupRpcData} from "../proxy/ProxyGroup";
+import {useTheme} from "@mui/material/styles";
 
 interface TrafficData {
     upload: number,
@@ -39,18 +40,16 @@ function bytes_to_string(data?: number) {
     }
 }
 
-export interface DashboardProps {
-    endpoint: string
-}
-
 type DataWidgetProps = {
     title: string;
     data: string;
 };
 
 const DataWidget = ({data, title}: DataWidgetProps) => {
+    const theme = useTheme()
+    const borderColor = theme.palette.text.disabled
     return (
-        <Card elevation={0}>
+        <Card elevation={0} sx={{border: 'solid 2px ' + borderColor}}>
             <CardContent sx={{textAlign: "center"}}>
                 <Typography gutterBottom component="div" variant="h3">
                     {data}
@@ -68,19 +67,30 @@ type OptionState = "Loading..." | "ON" | "OFF"
 const OptionWidget = () => {
     const [state, setState] = useState<OptionState>("Loading...")
 
-    const onClickHandler = () => {
-        const target = state !== "ON";
-        if (state !== "Loading...") {
-            api_call('PUT', '/tun', JSON.stringify({
-                    enabled: target
-                })
-            ).then(res => {
-                if (res.status === 200) {
-                    setState(target ? "ON" : "OFF")
-                }
-            }).catch(e => console.log(e))
+    const tunHandler = (state: OptionState) => {
+        const target = state === "ON"
+        api_call('PUT', '/tun', JSON.stringify({
+                enabled: target
+            })
+        ).then(res => {
+            if (res.status === 200) {
+                setState(target ? "ON" : "OFF")
+            }
+        }).catch(e => console.log(e))
+    }
+
+    const turnOnHandler = () => {
+        if (state === 'OFF') {
+            tunHandler('ON')
         }
     }
+
+    const turnOffHandler = () => {
+        if (state === 'ON') {
+            tunHandler('OFF')
+        }
+    }
+
 
     useEffect(() => {
         api_call('GET', '/tun').then(res => res.json()).then(p => {
@@ -91,7 +101,7 @@ const OptionWidget = () => {
     }, [])
 
     return (
-        <Card onClick={onClickHandler} sx={{cursor: 'pointer'}}>
+        <Card>
             <CardContent sx={{
                 display: 'flex',
                 alignItems: 'center',
@@ -104,13 +114,12 @@ const OptionWidget = () => {
                     {"TUN"}
                 </Typography>
                 <ButtonGroup variant="contained" color={'secondary'} sx={{boxShadow: 'none'}}>
-                    <Button size={'small'} color={state === 'ON' ? 'primary' : 'secondary'}
+                    <Button onClick={turnOnHandler} size={'small'} color={state === 'ON' ? 'primary' : 'secondary'}
+
                             sx={{borderRadius: '12px'}}>ON</Button>
-                    <Button size={'small'} color={state === 'OFF' ? 'primary' : 'secondary'}>OFF</Button>
+                    <Button onClick={turnOffHandler} size={'small'}
+                            color={state === 'OFF' ? 'primary' : 'secondary'}>OFF</Button>
                 </ButtonGroup>
-                {/*<Typography color="primary" variant="h5" sx={{textAlign: 'right'}}>*/}
-                {/*    {state}*/}
-                {/*</Typography>*/}
             </CardContent>
         </Card>
     )
@@ -153,7 +162,7 @@ const Dashboard = () => {
                 <AdminToolbar title={"DashBoard"}/>
             </AdminAppBar>
             <Box>
-                <Grid container spacing={{xs: 1, sm: 3}} alignItems='center'>
+                <Grid container spacing={{xs: 1, sm: 3}} alignItems='center' xs={12} sm={11.75} lg={10.25} xl={9.2}>
                     {
                         [
                             {
@@ -173,12 +182,12 @@ const Dashboard = () => {
                                 title: "Download Speed"
                             }
                         ].map(({data, title}) => (
-                            <Grid item xs={3} sm={2.8125} lg={2.5} xl={2.25}>
+                            <Grid item xs={3}>
                                 <DataWidget data={data} title={title}/>
                             </Grid>
                         ))
                     }
-                    <Grid item xs={12} sm={11.25} lg={10} xl={9}>
+                    <Grid item xs={12}>
                         <OptionWidget/>
                     </Grid>
                 </Grid>
