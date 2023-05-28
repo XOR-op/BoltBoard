@@ -1,16 +1,8 @@
-import {
-    ThemeProvider as MuiThemeProvider,
-} from "@mui/material";
+import {ThemeProvider as MuiThemeProvider,} from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
-import React, {
-    createContext,
-    useContext,
-    useEffect,
-    useMemo,
-    useState,
-} from "react";
+import React, {createContext, useContext, useEffect, useMemo, useState,} from "react";
 import {useLocalStorage} from "../hooks/useLocalStorage";
 import {createTheme} from "../theme";
 

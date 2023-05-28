@@ -5,7 +5,6 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
-import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import ViewStreamIcon from "@mui/icons-material/ViewStream";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import {NavLink} from "react-router-dom";

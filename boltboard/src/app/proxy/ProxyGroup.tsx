@@ -1,10 +1,8 @@
 import React, {useState} from 'react'
-import {Box, Button, CardActionArea, CardActions, Collapse, Grid, IconButton} from "@mui/material";
+import {Box, CardActionArea, CardActions, Collapse, Grid} from "@mui/material";
 import ProxyWidget from "./ProxyWidget";
 import Typography from "@mui/material/Typography";
 import {makeStyles} from '@mui/styles'
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {api_call} from "../../misc/request";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";

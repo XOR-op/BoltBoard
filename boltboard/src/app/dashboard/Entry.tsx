@@ -1,7 +1,6 @@
-import {useState, useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {defaultEndpoint, defaultShortenEndpoint, homePath, loginPath} from "../Const";
-import {useLocalStorage} from "../../core/hooks/useLocalStorage";
 
 const EntryPage = () => {
     const navigate = useNavigate();

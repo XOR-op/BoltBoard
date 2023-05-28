@@ -3,7 +3,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 
 import {makeStyles} from '@mui/styles'
-import {Button, Theme} from "@mui/material";
+import {Theme} from "@mui/material";
 import {ProxyRpcData} from "./ProxyGroup";
 import {useTheme} from "@mui/material/styles";
 
@@ -24,17 +24,17 @@ export interface ProxyWidgetProps {
 function colorizeLatency(theme: Theme, latency: string | null): string {
     if (!latency) return theme.palette.primary.main;
     const color = {
-        'light':{
-            'fast':'#009b3d',
-            'average':'#bf9301',
-            'slow':'#e06337',
-            'failed':'#e03c32'
+        'light': {
+            'fast': '#009b3d',
+            'average': '#bf9301',
+            'slow': '#e06337',
+            'failed': '#e03c32'
         },
-        'dark':{
-            'fast':'#639754',
-            'average':'#ffd301',
-            'slow':'#ef9367',
-            'failed':'#d62f2f'
+        'dark': {
+            'fast': '#639754',
+            'average': '#ffd301',
+            'slow': '#ef9367',
+            'failed': '#d62f2f'
         }
     }
     if (latency === 'Failed') {

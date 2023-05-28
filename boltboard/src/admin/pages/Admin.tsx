@@ -3,7 +3,6 @@ import Toolbar from "@mui/material/Toolbar";
 import {useState} from "react";
 import {Outlet} from "react-router-dom";
 import QueryWrapper from "../../core/components/QueryWrapper";
-import SettingsDrawer from "../../core/components/SettingsDrawer";
 import {useSettings} from "../../core/contexts/SettingsProvider";
 import AdminDrawer from "../components/AdminDrawer";
 

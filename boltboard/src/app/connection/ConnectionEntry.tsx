@@ -1,9 +1,7 @@
 import React from "react";
 import {TableCell, TableRow} from "@mui/material";
 import Typography from "@mui/material/Typography";
-import LinkIcon from "@mui/icons-material/Link"
-import LinkOffIcon from "@mui/icons-material/LinkOff"
-import {CheckCircleOutlined, DoneOutlined, ImportExportOutlined} from "@mui/icons-material";
+import {CheckCircleOutlined, ImportExportOutlined} from "@mui/icons-material";
 
 export interface ConnectionEntryData {
     conn_id: number,

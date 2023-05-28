@@ -1,9 +1,18 @@
 import React, {useState} from "react";
 import ConnectionEntry, {ConnectionEntryData} from "./ConnectionEntry";
-import {Grid, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow} from "@mui/material";
+import {
+    Collapse,
+    Grid,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TablePagination,
+    TableRow
+} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import {makeStyles} from '@mui/styles'
-import {Collapse} from '@mui/material'
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 

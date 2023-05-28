@@ -6,7 +6,9 @@
 <h1 align="center">BoltBoard</h1>
 
 ### About
-BoltBoard is an unofficial web dashboard of <a href="https://github.com/XOR-op/BoltConn">BoltConn</a>. As an experimental project, no bugfix or maintenance could be guaranteed.
+
+BoltBoard is an unofficial web dashboard of <a href="https://github.com/XOR-op/BoltConn">BoltConn</a>. As an
+experimental project, no bugfix or maintenance could be guaranteed.
 
 ### License
 
