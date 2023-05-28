@@ -25,7 +25,7 @@ const ConnectionGroup = ({name, entries}: ConnectionGroupProps) => {
     const [open, setOpen] = useState(true);
 
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
 
     // Calculate the index of the first and last rows on the current page
     const firstRowOnPage = page * rowsPerPage;
@@ -53,7 +53,7 @@ const ConnectionGroup = ({name, entries}: ConnectionGroupProps) => {
         <React.Fragment>
             <Grid item xs={12} md={8}>
                 <Card onClick={handleOpen} sx={{cursor: 'pointer'}}>
-                    <CardContent sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <CardContent sx={{display: 'flex', justifyContent: 'space-between'}}>
                         <Typography variant="h4" sx={{textAlign: 'left'}}>
                             {name}
                         </Typography>
@@ -66,7 +66,7 @@ const ConnectionGroup = ({name, entries}: ConnectionGroupProps) => {
 
 
             <TableContainer>
-                <Collapse in={open} timeout="auto" unmountOnExit >
+                <Collapse in={open} timeout="auto" unmountOnExit>
                     <Table aria-label="Connection Group"
                            size="small"
                            sx={{
@@ -74,7 +74,7 @@ const ConnectionGroup = ({name, entries}: ConnectionGroupProps) => {
                                    border: 0,
                                    borderColor: 'grey.500'
                                },
-                               marginTop:'2rem'
+                               marginTop: '2rem'
                            }}
                     >
                         <TableHead>
@@ -94,8 +94,9 @@ const ConnectionGroup = ({name, entries}: ConnectionGroupProps) => {
                             {displayedRows.map(item => (<ConnectionEntry key={item.conn_id} data={item}/>))}
                         </TableBody>
                     </Table>
-                    <TablePagination component="div" rowsPerPageOptions={[5, 10, 25, 100]} count={entries.length} page={page} rowsPerPage={rowsPerPage}
-                                     onPageChange={handlePageChange} onRowsPerPageChange={handleRowsPerPageChange} />
+                    <TablePagination component="div" rowsPerPageOptions={[10, 25, 50, 100]} count={entries.length}
+                                     page={page} rowsPerPage={rowsPerPage}
+                                     onPageChange={handlePageChange} onRowsPerPageChange={handleRowsPerPageChange}/>
                 </Collapse>
             </TableContainer>
         </React.Fragment>

@@ -32,25 +32,32 @@ export interface InterceptDataProps {
 interface PacketProps {
     header: string[],
     body: string
+    warning: string | undefined
 }
 
 interface DataDisplayProps {
     className: string,
     compress: string,
     view: PayloadType,
-    body: string
+    body: string,
+    warning: string | undefined
 }
 
 type PayloadType = 'base64' | 'text' | 'img'
 
-const DataDisplay = ({className, compress, view, body}: DataDisplayProps) => {
+const DataDisplay = ({className, compress, view, body, warning}: DataDisplayProps) => {
     const [data, setData] = useState(body);
     useEffect(() => {
+            if (warning) {
+                setData(warning);
+                return
+            }
             if (view === "base64") {
                 setData(body);
             } else if (view === "text") {
                 try {
                     const rawData = window.atob(body);
+
                     let bytes = new Uint8Array(rawData.length);
                     for (let i = 0; i < rawData.length; i++) {
                         bytes[i] = rawData.charCodeAt(i);
@@ -76,7 +83,7 @@ const DataDisplay = ({className, compress, view, body}: DataDisplayProps) => {
     </Typography>)
 }
 
-const InterceptPacket = ({header, body}: PacketProps) => {
+const InterceptPacket = ({header, body, warning}: PacketProps) => {
     const [view, setView] = useState<PayloadType>("base64");
     const [compress, setCompress] = useState("");
     const style = interceptDataStyle();
@@ -123,7 +130,7 @@ const InterceptPacket = ({header, body}: PacketProps) => {
                     </ToggleButton>
                 </ToggleButtonGroup>
                 <br/>
-                <DataDisplay className={style.body} compress={compress} view={view} body={body}/>
+                <DataDisplay className={style.body} compress={compress} view={view} body={body} warning={warning}/>
             </Grid>
         </React.Fragment>
     )
@@ -133,8 +140,8 @@ const InterceptData = ({data}: InterceptDataProps) => {
     return (
         <React.Fragment>
             <Grid container spacing={2} item={true}>
-                <InterceptPacket header={data.req_header} body={data.req_body}/>
-                <InterceptPacket header={data.resp_header} body={data.resp_body}/>
+                <InterceptPacket header={data.req_header} body={data.req_body} warning={undefined}/>
+                <InterceptPacket header={data.resp_header} body={data.resp_body} warning={data.warning}/>
             </Grid>
         </React.Fragment>
     )

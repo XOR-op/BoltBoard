@@ -13,7 +13,7 @@ export interface InterceptEntryData {
     uri: string,
     method: string,
     status: number,
-    size: number,
+    size: number | undefined,
     time: string,
 }
 
@@ -22,6 +22,7 @@ export interface InterceptPayloadData {
     req_body: string,
     resp_header: string[],
     resp_body: string,
+    warning: string | undefined,
 }
 
 export interface InterceptEntryProps {
@@ -94,7 +95,7 @@ const InterceptEntry = ({data}: InterceptEntryProps) => {
                 </TableCell>
                 <TableCell>
                     <Typography component='div'>
-                        {pretty_size(data.size)}
+                        {data.size ? pretty_size(data.size) : 'N/A'}
                     </Typography>
                 </TableCell>
                 <TableCell>
