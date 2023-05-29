@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, protocol, globalShortcut} = require('electron')
+const {app, BrowserWindow, protocol, globalShortcut, Tray, Menu} = require('electron')
 const path = require('path')
 const url = require('url')
 
@@ -9,7 +9,8 @@ function createWindow() {
         width: 800,
         height: 600,
         minHeight: 400,
-        minWidth: 600
+        minWidth: 600,
+        titleBarStyle: 'hidden'
     })
     appWindow.loadURL(url.format({
         pathname: 'index.html',    /* Attention here: origin is path.join(__dirname, 'index.html') */
@@ -22,6 +23,19 @@ function createWindow() {
     // mainWindow.webContents.openDevTools()
 }
 
+let tray = null
+
+let newAppWindow = () => {
+    protocol.interceptFileProtocol('file', (request, callback) => {
+        const url = request.url.substr(7)    /* all urls start with 'file://' */
+        let nextPath = path.normalize(`${__dirname}/../boltboard/dist/${url}`)
+        // console.log(nextPath)
+        callback({path: nextPath})
+    }, (err) => {
+        if (err) console.error('Failed to register protocol')
+    })
+    createWindow()
+}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -29,25 +43,32 @@ function createWindow() {
 app.whenReady().then(() => {
     globalShortcut.register('CommandOrControl+R', () => {
     })
-    protocol.interceptFileProtocol('file', (request, callback) => {
-        const url = request.url.substr(7)    /* all urls start with 'file://' */
-        callback({path: path.normalize(`${__dirname}/../boltboard/dist/${url}`)})
-    }, (err) => {
-        if (err) console.error('Failed to register protocol')
-    })
-    createWindow()
+    newAppWindow()
+
+    // Set up tray
+    tray = new Tray(path.normalize(`${__dirname}/../boltboard/dist/icon.ico`))
+    const contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Show app', click: () => {
+                if (BrowserWindow.getAllWindows().length === 0) {
+                    newAppWindow()
+                }
+            }
+        },
+        {
+            label: 'Quit', click: () => {
+                app.quit()
+            }
+        }
+    ])
+    tray.setToolTip('BoltConn')
+    tray.setContextMenu(contextMenu)
 
     app.on('activate', function () {
         // On macOS it's common to re-create a window in the app when the
         // dock icon is clicked and there are no other windows open.
         if (BrowserWindow.getAllWindows().length === 0) {
-            protocol.interceptFileProtocol('file', (request, callback) => {
-                const url = request.url.substr(7)    /* all urls start with 'file://' */
-                callback({path: path.normalize(`${__dirname}/../boltboard/dist/${url}`)})
-            }, (err) => {
-                if (err) console.error('Failed to register protocol')
-            })
-            createWindow()
+            newAppWindow()
         }
     })
 })

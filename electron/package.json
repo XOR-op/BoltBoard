@@ -1,21 +1,16 @@
 {
-  "name": "electron-quick-start",
+  "name": "boltboard",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Desktop Application for BoltConn",
   "main": "main.ts",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build-start": "npm --prefix ../boltboard run build && electron ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "BoltConn"
   ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "author": "XOR-op",
   "devDependencies": {
     "@electron-forge/cli": "^6.1.1",
     "@types/node": "^20.1.0",
