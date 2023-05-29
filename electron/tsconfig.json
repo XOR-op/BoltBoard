@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
-    "module": "nodenext",
-    "noImplicitAny": true,
+    "module": "commonjs",
     "sourceMap": true,
     "outDir": "dist",
     "baseUrl": ".",

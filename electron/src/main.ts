@@ -17,7 +17,7 @@ app.whenReady().then(() => {
     protocol.interceptFileProtocol('file', (request, callback) => {
         try {
             const url = request.url.substr(7)    /* all urls start with 'file://' */
-            let nextPath = path.normalize(`${__dirname}/../boltboard/dist/${url}`)
+            let nextPath = path.normalize(`${__dirname}/../../boltboard/dist/${url}`)
             callback({path: nextPath})
         } catch (err) {
             console.error('Failed to register protocol')

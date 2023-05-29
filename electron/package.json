@@ -2,18 +2,18 @@
   "name": "boltboard",
   "version": "1.0.0",
   "description": "Desktop Application for BoltConn",
-  "main": "main.ts",
+  "main": "src/main.ts",
   "scripts": {
     "build": "tsc",
     "start": "npm run build && electron ./dist/main.js",
-    "raw_start": "electron ./src/main.ts",
+    "raw-start": "electron .",
     "build-start": "npm --prefix ../boltboard run build && npm start"
   },
   "keywords": [
     "BoltConn"
   ],
   "author": "XOR-op",
-  "type": "module",
+  "type": "commonjs",
   "devDependencies": {
     "@electron-forge/cli": "^6.1.1",
     "@types/electron": "^1.6.10",

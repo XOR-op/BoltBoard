@@ -10,18 +10,11 @@ function createWindow() {
         minWidth: 600,
         titleBarStyle: 'hidden'
     })
-    let indexUrl = new URL('file:///index.html')
-    indexUrl.protocol = 'file'
-    indexUrl.host = '/'
-    indexUrl.pathname = '/index.html'
-    console.log(indexUrl)
-    let k = url.format({
+    appWindow.loadURL(url.format({
         pathname: 'index.html',    /* Attention here: origin is path.join(__dirname, 'index.html') */
         protocol: 'file',
         slashes: true
-    })
-    console.log("old:" + k)
-    appWindow.loadURL(k)
+    }))
 
 
     // Open the DevTools.
