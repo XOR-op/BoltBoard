@@ -25,7 +25,7 @@ app.whenReady().then(() => {
     })
 
     setupTray(tray)
-    newAppWindow()
+    // newAppWindow()
 
 
     app.on('activate', function () {

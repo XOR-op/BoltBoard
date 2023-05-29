@@ -1,26 +1,130 @@
-import {app, BrowserWindow, Menu, Tray} from "electron";
+import {app, BrowserWindow, Menu, MenuItemConstructorOptions, Tray} from "electron";
 import {newAppWindow} from "./window.js";
+import {api_call} from "./request";
+import {GroupRpcData, ProxyRpcData} from "./type";
+
+const dashboardItem = {
+    label: 'Dashboard', click: () => {
+        if (BrowserWindow.getAllWindows().length === 0) {
+            newAppWindow()
+        }
+    }, accelerator: 'CommandOrControl+D', acceleratorWorksWhenHidden: false
+}
+
+const quitItem = {
+    label: 'Quit', click: () => {
+        app.quit()
+    }, accelerator: 'CommandOrControl+Q', acceleratorWorksWhenHidden: false
+}
 
 export function setupTray(tray: Tray) {
 
     // Set up tray: we should follow the advice in https://github.com/electron/electron/issues/27128
     tray = new Tray('IconTemplate.png')
-    const contextMenu = Menu.buildFromTemplate([
-        {
-            label: 'Show app', click: () => {
-                if (BrowserWindow.getAllWindows().length === 0) {
-                    newAppWindow()
-                }
-            }
-        },
-        {type: 'separator'},
-        {type: 'separator'},
-        {
-            label: 'Quit', click: () => {
-                app.quit()
+    // const contextMenu = Menu.buildFromTemplate([dashboardItem, quitItem])
+    tray.setToolTip('BoltConn')
+    tray.on('click', async () => {
+        let menu = await freshApp(tray)
+        tray.popUpContextMenu(menu)
+    })
+}
+
+function updateTrayMenu(tray: Tray, proxies: MenuItemConstructorOptions[], tun: MenuItemConstructorOptions) {
+    let contextMenu: MenuItemConstructorOptions[] = []
+    contextMenu = contextMenu.concat(proxies)
+    contextMenu.push({type: 'separator'})
+    contextMenu.push(tun)
+    contextMenu.push({type: 'separator'})
+    contextMenu.push(dashboardItem)
+    contextMenu.push(quitItem)
+    return Menu.buildFromTemplate(contextMenu)
+}
+
+const minSpaceLen = 2
+
+function getMaxProxyLength(list: ProxyRpcData[]) {
+    let l = 0
+    for (const e of list) {
+        let sum = (e.name + e.latency).length
+        if (sum > l) l = sum
+    }
+    return l + minSpaceLen
+}
+
+function getMaxGroupLength(list: GroupRpcData[]) {
+    let l = 0
+    for (const e of list) {
+        let sum = (e.name + e.selected).length
+        if (sum > l) l = sum
+    }
+    return l + minSpaceLen
+}
+
+function formatProxy(proxy: ProxyRpcData, maxLen: number) {
+    let spaceLen = maxLen - (proxy.name + proxy.latency).length
+    return proxy.name + ' '.repeat(spaceLen) + proxy.latency
+}
+
+
+function formatProxyGroup(group: GroupRpcData, maxLen: number) {
+    let spaceLen = maxLen - (group.name + group.selected).length
+    // return group.name + ' '.repeat(spaceLen) + '[' + group.selected + ']'
+    return group.name
+}
+
+export async function freshApp(tray: Tray) {
+    let proxies: GroupRpcData[] = []
+    let tunEnabled = false
+    let p1 = api_call('GET', '/proxies').then(res => res.json()).then(p => {
+        proxies = p
+    }).catch(e => console.log(e))
+    let p2 = api_call('GET', '/tun').then(res => res.json()).then(p => {
+        if ("enabled" in p) {
+            tunEnabled = p.enabled
+        }
+    }).catch(e => console.log(e))
+
+    await p1
+    await p2
+    let maxGroupLen = getMaxGroupLength(proxies)
+    let proxiesItems: MenuItemConstructorOptions[] = proxies.map(g => {
+            let maxProxyLen = getMaxProxyLength(g.list)
+            return {
+                label: formatProxyGroup(g, maxGroupLen),
+                submenu: g.list.map(p => {
+                    return {
+                        label: p.name,
+                        type: 'radio',
+                        checked: p.name == g.selected,
+                        click: () => {
+                            api_call('PUT', '/proxies/' + g.name,
+                                JSON.stringify({
+                                    'selected': p.name
+                                })
+                            ).then(res => {
+                                if (res.status === 200) {
+                                    console.log("Set " + g.name + " to " + p.name)
+                                }
+                            }).catch(e => console.log(e))
+                        }
+                    }
+                })
             }
         }
-    ])
-    tray.setToolTip('BoltConn')
-    tray.setContextMenu(contextMenu)
+    )
+    let tun_copy = tunEnabled;
+    let tunItem: MenuItemConstructorOptions = {
+        label: 'Enable TUN mode',
+        type: 'checkbox',
+        checked: tunEnabled,
+        click: () => {
+            api_call('PUT', '/tun', JSON.stringify({
+                enabled: !tun_copy
+            })).then(res => {
+                if (res.status === 200) {
+                }
+            }).catch(e => console.log(e))
+        }
+    }
+    return updateTrayMenu(tray, proxiesItems, tunItem)
 }
