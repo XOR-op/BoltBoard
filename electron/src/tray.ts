@@ -2,6 +2,7 @@ import {app, BrowserWindow, Menu, MenuItemConstructorOptions, Tray} from "electr
 import {newAppWindow} from "./window.js";
 import {api_call} from "./request";
 import {GroupRpcData, ProxyRpcData} from "./type";
+import {renderGroup} from "./render";
 
 const dashboardItem = {
     label: 'Dashboard', click: () => {
@@ -22,7 +23,8 @@ export function setupTray(tray: Tray) {
     // Set up tray: we should follow the advice in https://github.com/electron/electron/issues/27128
     tray = new Tray('IconTemplate.png')
     // const contextMenu = Menu.buildFromTemplate([dashboardItem, quitItem])
-    tray.setToolTip('BoltConn')
+    // tray.setTitle('BoltConn')
+    tray.setImage('test.png')
     tray.on('click', async () => {
         let menu = await freshApp(tray)
         tray.popUpContextMenu(menu)
@@ -37,6 +39,11 @@ function updateTrayMenu(tray: Tray, proxies: MenuItemConstructorOptions[], tun: 
     contextMenu.push({type: 'separator'})
     contextMenu.push(dashboardItem)
     contextMenu.push(quitItem)
+    contextMenu.push({
+        type: 'normal',
+        label: ' ',
+        icon: 'test.png'
+    })
     return Menu.buildFromTemplate(contextMenu)
 }
 
@@ -68,8 +75,8 @@ function formatProxy(proxy: ProxyRpcData, maxLen: number) {
 
 function formatProxyGroup(group: GroupRpcData, maxLen: number) {
     let spaceLen = maxLen - (group.name + group.selected).length
-    // return group.name + ' '.repeat(spaceLen) + '[' + group.selected + ']'
-    return group.name
+    return group.name + '\t'.repeat(Math.ceil(spaceLen / 4)) + '[' + group.selected + ']'
+    // return group.name
 }
 
 export async function freshApp(tray: Tray) {
@@ -90,7 +97,9 @@ export async function freshApp(tray: Tray) {
     let proxiesItems: MenuItemConstructorOptions[] = proxies.map(g => {
             let maxProxyLen = getMaxProxyLength(g.list)
             return {
-                label: formatProxyGroup(g, maxGroupLen),
+                // label: formatProxyGroup(g, maxGroupLen),
+                label: '',
+                icon: renderGroup(g),
                 submenu: g.list.map(p => {
                     return {
                         label: p.name,

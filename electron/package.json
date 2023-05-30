@@ -14,6 +14,9 @@
   ],
   "author": "XOR-op",
   "type": "commonjs",
+  "dependencies": {
+    "canvas": "^2.11.2"
+  },
   "devDependencies": {
     "@electron-forge/cli": "^6.1.1",
     "@types/electron": "^1.6.10",
