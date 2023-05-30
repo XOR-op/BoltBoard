@@ -4,7 +4,8 @@ import Grid from "@mui/material/Grid";
 import React, {useEffect, useState} from "react";
 import {websocket_url} from "../../misc/request";
 import useWebSocket from "react-use-websocket";
-import {Table, TableBody, TableCell, TableHead, TableRow} from "@mui/material";
+import {Table, TableBody, TableCell, TableHead, TableRow, Theme} from "@mui/material";
+import {useTheme} from "@mui/material/styles";
 
 interface LogSchema {
     timestamp: string,
@@ -13,8 +14,31 @@ interface LogSchema {
     target: string
 }
 
+
+function levelColor(theme: Theme, level: string) {
+    let color
+    level = level.toLowerCase()
+    if (level === 'error') {
+        color = theme.palette.error
+    } else if (level === 'warning') {
+        color = theme.palette.warning
+    } else if (level === 'info') {
+        color = theme.palette.success
+    } else if (level === 'trace') {
+        color = theme.palette.info
+    } else {
+        color = theme.palette.primary
+    }
+    if (theme.palette.mode === 'dark') {
+        return color.dark
+    } else {
+        return color.light
+    }
+}
+
 const LogsPage = () => {
     const [logs, setLogs] = useState<Array<LogSchema>>([])
+    const theme = useTheme()
 
     const {lastMessage} = useWebSocket(websocket_url('/ws/logs'))
     useEffect(() => {
@@ -52,7 +76,7 @@ const LogsPage = () => {
                         {logs.map((item, idx) => (
                             <TableRow key={idx.toString() + "/" + item.timestamp}>
                                 <TableCell>{item.timestamp}</TableCell>
-                                <TableCell>{item.level}</TableCell>
+                                <TableCell sx={{color: levelColor(theme, item.level)}}>{item.level}</TableCell>
                                 <TableCell>{item.fields.message}</TableCell>
                             </TableRow>
                         ))}

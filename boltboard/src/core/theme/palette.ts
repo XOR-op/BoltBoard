@@ -65,10 +65,10 @@ export const lightPalette = {
     contrastThreshold: 3,
     mode: "light" as PaletteMode,
     error: {
-        main: "#FF3D00",
+        main: "#E03C32",
     },
     info: {
-        main: "#00B0FF",
+        main: "#00A0CC",
     },
     primary: {
         main: "#2962FF",
@@ -78,10 +78,10 @@ export const lightPalette = {
         main: palette.grey[100],
     },
     success: {
-        main: "#00E676",
+        main: "#009b3d",
     },
     warning: {
-        main: "#FFC400",
+        main: "#BF9400",
     },
     textAsSecondary: {
         main: palette.grey[500]

@@ -182,7 +182,7 @@ const Dashboard = () => {
                                 title: "Download Speed"
                             }
                         ].map(({data, title}) => (
-                            <Grid item xs={3}>
+                            <Grid item xs={3} key={title}>
                                 <DataWidget data={data} title={title}/>
                             </Grid>
                         ))
