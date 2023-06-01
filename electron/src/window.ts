@@ -11,6 +11,7 @@ function createWindow() {
         titleBarStyle: 'hidden'
     })
     appWindow.loadURL(url.format({
+        // pathname: path.normalize(`${__dirname}/../../boltboard/dist/index.html`),
         pathname: 'index.html',    /* Attention here: origin is path.join(__dirname, 'index.html') */
         protocol: 'file',
         slashes: true

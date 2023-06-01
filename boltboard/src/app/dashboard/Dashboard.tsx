@@ -162,7 +162,7 @@ const Dashboard = () => {
                 <AdminToolbar title={"DashBoard"}/>
             </AdminAppBar>
             <Box>
-                <Grid container spacing={{xs: 1, sm: 3}} alignItems='center' xs={12} sm={11.75} lg={10.25} xl={9.2}>
+                <Grid container spacing={{xs: 1, sm: 3}} alignItems='center' xs={12} sm={11.75} lg={10.25} xl={9.1}>
                     {
                         [
                             {

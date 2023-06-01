@@ -35,10 +35,24 @@ const AppRoutes = () => {
             </Route>
             <Route path="403" element={<Forbidden/>}/>
             <Route path="404" element={<NotFound/>}/>
+            {/* For macOS WebView index.html loading */}
+            {/*<Route*/}
+            {/*    path="/Users/*"*/}
+            {/*    element={<Navigate to={`/index.html`} replace/>}*/}
+            {/*/>*/}
+            {/*<Route*/}
+            {/*    path="/Applications"*/}
+            {/*    element={<Navigate to={`/index.html`} replace/>}*/}
+            {/*/>*/}
             <Route
                 path="*"
-                element={<Navigate to={`/404`} replace/>}
-            />
+            >
+                {/*<Route index element={<Navigate to={`/index.html`} replace/>}/>*/}
+                <Route
+                    path="*"
+                    element={<Navigate to={`/404`} replace/>}
+                />
+            </Route>
         </Routes>
     );
 };
