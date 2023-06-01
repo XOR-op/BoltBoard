@@ -63,7 +63,7 @@ const AdminDrawer = ({
                         button
                         component={NavLink}
                         key={item.path}
-                        activeClassName="Mui-selected"
+                        activeclassname="Mui-selected"
                         end={true}
                         to={`${item.path}`}
                     >

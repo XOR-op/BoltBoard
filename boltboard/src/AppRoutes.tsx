@@ -23,36 +23,22 @@ const LogsPage = lazy(() => import("./app/logs/LogsPage"))
 
 const AppRoutes = () => {
     return (
-        <Routes basename="/">
+        <Routes>
             <Route path={"/"} element={<Entry/>}/>
             <Route path={"/index.html"} element={<Entry/>}/>
             <Route path={loginPath} element={<Login/>}/>
             <Route path={homePath} element={<Admin/>}>
-                <Route path="/" element={<Dashboard/>}/>
+                <Route path="" element={<Dashboard/>}/>
                 <Route path="connection" element={<ConnectionPage/>}/>
                 <Route path="intercept" element={<InterceptPage/>}/>
                 <Route path="logs" element={<LogsPage/>}/>
             </Route>
             <Route path="403" element={<Forbidden/>}/>
             <Route path="404" element={<NotFound/>}/>
-            {/* For macOS WebView index.html loading */}
-            {/*<Route*/}
-            {/*    path="/Users/*"*/}
-            {/*    element={<Navigate to={`/index.html`} replace/>}*/}
-            {/*/>*/}
-            {/*<Route*/}
-            {/*    path="/Applications"*/}
-            {/*    element={<Navigate to={`/index.html`} replace/>}*/}
-            {/*/>*/}
             <Route
                 path="*"
-            >
-                {/*<Route index element={<Navigate to={`/index.html`} replace/>}/>*/}
-                <Route
-                    path="*"
-                    element={<Navigate to={`/404`} replace/>}
-                />
-            </Route>
+                element={<Navigate to={`/index.html`} replace/>}
+            />
         </Routes>
     );
 };
