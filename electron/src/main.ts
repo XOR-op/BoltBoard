@@ -1,7 +1,7 @@
 // Modules to control application life and create native browser window
 import {app, BrowserWindow, globalShortcut, protocol, Tray} from 'electron'
 import {newAppWindow} from "./window.js";
-import {setupTray} from "./tray.js";
+import {setupNativeTray} from "./native_tray";
 
 import * as path from 'path'
 
@@ -24,8 +24,8 @@ app.whenReady().then(() => {
         }
     })
 
-    setupTray(tray)
-    newAppWindow()
+    setupNativeTray(tray)
+    // newAppWindow()
 
 
     app.on('activate', function () {

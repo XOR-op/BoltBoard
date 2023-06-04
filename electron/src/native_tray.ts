@@ -17,11 +17,11 @@ const quitItem = {
     }, accelerator: 'CommandOrControl+Q', acceleratorWorksWhenHidden: false
 }
 
-export function setupTray(tray: Tray) {
+export function setupNativeTray(tray: Tray) {
 
     // Set up tray: we should follow the advice in https://github.com/electron/electron/issues/27128
     tray = new Tray('IconTemplate.png')
-    // const contextMenu = Menu.buildFromTemplate([dashboardItem, quitItem])
+    tray.setIgnoreDoubleClickEvents(true)
     // tray.setTitle('BoltConn\u2070\u2080')
     // tray.setImage('test.png')
     tray.on('click', async () => {
@@ -52,27 +52,6 @@ function getMaxProxyLength(list: ProxyRpcData[]) {
     return l + minSpaceLen
 }
 
-function getMaxGroupLength(list: GroupRpcData[]) {
-    let l = 0
-    for (const e of list) {
-        let sum = (e.name + e.selected).length
-        if (sum > l) l = sum
-    }
-    return l + minSpaceLen
-}
-
-function formatProxy(proxy: ProxyRpcData, maxLen: number) {
-    let spaceLen = maxLen - (proxy.name + proxy.latency).length
-    return proxy.name + ' '.repeat(spaceLen) + proxy.latency
-}
-
-
-function formatProxyGroup(group: GroupRpcData, maxLen: number) {
-    let spaceLen = maxLen - (group.name + group.selected).length
-    return group.name + '\t'.repeat(Math.ceil(spaceLen / 4)) + '[' + group.selected + ']'
-    // return group.name
-}
-
 export async function freshApp(tray: Tray) {
     let proxies: GroupRpcData[] = []
     let tunEnabled = false
@@ -84,17 +63,12 @@ export async function freshApp(tray: Tray) {
             tunEnabled = p.enabled
         }
     }).catch(e => console.log(e))
-
     await p1
     await p2
-    let maxGroupLen = getMaxGroupLength(proxies)
     let proxiesItems: MenuItemConstructorOptions[] = proxies.map(g => {
             let maxProxyLen = getMaxProxyLength(g.list)
             return {
-                // label: formatProxyGroup(g, maxGroupLen),
                 label: g.name,
-                // label: '',
-                // icon: renderGroup(g),
                 submenu: g.list.map(p => {
                     return {
                         label: p.name,
