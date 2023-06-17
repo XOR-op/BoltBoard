@@ -45,6 +45,7 @@
   "scripts": {
     "start": "vite",
     "ts-build": "tsc && vite build",
+    "ts-build-tauri": "VITE_MODE=tauri vite build",
     "build": "vite build",
     "serve": "vite preview"
   },
