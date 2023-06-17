@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import React, {useCallback, useEffect, useState} from "react";
 import {ConnectionEntryData} from "./ConnectionEntry";
 import ConnectionGroup from "./ConnectionGroup";
-import {api_call} from "../../misc/request";
+import {apiGetAllConnections} from "../../misc/request";
 
 function groupBy(list: Array<any>, key: string): Map<string, Array<any>> {
     const map = new Map();
@@ -24,7 +24,7 @@ const ConnectionPage = () => {
     const [connList, setConnList] = useState<Array<ConnectionEntryData>>([])
 
     const refresh = useCallback(() => {
-        api_call('GET', '/connections').then(res => res.json()).then(list => setConnList(list))
+        apiGetAllConnections().then(list => setConnList(list))
             .catch(e => console.log(e))
     }, [])
     useEffect(() => {

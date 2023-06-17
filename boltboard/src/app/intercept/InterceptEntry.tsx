@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import InterceptData from "./InterceptData";
-import {api_call} from "../../misc/request";
+import {apiGetInterceptedPayload} from "../../misc/request";
 import {makeStyles} from "@mui/styles";
 
 export interface InterceptEntryData {
@@ -63,8 +63,7 @@ const InterceptEntry = ({data}: InterceptEntryProps) => {
 
     const handleOpen = () => {
         if (!open && payload === undefined) {
-            api_call('GET', '/intercept/payload/' + data.intercept_id)
-                .then(res => res.json()).then(pl => setPayload(pl))
+            apiGetInterceptedPayload(data.intercept_id).then(pl => setPayload(pl))
                 .catch(e => console.log(e))
         }
         setOpen(!open);

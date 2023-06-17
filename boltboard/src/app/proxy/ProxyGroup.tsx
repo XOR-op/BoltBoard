@@ -3,7 +3,7 @@ import {Box, CardActionArea, CardActions, Collapse, Grid} from "@mui/material";
 import ProxyWidget from "./ProxyWidget";
 import Typography from "@mui/material/Typography";
 import {makeStyles} from '@mui/styles'
-import {api_call} from "../../misc/request";
+import {apiSetProxyFor, apiSpeedtest} from "../../misc/request";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import {Bolt, MoreHoriz} from "@mui/icons-material";
@@ -39,12 +39,8 @@ const ProxyGroup = ({data, refresh}: ProxyGroupProps) => {
     const [currentProxy, setCurrentProxy] = useState(data.selected);
     const onClickHandler = (proxyName: string) => {
         if (proxyName !== currentProxy) {
-            api_call('PUT', '/proxies/' + data.name,
-                JSON.stringify({
-                    'selected': proxyName
-                })
-            ).then(res => {
-                if (res.status === 200) {
+            apiSetProxyFor(data.name, proxyName).then(ok => {
+                if (ok) {
                     setCurrentProxy(proxyName)
                 }
             }).catch(e => console.log(e))
@@ -53,7 +49,7 @@ const ProxyGroup = ({data, refresh}: ProxyGroupProps) => {
 
     const onSpeedtestHandler = () => {
         setIsSpeedtesting(true)
-        api_call('GET', '/speedtest/' + data.name).then(_ => {
+        apiSpeedtest(data.name).then(_ => {
                 setIsSpeedtesting(false)
                 refresh()
             }

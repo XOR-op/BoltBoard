@@ -25,3 +25,43 @@ export function websocket_url(endpoint: string) {
     const {url} = url_and_header();
     return 'ws://' + url + endpoint
 }
+
+export async function apiGetAllConnections(): Promise<any> {
+    return api_call('GET', '/connections').then(res => res.json())
+}
+
+export async function apiGetAllProxies(): Promise<any> {
+    return api_call('GET', '/proxies').then(res => res.json());
+}
+
+export async function apiSetProxyFor(group: String, selected: String): Promise<boolean> {
+    return api_call('PUT', '/proxies/' + group,
+        JSON.stringify({
+            'selected': selected
+        })
+    ).then(res => res.status === 200);
+}
+
+export async function apiGetTun(): Promise<any> {
+    return api_call('GET', '/tun').then(res => res.json())
+}
+
+export async function apiSetTun(enabled: boolean): Promise<any> {
+    return api_call('PUT', '/tun', JSON.stringify({
+        enabled: enabled
+    })).then(res => res.status === 200)
+}
+
+export async function apiGetInterceptedPayload(id: number): Promise<any> {
+    return api_call('GET', '/intercept/payload/' + id)
+        .then(res => res.json())
+}
+
+export async function apiGetAllInterceptions(): Promise<any> {
+    return api_call('GET', '/intercept/all')
+        .then(res => res.json())
+}
+
+export async function apiSpeedtest(group: String): Promise<any> {
+    return api_call('GET', '/speedtest/' + group)
+}

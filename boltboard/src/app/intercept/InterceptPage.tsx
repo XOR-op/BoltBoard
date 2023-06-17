@@ -5,14 +5,13 @@ import React, {useCallback, useEffect, useState} from "react";
 import {InterceptEntryData} from "./InterceptEntry";
 import InterceptGroup from "./InterceptGroup";
 import {Box} from "@mui/material";
-import {api_call} from "../../misc/request";
+import {apiGetAllInterceptions} from "../../misc/request";
 
 const InterceptPage = () => {
     const [interceptEntryData, setInterceptEntryData] = useState<Array<InterceptEntryData>>([])
 
     const refresh = useCallback(() => {
-        api_call('GET', '/intercept/all')
-            .then(res => res.json()).then(list => setInterceptEntryData(list))
+        apiGetAllInterceptions().then(list => setInterceptEntryData(list))
             .catch(e => console.log(e))
     }, []);
     useEffect(() => {

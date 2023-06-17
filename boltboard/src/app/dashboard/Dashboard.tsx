@@ -7,7 +7,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import {Box, Button, ButtonGroup} from "@mui/material";
-import {api_call, websocket_url} from "../../misc/request";
+import {apiGetAllProxies, apiGetTun, apiSetTun, websocket_url} from "../../misc/request";
 import ProxyGroup, {GroupRpcData} from "../proxy/ProxyGroup";
 import {useTheme} from "@mui/material/styles";
 
@@ -69,11 +69,8 @@ const OptionWidget = () => {
 
     const tunHandler = (state: OptionState) => {
         const target = state === "ON"
-        api_call('PUT', '/tun', JSON.stringify({
-                enabled: target
-            })
-        ).then(res => {
-            if (res.status === 200) {
+        apiSetTun(target).then(ok => {
+            if (ok) {
                 setState(target ? "ON" : "OFF")
             }
         }).catch(e => console.log(e))
@@ -93,7 +90,7 @@ const OptionWidget = () => {
 
 
     useEffect(() => {
-        api_call('GET', '/tun').then(res => res.json()).then(p => {
+        apiGetTun().then(p => {
             if ("enabled" in p) {
                 setState(p.enabled ? "ON" : "OFF")
             }
@@ -147,7 +144,7 @@ const Dashboard = () => {
 
     const [groupList, setGroupList] = useState<Array<GroupRpcData>>([]);
     const refresh = useCallback(() => {
-        api_call('GET', '/proxies').then(res => res.json()).then(p => {
+        apiGetAllProxies().then(p => {
             setGroupList(p)
         }).catch(e => console.log(e))
     }, []);
