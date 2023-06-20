@@ -52,7 +52,7 @@ impl ConnectionState {
 }
 
 #[tauri::command]
-pub async fn get_group_list(
+pub async fn get_all_proxies(
     state: tauri::State<'_, ConnectionState>,
 ) -> ConnResult<Vec<GetGroupRespSchema>> {
     let resp = state.client.get_all_proxies(Context::current()).await?;
@@ -72,7 +72,7 @@ pub async fn set_proxy_for(
 }
 
 #[tauri::command]
-pub async fn get_connections(
+pub async fn get_all_connections(
     state: tauri::State<'_, ConnectionState>,
 ) -> ConnResult<Vec<ConnectionSchema>> {
     Ok(state.client.get_all_conns(Context::current()).await?)
@@ -94,16 +94,27 @@ pub async fn stop_connection(
 }
 
 #[tauri::command]
+pub async fn update_group_latency(
+    state: tauri::State<'_, ConnectionState>,
+    group: String,
+) -> ConnResult<bool> {
+    Ok(state
+        .client
+        .update_group_latency(Context::current(), group)
+        .await?)
+}
+
+#[tauri::command]
 pub async fn get_tun(state: tauri::State<'_, ConnectionState>) -> ConnResult<TunStatusSchema> {
     Ok(state.client.get_tun(Context::current()).await?)
 }
 
 #[tauri::command]
-pub async fn set_tun(
-    state: tauri::State<'_, ConnectionState>,
-    enabled: TunStatusSchema,
-) -> ConnResult<()> {
-    state.client.set_tun(Context::current(), enabled).await?;
+pub async fn set_tun(state: tauri::State<'_, ConnectionState>, enabled: bool) -> ConnResult<()> {
+    state
+        .client
+        .set_tun(Context::current(), TunStatusSchema { enabled })
+        .await?;
     Ok(())
 }
 

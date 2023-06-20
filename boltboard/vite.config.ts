@@ -2,22 +2,23 @@ import {defineConfig, loadEnv} from 'vite';
 import react from '@vitejs/plugin-react';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 import svgrPlugin from 'vite-plugin-svgr';
+import ConditionalCompile from 'vite-plugin-conditional-compiler';
 
 // https://vitejs.dev/config/
 export default defineConfig(({command, mode}) => {
     const env = loadEnv(mode, process.cwd())
 
-    if (env.VITE_MODE !== undefined && env.VITE_MODE.toLowerCase() === 'tauri') {
+    if (env.VITE_TAURI !== undefined) {
         return {
             base: "./",
             build: {outDir: './tauri-dist'},
-            plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
+            plugins: [react(), viteTsconfigPaths(), svgrPlugin(), ConditionalCompile()],
             preview: {cors: true}
         }
     } else {
         return {
             base: "./",
-            plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
+            plugins: [react(), viteTsconfigPaths(), svgrPlugin(), ConditionalCompile()],
             preview: {cors: true}
         }
     }

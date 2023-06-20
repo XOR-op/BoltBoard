@@ -6,7 +6,7 @@ import {homePath, loginPath} from "./app/Const";
 // Admin
 const Admin = lazy(() => import("./admin/pages/Admin"));
 const Dashboard = lazy(() => import("./app/dashboard/Dashboard"));
-const Entry = lazy(() => import("./app/dashboard/Entry"));
+const Entry = lazy(() => import("./app/Entry"));
 
 // Auth
 const Login = lazy(() => import("./admin/pages/Login"));

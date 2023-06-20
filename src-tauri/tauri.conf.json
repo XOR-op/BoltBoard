@@ -1,8 +1,8 @@
 {
   "build": {
-    "beforeBuildCommand": "npm run build",
-    "beforeDevCommand": "npm run dev",
-    "devPath": "localhost:5273",
+    "beforeBuildCommand": "",
+    "beforeDevCommand": "",
+    "devPath": "../boltboard/tauri-dist",
     "distDir": "../boltboard/tauri-dist"
   },
   "package": {
@@ -28,7 +28,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "com.boltconn.boltboard-tauri",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -54,6 +54,7 @@
     },
     "windows": [
       {
+        "label": "main",
         "fullscreen": false,
         "height": 600,
         "resizable": true,

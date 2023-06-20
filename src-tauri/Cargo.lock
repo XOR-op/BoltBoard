@@ -170,6 +170,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "boltapi",
+ "cocoa",
  "serde",
  "serde_json",
  "tarpc",

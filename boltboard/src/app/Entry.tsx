@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {defaultEndpoint, defaultShortenEndpoint, homePath, loginPath} from "../Const";
+import {defaultEndpoint, defaultShortenEndpoint, homePath, loginPath} from "./Const";
+import {checkConnection} from "../misc/request";
 
 const EntryPage = () => {
     const navigate = useNavigate();
@@ -10,14 +11,9 @@ const EntryPage = () => {
         const probeUrl = defaultEndpoint + '/traffic';
         const timeout = 1000; // Timeout in milliseconds
 
-        Promise.race([
-            fetch(probeUrl),
-            new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('Connection timed out')), timeout)
-            )
-        ])
-            .then((response: any) => {
-                if (response.status === 200) {
+        checkConnection(probeUrl, timeout)
+            .then(ok => {
+                if (ok) {
                     setRedirectTo(homePath);
                 } else {
                     setRedirectTo(loginPath)

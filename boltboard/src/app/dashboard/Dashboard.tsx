@@ -127,7 +127,12 @@ const Dashboard = () => {
 
     const [traffic, setTraffic] = useState<TrafficData>({upload: 0, download: 0, upload_speed: 0, download_speed: 0})
 
-    const {lastMessage} = useWebSocket(websocket_url('/ws/traffic'))
+
+    /* #v-ifdef VITE_TAURI */
+    var lastMessage: MessageEvent<any> | null = null;
+    /* #v-else */
+    var {lastMessage} = useWebSocket(websocket_url('/ws/traffic'))
+    /* #v-endif */
     useEffect(() => {
         if (lastMessage != null) {
             const message = JSON.parse(lastMessage.data);

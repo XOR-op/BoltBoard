@@ -1833,6 +1833,13 @@ magic-string@^0.27.0:
   dependencies:
     "@jridgewell/sourcemap-codec" "^1.4.13"
 
+magic-string@^0.30.0:
+  version "0.30.0"
+  resolved "https://registry.npmjs.org/magic-string/-/magic-string-0.30.0.tgz"
+  integrity sha512-LA+31JYDJLs82r2ScLrlz1GjSgu66ZV518eyWT+S8VhyQn/JL0u9MeBOvQMGYiPk1DBiSN9DDMOcXvigJZaViQ==
+  dependencies:
+    "@jridgewell/sourcemap-codec" "^1.4.13"
+
 make-dir@^3.0.2:
   version "3.1.0"
   resolved "https://registry.npmjs.org/make-dir/-/make-dir-3.1.0.tgz"
@@ -2505,6 +2512,13 @@ update-browserslist-db@^1.0.10:
   dependencies:
     escalade "^3.1.1"
     picocolors "^1.0.0"
+
+vite-plugin-conditional-compiler@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.npmjs.org/vite-plugin-conditional-compiler/-/vite-plugin-conditional-compiler-0.1.1.tgz"
+  integrity sha512-1QKTJ9/kWuqwWxtIEhtxENUQlfRfgjDyeAtic91ArQFjzI71necB7Sp9F5IGR/L1zIQXkkXBvidLLJkTJcp/OQ==
+  dependencies:
+    magic-string "^0.30.0"
 
 vite-plugin-svgr@^2.4.0:
   version "2.4.0"

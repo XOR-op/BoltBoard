@@ -40,7 +40,12 @@ const LogsPage = () => {
     const [logs, setLogs] = useState<Array<LogSchema>>([])
     const theme = useTheme()
 
-    const {lastMessage} = useWebSocket(websocket_url('/ws/logs'))
+    /* #v-ifdef VITE_TAURI */
+    var lastMessage: MessageEvent<any> | null = null;
+    /* #v-else */
+    var {lastMessage} = useWebSocket(websocket_url('/ws/logs'))
+    /* #v-endif */
+
     useEffect(() => {
         if (lastMessage != null) {
             const message = JSON.parse(lastMessage.data);
