@@ -1,4 +1,5 @@
 use std::path::PathBuf;
+use std::sync::Arc;
 
 use boltapi::multiplex::rpc_multiplex_twoway;
 use boltapi::rpc::{ClientStreamService, ControlServiceClient};
@@ -11,26 +12,39 @@ use tarpc::context::Context;
 use tarpc::server::{BaseChannel, Channel};
 use tarpc::tokio_serde::formats::Bincode;
 use tarpc::tokio_util::codec::LengthDelimitedCodec;
+use tauri::{AppHandle, Manager, Wry};
 use tokio::net::UnixStream;
+use tokio::sync::RwLock;
 
 type ConnResult<T> = Result<T, SerializableError>;
 
 #[derive(Clone)]
-struct ClientStreamServer {}
+struct ClientStreamServer {
+    traffic_sender: Arc<RwLock<Option<AppHandle<Wry>>>>,
+    logs_sender: Arc<RwLock<Option<AppHandle<Wry>>>>,
+}
 
 #[tarpc::server]
 impl ClientStreamService for ClientStreamServer {
     async fn post_traffic(self, _: Context, traffic: TrafficResp) {
-        todo!()
+        let guard = self.traffic_sender.read().await;
+        if let Some(handle) = &*guard {
+            let _ = handle.emit_all("traffic", traffic);
+        }
     }
 
     async fn post_log(self, _: Context, log: String) {
-        todo!()
+        let guard = self.logs_sender.read().await;
+        if let Some(handle) = &*guard {
+            let _ = handle.emit_all("logs", log);
+        }
     }
 }
 
 pub struct ConnectionState {
     client: ControlServiceClient,
+    traffic_sender: Arc<RwLock<Option<AppHandle<Wry>>>>,
+    logs_sender: Arc<RwLock<Option<AppHandle<Wry>>>>,
 }
 
 impl ConnectionState {
@@ -45,9 +59,33 @@ impl ConnectionState {
         tokio::spawn(in_task);
         tokio::spawn(out_task);
         let client = ControlServiceClient::new(Default::default(), client_t).spawn();
-        tokio::spawn(BaseChannel::with_defaults(server_t).execute(ClientStreamServer {}.serve()));
+        let traffic = Arc::new(RwLock::new(None));
+        let logs = Arc::new(RwLock::new(None));
+        let t2 = traffic.clone();
+        let l2 = logs.clone();
+        tokio::spawn(
+            BaseChannel::with_defaults(server_t).execute(
+                ClientStreamServer {
+                    traffic_sender: traffic,
+                    logs_sender: logs,
+                }
+                .serve(),
+            ),
+        );
 
-        Ok(Self { client })
+        Ok(Self {
+            client,
+            traffic_sender: t2,
+            logs_sender: l2,
+        })
+    }
+
+    pub async fn reset_traffic(&self) {
+        *self.traffic_sender.write().await = None
+    }
+
+    pub async fn reset_logs(&self) {
+        *self.logs_sender.write().await = None
     }
 }
 
@@ -155,6 +193,24 @@ pub async fn get_intercept_payload(
 #[tauri::command]
 pub async fn reload_config(state: tauri::State<'_, ConnectionState>) -> ConnResult<()> {
     Ok(state.client.reload(Context::current()).await?)
+}
+
+#[tauri::command]
+pub async fn enable_traffic_streaming(
+    app_handle: AppHandle<Wry>,
+    state: tauri::State<'_, ConnectionState>,
+) -> ConnResult<()> {
+    *state.traffic_sender.write().await = Some(app_handle);
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn enable_logs_streaming(
+    app_handle: AppHandle<Wry>,
+    state: tauri::State<'_, ConnectionState>,
+) -> ConnResult<()> {
+    *state.logs_sender.write().await = Some(app_handle);
+    Ok(())
 }
 
 #[derive(Debug, thiserror::Error)]

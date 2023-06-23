@@ -78,7 +78,9 @@ async fn run() -> anyhow::Result<()> {
             get_all_interceptions,
             get_range_interceptions,
             get_intercept_payload,
-            reload_config
+            reload_config,
+            enable_traffic_streaming,
+            enable_logs_streaming
         ])
         .run(tauri::generate_context!())?;
     Ok(())
