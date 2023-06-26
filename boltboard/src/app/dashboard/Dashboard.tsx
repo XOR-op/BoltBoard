@@ -10,6 +10,8 @@ import {Box, Button, ButtonGroup} from "@mui/material";
 import {apiGetAllProxies, apiGetTun, apiSetTun, websocket_url} from "../../misc/request";
 import ProxyGroup, {GroupRpcData} from "../proxy/ProxyGroup";
 import {useTheme} from "@mui/material/styles";
+import {listen} from "@tauri-apps/api/event";
+import {invoke} from "@tauri-apps/api";
 
 interface TrafficData {
     upload: number,
@@ -130,6 +132,23 @@ const Dashboard = () => {
 
     /* #v-ifdef VITE_TAURI */
     var lastMessage: MessageEvent<any> | null = null;
+    useEffect(() => {
+        invoke('enable_traffic_streaming')
+        const unlisten = listen('traffic', (e) => {
+            let message = e.payload as TrafficData;
+            setTraffic({
+                upload: message.upload,
+                download: message.download,
+                upload_speed: message.upload_speed,
+                download_speed: message.download_speed
+            });
+        });
+        return () => {
+            unlisten.then(f => f())
+            invoke('reset_traffic')
+        };
+    }, [])
+
     /* #v-else */
     var {lastMessage} = useWebSocket(websocket_url('/ws/traffic'))
     /* #v-endif */

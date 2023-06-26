@@ -20,31 +20,49 @@ type ConnResult<T> = Result<T, SerializableError>;
 
 #[derive(Clone)]
 struct ClientStreamServer {
-    traffic_sender: Arc<RwLock<Option<AppHandle<Wry>>>>,
-    logs_sender: Arc<RwLock<Option<AppHandle<Wry>>>>,
+    traffic_sender: Arc<RwLock<Option<HandleContextInner>>>,
+    logs_sender: Arc<RwLock<Option<HandleContextInner>>>,
+}
+
+struct HandleContextInner {
+    handle: AppHandle<Wry>,
+    ctx_id: u64,
+}
+
+impl HandleContextInner {
+    pub fn new(handle: AppHandle<Wry>) -> Self {
+        let id = fastrand::u64(1..u64::MAX);
+        Self { handle, ctx_id: id }
+    }
 }
 
 #[tarpc::server]
 impl ClientStreamService for ClientStreamServer {
-    async fn post_traffic(self, _: Context, traffic: TrafficResp) {
+    async fn post_traffic(self, _: Context, traffic: TrafficResp) -> u64 {
         let guard = self.traffic_sender.read().await;
-        if let Some(handle) = &*guard {
-            let _ = handle.emit_all("traffic", traffic);
+        if let Some(inner) = &*guard {
+            let _ = inner.handle.emit_all("traffic", traffic);
+            inner.ctx_id
+        } else {
+            0
         }
     }
 
-    async fn post_log(self, _: Context, log: String) {
+    async fn post_log(self, _: Context, log: String) -> u64 {
         let guard = self.logs_sender.read().await;
-        if let Some(handle) = &*guard {
-            let _ = handle.emit_all("logs", log);
+        if let Some(inner) = &*guard {
+            let _ = inner.handle.emit_all("logs", log);
+            inner.ctx_id
+        } else {
+            0
         }
     }
 }
 
 pub struct ConnectionState {
     client: ControlServiceClient,
-    traffic_sender: Arc<RwLock<Option<AppHandle<Wry>>>>,
-    logs_sender: Arc<RwLock<Option<AppHandle<Wry>>>>,
+    traffic_sender: Arc<RwLock<Option<HandleContextInner>>>,
+    logs_sender: Arc<RwLock<Option<HandleContextInner>>>,
 }
 
 impl ConnectionState {
@@ -78,14 +96,6 @@ impl ConnectionState {
             traffic_sender: t2,
             logs_sender: l2,
         })
-    }
-
-    pub async fn reset_traffic(&self) {
-        *self.traffic_sender.write().await = None
-    }
-
-    pub async fn reset_logs(&self) {
-        *self.logs_sender.write().await = None
     }
 }
 
@@ -200,7 +210,12 @@ pub async fn enable_traffic_streaming(
     app_handle: AppHandle<Wry>,
     state: tauri::State<'_, ConnectionState>,
 ) -> ConnResult<()> {
-    *state.traffic_sender.write().await = Some(app_handle);
+    let handle = HandleContextInner::new(app_handle);
+    let _ = state
+        .client
+        .request_traffic_stream(Context::current(), handle.ctx_id)
+        .await;
+    *state.traffic_sender.write().await = Some(handle);
     Ok(())
 }
 
@@ -209,7 +224,24 @@ pub async fn enable_logs_streaming(
     app_handle: AppHandle<Wry>,
     state: tauri::State<'_, ConnectionState>,
 ) -> ConnResult<()> {
-    *state.logs_sender.write().await = Some(app_handle);
+    let handle = HandleContextInner::new(app_handle);
+    let _ = state
+        .client
+        .request_log_stream(Context::current(), handle.ctx_id)
+        .await;
+    *state.logs_sender.write().await = Some(handle);
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn reset_traffic(state: tauri::State<'_, ConnectionState>) -> ConnResult<()> {
+    *state.traffic_sender.write().await = None;
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn reset_logs(state: tauri::State<'_, ConnectionState>) -> ConnResult<()> {
+    *state.logs_sender.write().await = None;
     Ok(())
 }
 

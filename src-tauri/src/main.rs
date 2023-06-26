@@ -3,9 +3,15 @@
 
 use std::process::ExitCode;
 
+use chrono::Timelike;
 #[cfg(target_os = "macos")]
 use cocoa::appkit::{NSWindow, NSWindowStyleMask};
 use tauri::{Manager, Runtime, Window};
+use tracing_subscriber::fmt::format::Writer;
+use tracing_subscriber::fmt::time::FormatTime;
+use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::util::SubscriberInitExt;
+use tracing_subscriber::{fmt, EnvFilter};
 
 use crate::connection::*;
 
@@ -44,8 +50,33 @@ impl<R: Runtime> WindowExt for Window<R> {
         }
     }
 }
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Default)]
+pub struct SystemTime;
+
+impl FormatTime for SystemTime {
+    fn format_time(&self, w: &mut Writer<'_>) -> core::fmt::Result {
+        let time = chrono::prelude::Local::now();
+        write!(
+            w,
+            "{:02}:{:02}:{:02}.{:03}",
+            time.hour() % 24,
+            time.minute(),
+            time.second(),
+            time.timestamp_subsec_millis()
+        )
+    }
+}
 
 fn main() -> ExitCode {
+    let stdout_layer = fmt::layer()
+        .compact()
+        .with_writer(std::io::stdout)
+        .with_timer(SystemTime::default());
+
+    tracing_subscriber::registry()
+        .with(stdout_layer)
+        .with(EnvFilter::new("boltboard-tauri=trace"))
+        .init();
     let rt = tokio::runtime::Runtime::new().unwrap();
     if let Err(e) = rt.block_on(run()) {
         eprintln!("Error is: {}", e);
@@ -80,7 +111,9 @@ async fn run() -> anyhow::Result<()> {
             get_intercept_payload,
             reload_config,
             enable_traffic_streaming,
-            enable_logs_streaming
+            enable_logs_streaming,
+            reset_traffic,
+            reset_logs
         ])
         .run(tauri::generate_context!())?;
     Ok(())

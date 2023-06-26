@@ -6,6 +6,8 @@ import {websocket_url} from "../../misc/request";
 import useWebSocket from "react-use-websocket";
 import {Table, TableBody, TableCell, TableHead, TableRow, Theme} from "@mui/material";
 import {useTheme} from "@mui/material/styles";
+import {invoke} from "@tauri-apps/api";
+import {listen} from "@tauri-apps/api/event";
 
 interface LogSchema {
     timestamp: string,
@@ -42,18 +44,30 @@ const LogsPage = () => {
 
     /* #v-ifdef VITE_TAURI */
     var lastMessage: MessageEvent<any> | null = null;
+    useEffect(() => {
+        invoke('enable_logs_streaming')
+        const unlisten = listen('logs', (e) => {
+            console.log("Get log:" + e.payload as string)
+            let message = JSON.parse(e.payload as string);
+            setLogs(arr => [...arr, message]);
+        });
+        return () => {
+            unlisten.then(f => f())
+            invoke('reset_logs')
+        };
+    }, [])
     /* #v-else */
     var {lastMessage} = useWebSocket(websocket_url('/ws/logs'))
-    /* #v-endif */
 
     useEffect(() => {
         if (lastMessage != null) {
             const message = JSON.parse(lastMessage.data);
             if ('timestamp' in message) {
-                setLogs([...logs, message]);
+                setLogs(arr => [...arr, message]);
             }
         }
     }, [lastMessage,])
+    /* #v-endif */
 
     return (
         <React.Fragment>
