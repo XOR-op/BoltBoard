@@ -1,9 +1,6 @@
 {
   "build": {
-    "beforeBuildCommand": "",
-    "beforeDevCommand": "",
-    "devPath": "../boltboard/tauri-dist",
-    "distDir": "../boltboard/tauri-dist"
+    "devPath": "../boltboard/tauri-dist"
   },
   "package": {
     "productName": "Boltboard-tauri",

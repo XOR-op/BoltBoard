@@ -3,12 +3,20 @@ import {TableCell, TableRow} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import {CheckCircleOutlined, ImportExportOutlined} from "@mui/icons-material";
 
+export interface ProcessSchemaData {
+    pid: number,
+    path: string,
+    name: string,
+    cmdline: string,
+    parent_name: string | undefined
+}
+
 export interface ConnectionEntryData {
     conn_id: number,
     destination: string,
     protocol: string,
     proxy: string,
-    process: string | undefined,
+    process: ProcessSchemaData | undefined,
     upload: number,
     download: number,
     start_time: number,
@@ -72,7 +80,7 @@ const ConnectionEntry = ({data}: ConnectionEntryProps) => {
             </TableCell>
             <TableCell>
                 <Typography component='div'>
-                    {(data.process === undefined) ? 'N/A' : data.process}
+                    {(data.process === undefined) ? 'N/A' : data.process.name}
                 </Typography>
             </TableCell>
             <TableCell>

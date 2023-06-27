@@ -6,10 +6,10 @@ import {ConnectionEntryData} from "./ConnectionEntry";
 import ConnectionGroup from "./ConnectionGroup";
 import {apiGetAllConnections} from "../../misc/request";
 
-function groupBy(list: Array<any>, key: string): Map<string, Array<any>> {
+function groupByProcess(list: Array<ConnectionEntryData>): Map<string, Array<any>> {
     const map = new Map();
     list.forEach(item => {
-        let realKey = item[key] ?? 'Unknown Process';
+        let realKey = item.process?.name ?? 'Unknown Process';
         const collection = map.get(realKey);
         if (!collection) {
             map.set(realKey, [item]);
@@ -37,7 +37,7 @@ const ConnectionPage = () => {
                 <AdminToolbar title={'Connection'}/>
             </AdminAppBar>
             <Grid container spacing={2}>{
-                Array.from(groupBy(connList, 'process')).sort(([a, av], [b, bv]) => {
+                Array.from(groupByProcess(connList)).sort(([a, av], [b, bv]) => {
                     if (a.toLowerCase() > b.toLowerCase()) return 1;
                     if (a.toLowerCase() < b.toLowerCase()) return -1;
                     return 0;
