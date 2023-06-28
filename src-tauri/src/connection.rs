@@ -158,12 +158,11 @@ pub async fn get_tun(state: tauri::State<'_, ConnectionState>) -> ConnResult<Tun
 }
 
 #[tauri::command]
-pub async fn set_tun(state: tauri::State<'_, ConnectionState>, enabled: bool) -> ConnResult<()> {
-    state
+pub async fn set_tun(state: tauri::State<'_, ConnectionState>, enabled: bool) -> ConnResult<bool> {
+    Ok(state
         .client
         .set_tun(Context::current(), TunStatusSchema { enabled })
-        .await?;
-    Ok(())
+        .await?)
 }
 
 #[tauri::command]

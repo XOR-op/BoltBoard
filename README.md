@@ -7,13 +7,13 @@
 
 ### About
 
-BoltBoard is an unofficial web dashboard of <a href="https://github.com/XOR-op/BoltConn">BoltConn</a>. As an
-experimental project, no bugfix or maintenance could be guaranteed.
+BoltBoard is an experimental web dashboard/desktop client of <a href="https://github.com/XOR-op/BoltConn">BoltConn</a>. As an
+experimental project, bugfix or maintenance could not be guaranteed to deliver.
 
 ### License
 
 This project is licensed under the terms of the
-[MIT license](/LICENSE).
+[GPLv3 license](/LICENSE).
 
 ### Thanks
 

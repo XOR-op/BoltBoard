@@ -3,80 +3,21 @@
 
 use std::process::ExitCode;
 
-use chrono::Timelike;
 #[cfg(target_os = "macos")]
-use cocoa::appkit::{NSWindow, NSWindowStyleMask};
-use tauri::{Manager, Runtime, Window};
-use tracing_subscriber::fmt::format::Writer;
-use tracing_subscriber::fmt::time::FormatTime;
-use tracing_subscriber::layer::SubscriberExt;
-use tracing_subscriber::util::SubscriberInitExt;
-use tracing_subscriber::{fmt, EnvFilter};
+use tauri::{
+    CustomMenuItem, Manager, RunEvent, SystemTray, SystemTrayEvent, SystemTrayMenu,
+    SystemTrayMenuItem,
+};
 
 use crate::connection::*;
+use crate::tracing::init_tracing;
 
 mod connection;
-
-pub trait WindowExt {
-    #[cfg(target_os = "macos")]
-    fn set_transparent_titlebar(&self, transparent: bool);
-}
-
-impl<R: Runtime> WindowExt for Window<R> {
-    #[cfg(target_os = "macos")]
-    fn set_transparent_titlebar(&self, transparent: bool) {
-        use cocoa::appkit::NSWindowTitleVisibility;
-
-        unsafe {
-            let id = self.ns_window().unwrap() as cocoa::base::id;
-
-            let mut style_mask = id.styleMask();
-            style_mask.set(
-                NSWindowStyleMask::NSFullSizeContentViewWindowMask,
-                transparent,
-            );
-            id.setStyleMask_(style_mask);
-
-            id.setTitleVisibility_(if transparent {
-                NSWindowTitleVisibility::NSWindowTitleHidden
-            } else {
-                NSWindowTitleVisibility::NSWindowTitleVisible
-            });
-            id.setTitlebarAppearsTransparent_(if transparent {
-                cocoa::base::YES
-            } else {
-                cocoa::base::NO
-            });
-        }
-    }
-}
-#[derive(Debug, Clone, Copy, Eq, PartialEq, Default)]
-pub struct SystemTime;
-
-impl FormatTime for SystemTime {
-    fn format_time(&self, w: &mut Writer<'_>) -> core::fmt::Result {
-        let time = chrono::prelude::Local::now();
-        write!(
-            w,
-            "{:02}:{:02}:{:02}.{:03}",
-            time.hour() % 24,
-            time.minute(),
-            time.second(),
-            time.timestamp_subsec_millis()
-        )
-    }
-}
+mod tracing;
+mod window;
 
 fn main() -> ExitCode {
-    let stdout_layer = fmt::layer()
-        .compact()
-        .with_writer(std::io::stdout)
-        .with_timer(SystemTime::default());
-
-    tracing_subscriber::registry()
-        .with(stdout_layer)
-        .with(EnvFilter::new("boltboard-tauri=trace"))
-        .init();
+    init_tracing();
     let rt = tokio::runtime::Runtime::new().unwrap();
     if let Err(e) = rt.block_on(run()) {
         eprintln!("Error is: {}", e);
@@ -86,15 +27,37 @@ fn main() -> ExitCode {
     }
 }
 
+fn create_menu() -> SystemTrayMenu {
+    SystemTrayMenu::new()
+        .add_item(CustomMenuItem::new("dashboard".to_string(), "Dashboard"))
+        .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(CustomMenuItem::new("quit".to_string(), "Quit"))
+}
+
+#[allow(clippy::single_match)]
 async fn run() -> anyhow::Result<()> {
     let state = ConnectionState::new("/var/run/boltconn.sock".into()).await?;
     println!("Connected to control socket");
+    let tray_menu = create_menu();
     tauri::Builder::default()
-        .setup(|app| {
-            let win = app.get_window("main").unwrap();
-            win.set_transparent_titlebar(true);
-
-            Ok(())
+        .system_tray(SystemTray::new().with_menu(tray_menu))
+        .on_system_tray_event(|app, event| match event {
+            SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
+                "dashboard" => {
+                    let w = app
+                        .get_window("dashboard")
+                        .unwrap_or_else(|| window::create_dashboard(app));
+                    if w.show().is_ok() {
+                        let _ = w.set_focus();
+                    }
+                }
+                "quit" => app.exit(0),
+                _ => {}
+            },
+            SystemTrayEvent::LeftClick { .. } => {}
+            SystemTrayEvent::RightClick { .. } => {}
+            SystemTrayEvent::DoubleClick { .. } => {}
+            _ => {}
         })
         .manage(state)
         .invoke_handler(tauri::generate_handler![
@@ -115,6 +78,10 @@ async fn run() -> anyhow::Result<()> {
             reset_traffic,
             reset_logs
         ])
-        .run(tauri::generate_context!())?;
+        .build(tauri::generate_context!())?
+        .run(|_app, event| match event {
+            RunEvent::ExitRequested { api, .. } => api.prevent_exit(),
+            _ => {}
+        });
     Ok(())
 }

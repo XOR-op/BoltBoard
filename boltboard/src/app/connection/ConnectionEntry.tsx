@@ -80,7 +80,7 @@ const ConnectionEntry = ({data}: ConnectionEntryProps) => {
             </TableCell>
             <TableCell>
                 <Typography component='div'>
-                    {(data.process === undefined) ? 'N/A' : data.process.name}
+                    {data.process ? data.process.name : 'N/A'}
                 </Typography>
             </TableCell>
             <TableCell>

@@ -9,7 +9,7 @@ import {apiGetAllConnections} from "../../misc/request";
 function groupByProcess(list: Array<ConnectionEntryData>): Map<string, Array<any>> {
     const map = new Map();
     list.forEach(item => {
-        let realKey = item.process?.name ?? 'Unknown Process';
+        let realKey = item.process ? item.process.name : 'Unknown Process';
         const collection = map.get(realKey);
         if (!collection) {
             map.set(realKey, [item]);
