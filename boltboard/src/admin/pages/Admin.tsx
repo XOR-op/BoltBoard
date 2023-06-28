@@ -11,10 +11,6 @@ const AdminLayout = () => {
 
     const {collapsed, open, toggleDrawer, toggleMode} = useSettings();
 
-    const handleSettingsToggle = () => {
-        setSettingsOpen(!settingsOpen);
-    };
-
     return (
         <Box sx={{display: "flex"}}>
             <AdminDrawer

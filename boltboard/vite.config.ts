@@ -11,7 +11,7 @@ export default defineConfig(({command, mode}) => {
     if (env.VITE_TAURI !== undefined) {
         return {
             base: "./",
-            build: {outDir: './tauri-dist'},
+            build: {outDir: '../src-tauri/dist/dashboard'},
             plugins: [react(), viteTsconfigPaths(), svgrPlugin(), ConditionalCompile()],
             preview: {cors: true}
         }

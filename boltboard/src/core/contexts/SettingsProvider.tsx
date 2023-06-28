@@ -31,6 +31,9 @@ const SettingsProvider = ({children}: SettingsProviderProps) => {
 
     useEffect(() => {
         document.body.dir = direction;
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            setMode("dark")
+        }
     }, []);
 
     useEffect(() => {
