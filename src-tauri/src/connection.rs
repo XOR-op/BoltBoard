@@ -60,7 +60,7 @@ impl ClientStreamService for ClientStreamServer {
 }
 
 pub struct ConnectionState {
-    client: ControlServiceClient,
+    pub client: ControlServiceClient,
     traffic_sender: Arc<RwLock<Option<HandleContextInner>>>,
     logs_sender: Arc<RwLock<Option<HandleContextInner>>>,
 }
@@ -74,14 +74,14 @@ impl ConnectionState {
         );
         let (server_t, client_t, in_task, out_task) = rpc_multiplex_twoway(transport);
 
-        tokio::spawn(in_task);
-        tokio::spawn(out_task);
+        tauri::async_runtime::spawn(in_task);
+        tauri::async_runtime::spawn(out_task);
         let client = ControlServiceClient::new(Default::default(), client_t).spawn();
         let traffic = Arc::new(RwLock::new(None));
         let logs = Arc::new(RwLock::new(None));
         let t2 = traffic.clone();
         let l2 = logs.clone();
-        tokio::spawn(
+        tauri::async_runtime::spawn(
             BaseChannel::with_defaults(server_t).execute(
                 ClientStreamServer {
                     traffic_sender: traffic,

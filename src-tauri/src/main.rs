@@ -3,6 +3,8 @@
 
 use std::process::ExitCode;
 
+use boltapi::GetGroupRespSchema;
+use tauri::SystemTraySubmenu;
 #[cfg(target_os = "macos")]
 use tauri::{
     CustomMenuItem, Manager, RunEvent, SystemTray, SystemTrayEvent, SystemTrayMenu,
@@ -10,25 +12,55 @@ use tauri::{
 };
 
 use crate::connection::*;
-use crate::tracing::init_tracing;
+use crate::trace::init_tracing;
 
 mod connection;
-mod tracing;
+mod trace;
 mod window;
 
 fn main() -> ExitCode {
     init_tracing();
-    let rt = tokio::runtime::Runtime::new().unwrap();
-    if let Err(e) = rt.block_on(run()) {
+    if let Err(e) = tauri::async_runtime::block_on(run()) {
         eprintln!("Error is: {}", e);
         ExitCode::FAILURE
     } else {
         ExitCode::SUCCESS
     }
 }
+const SPLITTER: &str = "#!@";
 
-fn create_menu() -> SystemTrayMenu {
-    SystemTrayMenu::new()
+async fn create_menu(state: &ConnectionState) -> SystemTrayMenu {
+    let mut menu = SystemTrayMenu::new();
+
+    if let Ok(groups) = state
+        .client
+        .get_all_proxies(tarpc::context::Context::current())
+        .await
+    {
+        let groups: Vec<GetGroupRespSchema> = groups;
+        for entry in &groups {
+            let mut submenu = SystemTrayMenu::new();
+            for d in entry.list.iter() {
+                let mut item = CustomMenuItem::new(
+                    "_proxy".to_string()
+                        + SPLITTER
+                        + entry.name.as_str()
+                        + SPLITTER
+                        + d.name.as_str(),
+                    d.name.as_str(),
+                );
+                if d.name == entry.selected {
+                    item.selected = true;
+                }
+                submenu = submenu.add_item(item)
+            }
+            menu = menu.add_submenu(SystemTraySubmenu::new(
+                format!("[{}] / {}", entry.name, entry.selected),
+                submenu,
+            ))
+        }
+    }
+    menu.add_native_item(SystemTrayMenuItem::Separator)
         .add_item(CustomMenuItem::new("dashboard".to_string(), "Dashboard"))
         .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(CustomMenuItem::new("quit".to_string(), "Quit"))
@@ -38,7 +70,11 @@ fn create_menu() -> SystemTrayMenu {
 async fn run() -> anyhow::Result<()> {
     let state = ConnectionState::new("/var/run/boltconn.sock".into()).await?;
     println!("Connected to control socket");
-    let tray_menu = create_menu();
+
+    let tray_menu = SystemTrayMenu::new()
+        .add_item(CustomMenuItem::new("dashboard".to_string(), "Dashboard"))
+        .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(CustomMenuItem::new("quit".to_string(), "Quit"));
     tauri::Builder::default()
         .system_tray(SystemTray::new().with_menu(tray_menu))
         .on_system_tray_event(|app, event| match event {
@@ -52,11 +88,45 @@ async fn run() -> anyhow::Result<()> {
                     }
                 }
                 "quit" => app.exit(0),
-                _ => {}
+                s => {
+                    let splitted: Vec<String> = s.split(SPLITTER).map(|s| s.to_string()).collect();
+                    if splitted.len() == 3 {
+                        match splitted.get(0).unwrap().as_str() {
+                            "_proxy" => {
+                                let app_copy = app.clone();
+                                let _ = tokio::task::block_in_place(|| {
+                                    tauri::async_runtime::block_on(async move {
+                                        let state = app_copy.state::<ConnectionState>().inner();
+                                        state
+                                            .client
+                                            .set_proxy_for(
+                                                tarpc::context::Context::current(),
+                                                splitted.get(1).unwrap().to_string(),
+                                                splitted.get(2).unwrap().to_string(),
+                                            )
+                                            .await
+                                    })
+                                });
+                            }
+                            invalid => {
+                                tracing::warn!("Suspious event: {}", invalid);
+                            }
+                        }
+                    }
+                }
             },
-            SystemTrayEvent::LeftClick { .. } => {}
-            SystemTrayEvent::RightClick { .. } => {}
-            SystemTrayEvent::DoubleClick { .. } => {}
+            SystemTrayEvent::LeftClick { .. } => {
+                let app_copy = app.clone();
+                let _ = tokio::task::block_in_place(|| {
+                    tauri::async_runtime::block_on(async move {
+                        let state = app_copy.state::<ConnectionState>().inner();
+                        let menu = create_menu(state).await;
+                        if let Err(err) = app_copy.tray_handle().set_menu(menu) {
+                            eprintln!("Failed to set menu: {}", err)
+                        }
+                    })
+                });
+            }
             _ => {}
         })
         .manage(state)
