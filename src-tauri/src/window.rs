@@ -1,4 +1,4 @@
-use tauri::{AppHandle, Runtime, Window, WindowBuilder, WindowUrl, Wry};
+use tauri::{AppHandle, PhysicalPosition, Runtime, Window, WindowBuilder, WindowUrl, Wry};
 
 pub trait WindowExt {
     #[cfg(target_os = "macos")]
@@ -41,6 +41,29 @@ pub fn create_dashboard(app: &AppHandle<Wry>) -> Window<Wry> {
     .inner_size(800., 600.)
     .build()
     .unwrap();
+    window.set_transparent_titlebar();
+    window
+}
+
+pub fn create_menu(
+    app: &AppHandle<Wry>,
+    position: PhysicalPosition<f64>,
+    group_len: usize,
+) -> Window<Wry> {
+    let window = WindowBuilder::new(app, "menu", WindowUrl::App("./tray-menu/index.html".into()))
+        .resizable(false)
+        .closable(false)
+        .accept_first_mouse(true)
+        .focused(true)
+        .maximizable(false)
+        .minimizable(false)
+        .theme(None)
+        .inner_size(300., (group_len + 4) as f64 * 39.0 + 10.0)
+        .position(position.x, position.y - 30.0)
+        .transparent(true)
+        .visible(false)
+        .build()
+        .unwrap();
     window.set_transparent_titlebar();
     window
 }

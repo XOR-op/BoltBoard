@@ -20,3 +20,10 @@ export async function apiSetTun(enabled: boolean): Promise<any> {
 	return invoke("set_tun", { enabled: enabled });
 }
 
+export async function openDashboard(): Promise<any> {
+	return invoke("open_dashboard");
+}
+
+export async function quitApp(): Promise<any> {
+	return invoke("quit");
+}
