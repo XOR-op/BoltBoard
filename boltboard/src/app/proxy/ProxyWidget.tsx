@@ -43,7 +43,7 @@ function colorizeLatency(theme: Theme, latency: string | null): string {
         const ms = parseInt(latency.split(' ')[0])
         if (ms < 200) {
             return color[theme.palette.mode]['fast']
-        } else if (ms < 300) {
+        } else if (ms < 400) {
             return color[theme.palette.mode]['average']
         } else {
             return color[theme.palette.mode]['slow']
