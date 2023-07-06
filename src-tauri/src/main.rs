@@ -1,10 +1,12 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use std::future::Future;
 use std::process::ExitCode;
+use std::str::FromStr;
 
-use boltapi::GetGroupRespSchema;
-use tauri::SystemTraySubmenu;
+use boltapi::{GetGroupRespSchema, ProxyData, TunStatusSchema};
+use tauri::{AppHandle, SystemTraySubmenu, Wry};
 #[cfg(target_os = "macos")]
 use tauri::{
     CustomMenuItem, Manager, RunEvent, SystemTray, SystemTrayEvent, SystemTrayMenu,
@@ -29,7 +31,28 @@ fn main() -> ExitCode {
 }
 const SPLITTER: &str = "#!@";
 
-async fn create_menu(state: &ConnectionState) -> SystemTrayMenu {
+fn proxy_entry_display(d: &ProxyData) -> String {
+    match &d.latency {
+        None => "◽",
+        Some(s) => {
+            if let Ok(ms) = u32::from_str(s.split(" ms").collect::<Vec<&str>>().first().unwrap()) {
+                if ms < 200 {
+                    "🔹"
+                } else if ms < 400 {
+                    "🔸"
+                } else {
+                    "🔺"
+                }
+            } else {
+                "✖️"
+            }
+        }
+    }
+    .to_string()
+        + d.name.as_str()
+}
+
+async fn flush_state(state: &ConnectionState) -> SystemTrayMenu {
     let mut menu = SystemTrayMenu::new();
 
     if let Ok(groups) = state
@@ -47,7 +70,7 @@ async fn create_menu(state: &ConnectionState) -> SystemTrayMenu {
                         + entry.name.as_str()
                         + SPLITTER
                         + d.name.as_str(),
-                    d.name.as_str(),
+                    proxy_entry_display(d),
                 );
                 if d.name == entry.selected {
                     item.selected = true;
@@ -60,10 +83,43 @@ async fn create_menu(state: &ConnectionState) -> SystemTrayMenu {
             ))
         }
     }
-    menu.add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(CustomMenuItem::new("dashboard".to_string(), "Dashboard"))
+    menu = menu
         .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(CustomMenuItem::new("quit".to_string(), "Quit"))
+        .add_item(CustomMenuItem::new(
+            "system_proxy".to_string(),
+            "System Proxy",
+        ));
+    if let Ok(status) = state
+        .client
+        .get_tun(tarpc::context::Context::current())
+        .await
+    {
+        let mut item = CustomMenuItem::new("tun".to_string(), "Tun Mode");
+        item.selected = status.enabled;
+        menu = menu.add_item(item);
+        state.update_tun_state(status.enabled);
+    }
+    menu.add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(
+            CustomMenuItem::new("dashboard".to_string(), "Dashboard").accelerator("CmdOrControl+D"),
+        )
+        .add_item(CustomMenuItem::new("flush".to_string(), "Flush").accelerator("CmdOrControl+F"))
+        .add_item(CustomMenuItem::new("quit".to_string(), "Quit").accelerator("CmdOrControl+Q"))
+}
+
+fn block_task<F: Future>(f: F) -> F::Output {
+    tokio::task::block_in_place(|| tauri::async_runtime::block_on(f))
+}
+
+fn update_menu(app: &AppHandle<Wry>) {
+    let app_copy = app.clone();
+    block_task(async move {
+        let state = app_copy.state::<ConnectionState>().inner();
+        let menu = flush_state(state).await;
+        if let Err(err) = app_copy.tray_handle().set_menu(menu) {
+            eprintln!("Failed to set menu: {}", err)
+        }
+    })
 }
 
 #[allow(clippy::single_match)]
@@ -71,10 +127,7 @@ async fn run() -> anyhow::Result<()> {
     let state = ConnectionState::new("/var/run/boltconn.sock".into()).await?;
     println!("Connected to control socket");
 
-    let tray_menu = SystemTrayMenu::new()
-        .add_item(CustomMenuItem::new("dashboard".to_string(), "Dashboard"))
-        .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(CustomMenuItem::new("quit".to_string(), "Quit"));
+    let tray_menu = flush_state(&state).await;
     tauri::Builder::default()
         .system_tray(SystemTray::new().with_menu(tray_menu))
         .on_system_tray_event(|app, event| match event {
@@ -88,25 +141,48 @@ async fn run() -> anyhow::Result<()> {
                     }
                 }
                 "quit" => app.exit(0),
+                "tun" => {
+                    let app_copy = app.clone();
+                    block_task(async move {
+                        let state = app_copy.state::<ConnectionState>().inner();
+                        let next_state = !state.get_tun_state();
+                        if let Err(err) = state
+                            .client
+                            .set_tun(
+                                tarpc::context::Context::current(),
+                                TunStatusSchema {
+                                    enabled: next_state,
+                                },
+                            )
+                            .await
+                        {
+                            eprintln!("Failed to set proxy")
+                        }
+                    });
+                    update_menu(app)
+                }
+                "flush" => update_menu(app),
                 s => {
                     let splitted: Vec<String> = s.split(SPLITTER).map(|s| s.to_string()).collect();
                     if splitted.len() == 3 {
                         match splitted.get(0).unwrap().as_str() {
                             "_proxy" => {
                                 let app_copy = app.clone();
-                                let _ = tokio::task::block_in_place(|| {
-                                    tauri::async_runtime::block_on(async move {
-                                        let state = app_copy.state::<ConnectionState>().inner();
-                                        state
-                                            .client
-                                            .set_proxy_for(
-                                                tarpc::context::Context::current(),
-                                                splitted.get(1).unwrap().to_string(),
-                                                splitted.get(2).unwrap().to_string(),
-                                            )
-                                            .await
-                                    })
+                                block_task(async move {
+                                    let state = app_copy.state::<ConnectionState>().inner();
+                                    if let Err(err) = state
+                                        .client
+                                        .set_proxy_for(
+                                            tarpc::context::Context::current(),
+                                            splitted.get(1).unwrap().to_string(),
+                                            splitted.get(2).unwrap().to_string(),
+                                        )
+                                        .await
+                                    {
+                                        eprintln!("Failed to set proxy")
+                                    }
                                 });
+                                update_menu(app)
                             }
                             invalid => {
                                 tracing::warn!("Suspious event: {}", invalid);
@@ -115,18 +191,6 @@ async fn run() -> anyhow::Result<()> {
                     }
                 }
             },
-            SystemTrayEvent::LeftClick { .. } => {
-                let app_copy = app.clone();
-                let _ = tokio::task::block_in_place(|| {
-                    tauri::async_runtime::block_on(async move {
-                        let state = app_copy.state::<ConnectionState>().inner();
-                        let menu = create_menu(state).await;
-                        if let Err(err) = app_copy.tray_handle().set_menu(menu) {
-                            eprintln!("Failed to set menu: {}", err)
-                        }
-                    })
-                });
-            }
             _ => {}
         })
         .manage(state)

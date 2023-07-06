@@ -1,4 +1,5 @@
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 
 use boltapi::multiplex::rpc_multiplex_twoway;
@@ -61,6 +62,8 @@ impl ClientStreamService for ClientStreamServer {
 
 pub struct ConnectionState {
     pub client: ControlServiceClient,
+    tun_status: AtomicBool,
+    system_proxy_status: AtomicBool,
     traffic_sender: Arc<RwLock<Option<HandleContextInner>>>,
     logs_sender: Arc<RwLock<Option<HandleContextInner>>>,
 }
@@ -93,9 +96,27 @@ impl ConnectionState {
 
         Ok(Self {
             client,
+            tun_status: Default::default(),
+            system_proxy_status: Default::default(),
             traffic_sender: t2,
             logs_sender: l2,
         })
+    }
+
+    pub fn update_tun_state(&self, state: bool) {
+        self.tun_status.store(state, Ordering::Relaxed)
+    }
+
+    pub fn update_system_proxy_state(&self, state: bool) {
+        self.system_proxy_status.store(state, Ordering::Relaxed)
+    }
+
+    pub fn get_tun_state(&self) -> bool {
+        self.tun_status.load(Ordering::Relaxed)
+    }
+
+    pub fn get_system_proxy_state(&self) -> bool {
+        self.system_proxy_status.load(Ordering::Relaxed)
     }
 }
 
