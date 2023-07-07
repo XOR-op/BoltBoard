@@ -42,7 +42,7 @@ function App() {
         <>
             <ErrorBoundary fallbackRender={fallbackRender}>
                 <GroupList arr={groups} refresh={refresh} />
-                <GeneralList refresh={refresh} />
+                <GeneralList/>
             </ErrorBoundary>
         </>
     );

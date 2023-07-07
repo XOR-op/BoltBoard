@@ -35,6 +35,10 @@ async fn run() -> anyhow::Result<()> {
         .len();
 
     tauri::Builder::default()
+        .setup(|app| {
+            app.set_activation_policy(tauri::ActivationPolicy::Accessory);
+            Ok(())
+        })
         .on_window_event(|event| {
             if event.window().label() == "menu" {
                 match event.event() {

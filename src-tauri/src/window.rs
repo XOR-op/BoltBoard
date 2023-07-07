@@ -38,7 +38,7 @@ pub fn create_dashboard(app: &AppHandle<Wry>) -> Window<Wry> {
     .maximizable(false)
     .minimizable(false)
     .theme(None)
-    .inner_size(800., 600.)
+    .inner_size(1000., 600.)
     .build()
     .unwrap();
     window.set_transparent_titlebar();
@@ -52,13 +52,17 @@ pub fn create_menu(
 ) -> Window<Wry> {
     let window = WindowBuilder::new(app, "menu", WindowUrl::App("./tray-menu/index.html".into()))
         .resizable(false)
+        .content_protected(true)
+        .hidden_title(true)
+        .skip_taskbar(true)
+        .always_on_top(true)
         .closable(false)
         .accept_first_mouse(true)
         .focused(true)
         .maximizable(false)
         .minimizable(false)
         .theme(None)
-        .inner_size(300., (group_len + 4) as f64 * 39.0 + 10.0)
+        .inner_size(300., (group_len + 3) as f64 * 39.0 + 10.0)
         .position(position.x, position.y - 30.0)
         .transparent(true)
         .visible(false)

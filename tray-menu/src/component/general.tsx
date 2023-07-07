@@ -4,28 +4,29 @@ import { useEffect, useState } from "react";
 import { ToggleOff, ToggleOn } from "@mui/icons-material";
 import { apiGetTun, apiSetTun, openDashboard, quitApp } from "../misc/request";
 
-export interface UpdateState {
-    refresh(): void;
-}
 
-const GeneralList = ({ refresh }: UpdateState) => {
-    const [systemProxy, setSystemProxy] = useState(false);
+const GeneralList = () => {
+    // const [systemProxy, setSystemProxy] = useState(false);
+    // const toggleSystemProxy = () => {
+    //     setSystemProxy(!systemProxy);
+    // };
     const [tun, setTun] = useState(false);
-    const toggleSystemProxy = () => {
-        setSystemProxy(!systemProxy);
-    };
     const toggleTun = () => {
         const next = !tun;
-        apiSetTun(next).then(() => refresh());
+        apiSetTun(next).then(() => setTun(next));
     };
     useEffect(() => {
-        apiGetTun().then((r: boolean) => setTun(r));
+        apiGetTun().then((r: any) => setTun(r.enabled));
     }, []);
     return (
-        <List><ListItem secondaryAction={systemProxy ? <ToggleOn /> : <ToggleOff />} sx={ListItemStyle}
-                        onClick={toggleSystemProxy}>System Proxy</ListItem>
-            <ListItem secondaryAction={tun ? <ToggleOn /> : <ToggleOff />} sx={ListItemStyle} onClick={toggleTun}>Tun
-                Mode</ListItem>
+        <List>
+            {/*<ListItem secondaryAction={systemProxy ? <ToggleOn /> : <ToggleOff />} sx={ListItemStyle}*/}
+            {/*          onClick={toggleSystemProxy}>*/}
+            {/*    System Proxy*/}
+            {/*</ListItem>*/}
+            <ListItem secondaryAction={tun ? <ToggleOn /> : <ToggleOff />} sx={ListItemStyle} onClick={toggleTun}>
+                Tun Mode
+            </ListItem>
             <ListItem sx={ListItemStyle} onClick={openDashboard}>Dashboard</ListItem>
             <ListItem sx={ListItemStyle} onClick={quitApp}>Quit</ListItem>
         </List>
