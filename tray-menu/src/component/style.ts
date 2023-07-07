@@ -1,3 +1,6 @@
 export const ListItemStyle = {
-	"cursor": "pointer"
+    "cursor": "pointer",
+    ":hover": {
+        "background-color": "#0c0c0cdc"
+    }
 };

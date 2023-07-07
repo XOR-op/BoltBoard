@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { GroupRpcData } from "../misc/structure";
-import { Drawer, List, ListItem, ListItemText } from "@mui/material";
+import { Box, Drawer, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import { apiSetProxyFor, apiSpeedtest } from "../misc/request";
 import { ListItemStyle } from "./style";
-import { apiSetProxyFor } from "../misc/request";
 
 export interface AllGroupData {
     arr: GroupRpcData[];
@@ -52,16 +52,35 @@ function colorizeLatency(latency: string | null): string {
 
 const GroupItem = ({ data, refresh }: GroupItemProps) => {
     const [open, setOpen] = useState(false);
+    const [speedtestDisabled, setSpeedtestDisabled] = useState(false);
     const closeDrawer = () => setOpen(false);
     return (
         <React.Fragment>
-            <ListItem key={data.name} secondaryAction={data.selected} onClick={() => setOpen(true)} sx={ListItemStyle}>
+            <ListItem key={data.name} secondaryAction={data.selected} onClick={() => setOpen(true)}
+                      sx={ListItemStyle}>
                 {data.name}
             </ListItem>
             <Drawer anchor="right" open={open} onClose={closeDrawer}
                     ModalProps={{ keepMounted: false }} sx={DrawerStyle}>
                 <List>
+                    <ListItemButton key="Benchmark" disabled={speedtestDisabled} alignItems="center"
+                                    onClick={() => {
+                                        setSpeedtestDisabled(true);
+                                        const interval = setInterval(() => refresh(), 200);
+                                        apiSpeedtest(data.name).finally(() => {
+                                            clearInterval(interval);
+                                            refresh();
+                                            setSpeedtestDisabled(false);
+                                        });
+                                    }} sx={{
+                        "padding-top": "0",
+                        "padding-bottom": "0",
+                        "height": "35px",
+                        "text-align": "center", ...ListItemStyle
+                    }}><Box sx={{ width: "100%" }}>Benchmark</Box>
+                    </ListItemButton>
                     {data.list.map(p => {
+                        const colorSetting = p.name === data.selected ? { "color": "rgba(122,179,255,0.95)" } : {};
                         return (
                             <ListItem key={p.name}
                                       onClick={() => {
@@ -71,9 +90,22 @@ const GroupItem = ({ data, refresh }: GroupItemProps) => {
                                                   closeDrawer();
                                               }
                                           });
-                                      }} sx={{ "padding-top": "0", "padding-bottom": "0", "cursor": "pointer" }}>
+                                      }} sx={{
+                                "padding-top": "0",
+                                "padding-bottom": "0",
+                                ...ListItemStyle
+                            }}>
                                 <ListItemText primary={p.name} secondary={p.latency ? p.latency : "N/A"}
-                                              sx={{ ".MuiListItemText-secondary": { color: colorizeLatency(p.latency) } }} />
+                                              sx={{
+                                                  ".MuiListItemText-primary": {
+                                                      "font-family": "Nunito, system-ui, Avenir, Helvetica, Arial, sans-serif",
+                                                      ...colorSetting
+                                                  },
+                                                  ".MuiListItemText-secondary": {
+                                                      "font-family": "Nunito, system-ui, Avenir, Helvetica, Arial, sans-serif",
+                                                      color: colorizeLatency(p.latency)
+                                                  }
+                                              }} />
                             </ListItem>
                         );
                     })}
