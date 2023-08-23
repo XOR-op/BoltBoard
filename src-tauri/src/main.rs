@@ -62,8 +62,13 @@ async fn run() -> anyhow::Result<()> {
                 if let Ok(is_visible) = w.is_visible() {
                     if is_visible {
                         let _ = w.hide();
-                    } else if w.show().is_ok() {
-                        let _ = w.set_focus();
+                    } else {
+                        let mut posi = position;
+                        posi.y -= 30.0;
+                        let _ = w.set_position(posi);
+                        if w.show().is_ok() {
+                            let _ = w.set_focus();
+                        }
                     }
                 }
             }
