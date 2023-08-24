@@ -3,6 +3,14 @@ import {newAppWindow} from "./window.js";
 import {api_call} from "./request";
 import {GroupRpcData, ProxyRpcData} from "./type";
 
+const reloadItem = {
+    label: 'Reload', click: () => {
+        if (BrowserWindow.getAllWindows().length === 0) {
+            newAppWindow()
+        }
+    }, accelerator: 'CommandOrControl+R', acceleratorWorksWhenHidden: false
+}
+
 const dashboardItem = {
     label: 'Dashboard', click: () => {
         if (BrowserWindow.getAllWindows().length === 0) {
@@ -35,6 +43,7 @@ function updateTrayMenu(tray: Tray, proxies: MenuItemConstructorOptions[], tun: 
     contextMenu = contextMenu.concat(proxies)
     contextMenu.push({type: 'separator'})
     contextMenu.push(tun)
+    contextMenu.push(reloadItem)
     contextMenu.push({type: 'separator'})
     contextMenu.push(dashboardItem)
     contextMenu.push(quitItem)

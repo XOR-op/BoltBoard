@@ -2,7 +2,7 @@ import { List, ListItem } from "@mui/material";
 import { ListItemStyle } from "./style";
 import { useEffect, useState } from "react";
 import { ToggleOff, ToggleOn } from "@mui/icons-material";
-import { apiGetTun, apiSetTun, openDashboard, quitApp } from "../misc/request";
+import { apiGetTun, apiSetTun, openDashboard, quitApp, reload } from "../misc/request";
 
 
 const GeneralList = () => {
@@ -27,6 +27,7 @@ const GeneralList = () => {
             <ListItem secondaryAction={tun ? <ToggleOn /> : <ToggleOff />} sx={ListItemStyle} onClick={toggleTun}>
                 Tun Mode
             </ListItem>
+            <ListItem sx={ListItemStyle} onClick={reload}>Reload</ListItem>
             <ListItem sx={ListItemStyle} onClick={openDashboard}>Dashboard</ListItem>
             <ListItem sx={ListItemStyle} onClick={quitApp}>Quit</ListItem>
         </List>

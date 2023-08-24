@@ -62,7 +62,7 @@ pub fn create_menu(
         .maximizable(false)
         .minimizable(false)
         .theme(None)
-        .inner_size(300., (group_len + 3) as f64 * 39.0 + 10.0)
+        .inner_size(300., (group_len + 4) as f64 * 39.0 + 10.0)
         .position(position.x, position.y - 30.0)
         .transparent(true)
         .visible(false)
