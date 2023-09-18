@@ -1,6 +1,7 @@
 {
   "build": {
-    "devPath": "./dist"
+    "devPath": "./dist",
+    "distDir": "./dist"
   },
   "package": {
     "productName": "Boltboard-tauri",
