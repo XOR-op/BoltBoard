@@ -4,7 +4,7 @@
     "distDir": "./dist"
   },
   "package": {
-    "productName": "Boltboard-tauri",
+    "productName": "BoltBoard",
     "version": "0.1.0"
   },
   "tauri": {
