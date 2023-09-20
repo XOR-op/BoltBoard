@@ -2,9 +2,12 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::process::ExitCode;
+use std::sync::atomic::Ordering;
+use std::time::Duration;
 
 use tauri::{Manager, RunEvent, SystemTray, SystemTrayEvent};
 use tauri::{Window, WindowEvent, Wry};
+use tokio::time::timeout;
 
 use crate::connection::*;
 use crate::trace::init_tracing;
@@ -28,12 +31,6 @@ fn main() -> ExitCode {
 async fn run() -> anyhow::Result<()> {
     let state = ConnectionState::new().await?;
     println!("Connected to control socket");
-    let expected_groups = state
-        .client
-        .load()
-        .get_all_proxies(tarpc::context::Context::current())
-        .await?
-        .len();
 
     tauri::Builder::default()
         .setup(|app| {
@@ -57,6 +54,39 @@ async fn run() -> anyhow::Result<()> {
         .system_tray(SystemTray::new())
         .on_system_tray_event(move |app, event| match event {
             SystemTrayEvent::LeftClick { position, .. } => {
+                let state = app.state::<ConnectionState>();
+                let group_query = tokio::task::block_in_place(|| {
+                    tauri::async_runtime::block_on(timeout(
+                        Duration::from_millis(1000),
+                        get_all_proxies(state.clone()),
+                    ))
+                });
+                let expected_groups = if let Ok(Ok(groups)) = group_query {
+                    if state.reloaded.load(Ordering::Relaxed) {
+                        // Create new menu window
+                        let _ = app.get_window("menu").map(|w| w.close());
+                    }
+                    groups.len()
+                } else {
+                    let _ = app.get_window("menu").map(|w| w.close());
+                    let _ = tokio::task::block_in_place(|| {
+                        tauri::async_runtime::block_on(timeout(
+                            Duration::from_millis(1000),
+                            reconnect_background(state.clone()),
+                        ))
+                    });
+                    if let Ok(Ok(x)) = tokio::task::block_in_place(|| {
+                        tauri::async_runtime::block_on(timeout(
+                            Duration::from_millis(1000),
+                            get_all_proxies(state.clone()),
+                        ))
+                    }) {
+                        x.len()
+                    } else {
+                        0
+                    }
+                };
+                state.reloaded.store(false, Ordering::Relaxed);
                 let w = app
                     .get_window("menu")
                     .unwrap_or_else(|| window::create_menu(app, position, expected_groups));

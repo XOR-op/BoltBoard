@@ -67,6 +67,7 @@ pub struct ConnectionState {
     pub client: ArcSwap<ControlServiceClient>,
     tun_status: AtomicBool,
     system_proxy_status: AtomicBool,
+    pub reloaded: AtomicBool,
     traffic_sender: ArcSwap<RwLock<Option<HandleContextInner>>>,
     logs_sender: ArcSwap<RwLock<Option<HandleContextInner>>>,
 }
@@ -78,6 +79,7 @@ impl ConnectionState {
             client: ArcSwap::new(Arc::new(client)),
             tun_status: Default::default(),
             system_proxy_status: Default::default(),
+            reloaded: Default::default(),
             traffic_sender: ArcSwap::new(t2),
             logs_sender: ArcSwap::new(l2),
         })
@@ -267,7 +269,9 @@ pub async fn get_intercept_payload(
 
 #[tauri::command]
 pub async fn reload_config(state: tauri::State<'_, ConnectionState>) -> ConnResult<()> {
-    Ok(state.client.load().reload(Context::current()).await?)
+    state.client.load().reload(Context::current()).await?;
+    state.reloaded.store(true, Ordering::Relaxed);
+    Ok(())
 }
 
 #[tauri::command]
