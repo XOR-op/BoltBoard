@@ -1,3 +1,4 @@
+use arc_swap::ArcSwap;
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
@@ -18,6 +19,8 @@ use tokio::net::UnixStream;
 use tokio::sync::RwLock;
 
 type ConnResult<T> = Result<T, SerializableError>;
+
+static CONTROL_PATH: &str = "/var/run/boltconn.sock";
 
 #[derive(Clone)]
 struct ClientStreamServer {
@@ -61,15 +64,58 @@ impl ClientStreamService for ClientStreamServer {
 }
 
 pub struct ConnectionState {
-    pub client: ControlServiceClient,
+    pub client: ArcSwap<ControlServiceClient>,
     tun_status: AtomicBool,
     system_proxy_status: AtomicBool,
-    traffic_sender: Arc<RwLock<Option<HandleContextInner>>>,
-    logs_sender: Arc<RwLock<Option<HandleContextInner>>>,
+    traffic_sender: ArcSwap<RwLock<Option<HandleContextInner>>>,
+    logs_sender: ArcSwap<RwLock<Option<HandleContextInner>>>,
 }
 
 impl ConnectionState {
-    pub async fn new(bind_addr: PathBuf) -> ConnResult<Self> {
+    pub async fn new() -> ConnResult<Self> {
+        let (client, t2, l2) = Self::connect(CONTROL_PATH.into()).await?;
+        Ok(Self {
+            client: ArcSwap::new(Arc::new(client)),
+            tun_status: Default::default(),
+            system_proxy_status: Default::default(),
+            traffic_sender: ArcSwap::new(t2),
+            logs_sender: ArcSwap::new(l2),
+        })
+    }
+
+    pub fn update_tun_state(&self, state: bool) {
+        self.tun_status.store(state, Ordering::Relaxed)
+    }
+
+    #[allow(dead_code)]
+    pub fn update_system_proxy_state(&self, state: bool) {
+        self.system_proxy_status.store(state, Ordering::Relaxed)
+    }
+
+    pub fn get_tun_state(&self) -> bool {
+        self.tun_status.load(Ordering::Relaxed)
+    }
+
+    #[allow(dead_code)]
+    pub fn get_system_proxy_state(&self) -> bool {
+        self.system_proxy_status.load(Ordering::Relaxed)
+    }
+
+    pub async fn reconnect(&self) -> ConnResult<()> {
+        let (client, t2, l2) = Self::connect(CONTROL_PATH.into()).await?;
+        self.client.store(Arc::new(client));
+        self.traffic_sender.store(t2);
+        self.logs_sender.store(l2);
+        Ok(())
+    }
+
+    async fn connect(
+        bind_addr: PathBuf,
+    ) -> ConnResult<(
+        ControlServiceClient,
+        Arc<RwLock<Option<HandleContextInner>>>,
+        Arc<RwLock<Option<HandleContextInner>>>,
+    )> {
         let conn = UnixStream::connect(bind_addr).await?;
         let transport = tarpc::serde_transport::new(
             LengthDelimitedCodec::builder().new_framed(conn),
@@ -93,30 +139,7 @@ impl ConnectionState {
                 .serve(),
             ),
         );
-
-        Ok(Self {
-            client,
-            tun_status: Default::default(),
-            system_proxy_status: Default::default(),
-            traffic_sender: t2,
-            logs_sender: l2,
-        })
-    }
-
-    pub fn update_tun_state(&self, state: bool) {
-        self.tun_status.store(state, Ordering::Relaxed)
-    }
-
-    pub fn update_system_proxy_state(&self, state: bool) {
-        self.system_proxy_status.store(state, Ordering::Relaxed)
-    }
-
-    pub fn get_tun_state(&self) -> bool {
-        self.tun_status.load(Ordering::Relaxed)
-    }
-
-    pub fn get_system_proxy_state(&self) -> bool {
-        self.system_proxy_status.load(Ordering::Relaxed)
+        Ok((client, t2, l2))
     }
 }
 
@@ -124,7 +147,11 @@ impl ConnectionState {
 pub async fn get_all_proxies(
     state: tauri::State<'_, ConnectionState>,
 ) -> ConnResult<Vec<GetGroupRespSchema>> {
-    let resp = state.client.get_all_proxies(Context::current()).await?;
+    let resp = state
+        .client
+        .load()
+        .get_all_proxies(Context::current())
+        .await?;
     Ok(resp)
 }
 
@@ -136,6 +163,7 @@ pub async fn set_proxy_for(
 ) -> ConnResult<bool> {
     Ok(state
         .client
+        .load()
         .set_proxy_for(Context::current(), group, proxy)
         .await?)
 }
@@ -144,12 +172,20 @@ pub async fn set_proxy_for(
 pub async fn get_all_connections(
     state: tauri::State<'_, ConnectionState>,
 ) -> ConnResult<Vec<ConnectionSchema>> {
-    Ok(state.client.get_all_conns(Context::current()).await?)
+    Ok(state
+        .client
+        .load()
+        .get_all_conns(Context::current())
+        .await?)
 }
 
 #[tauri::command]
 pub async fn stop_all_connections(state: tauri::State<'_, ConnectionState>) -> ConnResult<bool> {
-    state.client.stop_all_conns(Context::current()).await?;
+    state
+        .client
+        .load()
+        .stop_all_conns(Context::current())
+        .await?;
     Ok(true)
 }
 
@@ -158,7 +194,11 @@ pub async fn stop_connection(
     state: tauri::State<'_, ConnectionState>,
     id: u32,
 ) -> ConnResult<bool> {
-    let r = state.client.stop_conn(Context::current(), id).await?;
+    let r = state
+        .client
+        .load()
+        .stop_conn(Context::current(), id)
+        .await?;
     Ok(r)
 }
 
@@ -169,19 +209,21 @@ pub async fn update_group_latency(
 ) -> ConnResult<bool> {
     Ok(state
         .client
+        .load()
         .update_group_latency(Context::current(), group)
         .await?)
 }
 
 #[tauri::command]
 pub async fn get_tun(state: tauri::State<'_, ConnectionState>) -> ConnResult<TunStatusSchema> {
-    Ok(state.client.get_tun(Context::current()).await?)
+    Ok(state.client.load().get_tun(Context::current()).await?)
 }
 
 #[tauri::command]
 pub async fn set_tun(state: tauri::State<'_, ConnectionState>, enabled: bool) -> ConnResult<bool> {
     Ok(state
         .client
+        .load()
         .set_tun(Context::current(), TunStatusSchema { enabled })
         .await?)
 }
@@ -192,6 +234,7 @@ pub async fn get_all_interceptions(
 ) -> ConnResult<Vec<HttpInterceptSchema>> {
     Ok(state
         .client
+        .load()
         .get_all_interceptions(Context::current())
         .await?)
 }
@@ -204,6 +247,7 @@ pub async fn get_range_interceptions(
 ) -> ConnResult<Vec<HttpInterceptSchema>> {
     Ok(state
         .client
+        .load()
         .get_range_interceptions(Context::current(), start, end)
         .await?)
 }
@@ -215,6 +259,7 @@ pub async fn get_intercept_payload(
 ) -> ConnResult<GetInterceptDataResp> {
     Ok(state
         .client
+        .load()
         .get_intercepted_payload(Context::current(), id)
         .await?
         .ok_or(anyhow::anyhow!("No response"))?)
@@ -222,7 +267,12 @@ pub async fn get_intercept_payload(
 
 #[tauri::command]
 pub async fn reload_config(state: tauri::State<'_, ConnectionState>) -> ConnResult<()> {
-    Ok(state.client.reload(Context::current()).await?)
+    Ok(state.client.load().reload(Context::current()).await?)
+}
+
+#[tauri::command]
+pub async fn reconnect_background(state: tauri::State<'_, ConnectionState>) -> ConnResult<()> {
+    state.reconnect().await
 }
 
 #[tauri::command]
@@ -233,9 +283,10 @@ pub async fn enable_traffic_streaming(
     let handle = HandleContextInner::new(app_handle);
     let _ = state
         .client
+        .load()
         .request_traffic_stream(Context::current(), handle.ctx_id)
         .await;
-    *state.traffic_sender.write().await = Some(handle);
+    *state.traffic_sender.load().write().await = Some(handle);
     Ok(())
 }
 
@@ -247,21 +298,22 @@ pub async fn enable_logs_streaming(
     let handle = HandleContextInner::new(app_handle);
     let _ = state
         .client
+        .load()
         .request_log_stream(Context::current(), handle.ctx_id)
         .await;
-    *state.logs_sender.write().await = Some(handle);
+    *state.logs_sender.load().write().await = Some(handle);
     Ok(())
 }
 
 #[tauri::command]
 pub async fn reset_traffic(state: tauri::State<'_, ConnectionState>) -> ConnResult<()> {
-    *state.traffic_sender.write().await = None;
+    *state.traffic_sender.load().write().await = None;
     Ok(())
 }
 
 #[tauri::command]
 pub async fn reset_logs(state: tauri::State<'_, ConnectionState>) -> ConnResult<()> {
-    *state.logs_sender.write().await = None;
+    *state.logs_sender.load().write().await = None;
     Ok(())
 }
 

@@ -26,7 +26,7 @@ pub fn init_tracing() {
     let stdout_layer = fmt::layer()
         .compact()
         .with_writer(std::io::stdout)
-        .with_timer(LocalTime::default());
+        .with_timer(LocalTime);
 
     tracing_subscriber::registry()
         .with(stdout_layer)

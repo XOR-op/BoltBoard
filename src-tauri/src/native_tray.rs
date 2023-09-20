@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use crate::connection::ConnectionState;
 use crate::window;
 use boltapi::{GetGroupRespSchema, ProxyData, TunStatusSchema};
@@ -50,6 +51,7 @@ fn on_system_tray_event(app: &AppHandle<Wry>, event: SystemTrayEvent) {
                     let next_state = !state.get_tun_state();
                     if let Err(err) = state
                         .client
+                        .load()
                         .set_tun(
                             tarpc::context::Context::current(),
                             TunStatusSchema {
@@ -58,7 +60,7 @@ fn on_system_tray_event(app: &AppHandle<Wry>, event: SystemTrayEvent) {
                         )
                         .await
                     {
-                        eprintln!("Failed to set proxy")
+                        eprintln!("Failed to set proxy: {}", err)
                     }
                 });
                 update_menu(app)
@@ -74,6 +76,7 @@ fn on_system_tray_event(app: &AppHandle<Wry>, event: SystemTrayEvent) {
                                 let state = app_copy.state::<ConnectionState>().inner();
                                 if let Err(err) = state
                                     .client
+                                    .load()
                                     .set_proxy_for(
                                         tarpc::context::Context::current(),
                                         splitted.get(1).unwrap().to_string(),
@@ -81,7 +84,7 @@ fn on_system_tray_event(app: &AppHandle<Wry>, event: SystemTrayEvent) {
                                     )
                                     .await
                                 {
-                                    eprintln!("Failed to set proxy")
+                                    eprintln!("Failed to set proxy: {}", err)
                                 }
                             });
                             update_menu(app)
@@ -93,7 +96,9 @@ fn on_system_tray_event(app: &AppHandle<Wry>, event: SystemTrayEvent) {
                 }
             }
         },
-        _ => {}
+        _ => {
+            // ignore
+        }
     }
 }
 
@@ -102,6 +107,7 @@ pub async fn flush_state(state: &ConnectionState) -> SystemTrayMenu {
 
     if let Ok(groups) = state
         .client
+        .load()
         .get_all_proxies(tarpc::context::Context::current())
         .await
     {
@@ -136,6 +142,7 @@ pub async fn flush_state(state: &ConnectionState) -> SystemTrayMenu {
         ));
     if let Ok(status) = state
         .client
+        .load()
         .get_tun(tarpc::context::Context::current())
         .await
     {

@@ -26,10 +26,11 @@ fn main() -> ExitCode {
 
 #[allow(clippy::single_match)]
 async fn run() -> anyhow::Result<()> {
-    let state = ConnectionState::new("/var/run/boltconn.sock".into()).await?;
+    let state = ConnectionState::new().await?;
     println!("Connected to control socket");
     let expected_groups = state
         .client
+        .load()
         .get_all_proxies(tarpc::context::Context::current())
         .await?
         .len();
@@ -93,6 +94,7 @@ async fn run() -> anyhow::Result<()> {
             enable_logs_streaming,
             reset_traffic,
             reset_logs,
+            reconnect_background,
             quit,
             open_dashboard
         ])
