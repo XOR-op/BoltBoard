@@ -6,6 +6,8 @@ import {ConnectionDisplay, ConnectionEntryData, data_to_display} from "./Connect
 import {apiGetAllConnections} from "../../misc/request";
 import MaterialReactTable, {MRT_ColumnDef, MRT_FilterFn} from "material-react-table";
 import {useTheme} from "@mui/material/styles";
+import {Button, IconButton, MenuItem} from "@mui/material";
+import {CachedOutlined} from "@mui/icons-material";
 
 function groupByProcess(list: Array<ConnectionEntryData>): Map<string, Array<any>> {
     const map = new Map();
@@ -32,38 +34,62 @@ const ConnectionPage = () => {
         refresh()
     }, [refresh]);
 
-    const filter_fn: MRT_FilterFn<ConnectionDisplay> = (item, columnId, filterValue): boolean => {
-        const re = new RegExp(filterValue);
+    const regex_filter: MRT_FilterFn<ConnectionDisplay> = (item, columnId, filterValue): boolean => {
+        const re = new RegExp(filterValue, 'i');
         return re.test(item.getValue(columnId));
     }
+    const displays = connList.map(item => data_to_display(item)).reverse();
 
     const columns = useMemo<MRT_ColumnDef<ConnectionDisplay>[]>(() => [
         {
             header: 'Destination',
             accessorKey: 'destination',
             size: 200,
-            filterFn: filter_fn
+            filterFn: 'regex',
+            enableColumnFilterModes: false
         },
         {
             header: 'Proto',
             accessorKey: 'protocol',
-            size: 70
+            size: 70,
+            enableColumnFilterModes: false,
+            filterFn: 'equals',
+            filterSelectOptions: ['TCP', 'UDP', 'TLS', 'QUIC'],
+            filterVariant: 'select',
         },
         {
             header: 'Proxy',
             accessorKey: 'proxy',
-            size: 80
+            size: 80,
+            enableColumnFilterModes: false
         },
         {
             header: 'Inbound',
             accessorKey: 'inbound',
-            size: 120
+            size: 120,
+            enableColumnFilterModes: false
         },
         {
             header: 'Process',
             accessorKey: 'process',
             size: 120,
-            filterFn: filter_fn
+            columnFilterModeOptions: ['contains', 'regex'],
+            filterFn: 'contains',
+            filterVariant: 'select',
+            filterSelectOptions: displays.map(x => x.process)
+                .filter((val, idx, arr) => arr.indexOf(val) === idx).sort(),
+            renderColumnFilterModeMenuItems: ({onSelectFilterMode}) => [
+                <MenuItem key="0" onClick={() => {
+                    onSelectFilterMode('contains')
+                }}>
+                    <div>Select</div>
+                </MenuItem>,
+                <MenuItem key="1" onClick={() => {
+                    onSelectFilterMode('regex')
+                }}>
+                    <div>Regex</div>
+                </MenuItem>,
+            ],
         },
         {
             header: 'Upload',
@@ -91,7 +117,6 @@ const ConnectionPage = () => {
             }
         }
     ], []);
-    const displays = connList.map(item => data_to_display(item)).reverse();
     const theme = useTheme();
     return (
         <React.Fragment>
@@ -99,6 +124,7 @@ const ConnectionPage = () => {
                 <AdminToolbar title={'Connection'}/>
             </AdminAppBar>
             <MaterialReactTable
+                // styles
                 muiTableContainerProps={{
                     sx: {
                         backgroundColor: theme.palette.mode === 'dark' ? 'rgb(55, 60, 67)' : 'rgb(218, 223, 228)',
@@ -112,12 +138,32 @@ const ConnectionPage = () => {
                 muiTableBodyProps={{
                     sx: {}
                 }}
+                muiTableHeadCellFilterTextFieldProps={{
+                    sx: {m: '0.5rem 0 0 0rem', width: '90%'},
+                    variant: 'outlined',
+                }}
+
+                // data
                 columns={columns}
                 data={displays}
+
+                // filter
+                enableColumnFilterModes
+                filterFns={{
+                    regex: regex_filter
+                }}
+                localization={
+                    {filterRegex: 'Regex'} as any
+                }
+
+                // configuration
                 enableRowVirtualization
                 enablePagination={false}
                 enableColumnOrdering
                 enableColumnDragging={false}
+                enableFullScreenToggle={false}
+                renderTopToolbarCustomActions={() => <IconButton
+                    onClick={() => refresh()}><CachedOutlined/></IconButton>}
                 initialState={{showColumnFilters: true}}
             />
         </React.Fragment>

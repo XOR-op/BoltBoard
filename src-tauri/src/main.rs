@@ -5,7 +5,7 @@ use std::process::ExitCode;
 use std::sync::atomic::Ordering;
 use std::time::Duration;
 
-use tauri::{Manager, RunEvent, SystemTray, SystemTrayEvent};
+use tauri::{AppHandle, Manager, RunEvent, SystemTray, SystemTrayEvent};
 use tauri::{Window, WindowEvent, Wry};
 use tokio::time::timeout;
 
@@ -103,6 +103,7 @@ async fn run() -> anyhow::Result<()> {
                     }
                 }
             }
+            SystemTrayEvent::RightClick { .. } => open_dashboard_inner(app),
 
             _ => {}
         })
@@ -144,6 +145,10 @@ fn quit(window: Window<Wry>) {
 #[tauri::command]
 fn open_dashboard(window: Window<Wry>) {
     let app = window.app_handle();
+    open_dashboard_inner(&app);
+}
+
+fn open_dashboard_inner(app: &AppHandle) {
     if let Some(w) = app.get_window("menu") {
         let _ = w.hide();
     }
