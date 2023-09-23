@@ -13,6 +13,7 @@ export interface ProcessSchemaData {
 
 export interface ConnectionEntryData {
     conn_id: number,
+    inbound: string,
     destination: string,
     protocol: string,
     proxy: string,

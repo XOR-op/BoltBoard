@@ -38,7 +38,7 @@ pub fn create_dashboard(app: &AppHandle<Wry>) -> Window<Wry> {
     .maximizable(false)
     .minimizable(false)
     .theme(None)
-    .inner_size(1000., 600.)
+    .inner_size(1200., 800.)
     .build()
     .unwrap();
     window.set_transparent_titlebar();
