@@ -58,6 +58,35 @@ function pretty_time(n: number) {
     }
 }
 
+export interface ConnectionDisplay {
+    id: number,
+    destination: string,
+    protocol: string,
+    proxy: string,
+    inbound: string,
+    process: string,
+    upload: string,
+    download: string,
+    time: string,
+    start_time: number
+}
+
+export function data_to_display(data: ConnectionEntryData): ConnectionDisplay {
+    return {
+        id: data.conn_id,
+        destination: data.destination,
+        protocol: data.protocol.toUpperCase(),
+        proxy: data.proxy,
+        inbound: data.inbound,
+        process: data.process ? data.process.name : 'Unknown Process',
+        upload: pretty_size(data.upload),
+        download: pretty_size(data.download),
+        time: pretty_time(data.start_time),
+        start_time: data.start_time
+    }
+}
+
+
 const ConnectionEntry = ({data}: ConnectionEntryProps) => {
     return (
         <TableRow>
