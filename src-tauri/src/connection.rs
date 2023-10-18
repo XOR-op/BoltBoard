@@ -12,11 +12,11 @@ use boltapi::{
 use serde::{Serialize, Serializer};
 use tarpc::context::Context;
 use tarpc::server::{BaseChannel, Channel};
-use tarpc::tokio_serde::formats::Bincode;
 use tarpc::tokio_util::codec::LengthDelimitedCodec;
 use tauri::{AppHandle, Manager, Wry};
 use tokio::net::UnixStream;
 use tokio::sync::RwLock;
+use tokio_serde::formats::Cbor;
 
 type ConnResult<T> = Result<T, SerializableError>;
 
@@ -121,7 +121,7 @@ impl ConnectionState {
         let conn = UnixStream::connect(bind_addr).await?;
         let transport = tarpc::serde_transport::new(
             LengthDelimitedCodec::builder().new_framed(conn),
-            Bincode::default(),
+            Cbor::default(),
         );
         let (server_t, client_t, in_task, out_task) = rpc_multiplex_twoway(transport);
 
