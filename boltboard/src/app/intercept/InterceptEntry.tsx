@@ -17,12 +17,16 @@ export interface InterceptEntryData {
     time: string,
 }
 
+export interface InterceptPayloadBody {
+    type: 'empty' | 'warning' | 'body'
+    content: string | undefined
+}
+
 export interface InterceptPayloadData {
     req_header: string[],
-    req_body: string,
+    req_body: InterceptPayloadBody,
     resp_header: string[],
-    resp_body: string,
-    warning: string | undefined,
+    resp_body: InterceptPayloadBody,
 }
 
 export interface InterceptEntryProps {

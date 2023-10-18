@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Grid} from "@mui/material";
 import Typography from "@mui/material/Typography";
-import {InterceptPayloadData} from "./InterceptEntry";
+import {InterceptPayloadBody, InterceptPayloadData} from "./InterceptEntry";
 import {makeStyles} from "@mui/styles";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ToggleButton from "@mui/material/ToggleButton";
@@ -31,8 +31,7 @@ export interface InterceptDataProps {
 
 interface PacketProps {
     header: string[],
-    body: string
-    warning: string | undefined
+    body: InterceptPayloadBody
 }
 
 interface DataDisplayProps {
@@ -83,7 +82,7 @@ const DataDisplay = ({className, compress, view, body, warning}: DataDisplayProp
     </Typography>)
 }
 
-const InterceptPacket = ({header, body, warning}: PacketProps) => {
+const InterceptPacket = ({header, body}: PacketProps) => {
     const [view, setView] = useState<PayloadType>("base64");
     const [compress, setCompress] = useState("");
     const style = interceptDataStyle();
@@ -101,11 +100,12 @@ const InterceptPacket = ({header, body, warning}: PacketProps) => {
             if (l.startsWith('content-encoding:')) {
                 setCompress(l.split(': ')[1])
             }
-            if (l.startsWith('content-type:') && (l.includes('text') || l.includes('json'))) {
+            if (l.startsWith('content-type:') && (l.includes('text') || l.includes('json') || l.includes('x-www-form-urlencoded'))) {
                 viewChangeHandler(0, 'text')
             }
         }
     }, [header])
+
 
     return (
         <React.Fragment>
@@ -130,7 +130,9 @@ const InterceptPacket = ({header, body, warning}: PacketProps) => {
                     </ToggleButton>
                 </ToggleButtonGroup>
                 <br/>
-                <DataDisplay className={style.body} compress={compress} view={view} body={body} warning={warning}/>
+                <DataDisplay className={style.body} compress={compress} view={view}
+                             body={body.type == 'body' ? body.content as string : ''}
+                             warning={body.type != 'body' ? (body.type == 'warning' ? body.content : '**EMPTY BODY**') : undefined}/>
             </Grid>
         </React.Fragment>
     )
@@ -140,8 +142,8 @@ const InterceptData = ({data}: InterceptDataProps) => {
     return (
         <React.Fragment>
             <Grid container spacing={2} item={true}>
-                <InterceptPacket header={data.req_header} body={data.req_body} warning={undefined}/>
-                <InterceptPacket header={data.resp_header} body={data.resp_body} warning={data.warning}/>
+                <InterceptPacket header={data.req_header} body={data.req_body}/>
+                <InterceptPacket header={data.resp_header} body={data.resp_body}/>
             </Grid>
         </React.Fragment>
     )
