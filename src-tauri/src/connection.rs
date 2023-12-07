@@ -120,7 +120,9 @@ impl ConnectionState {
     )> {
         let conn = UnixStream::connect(bind_addr).await?;
         let transport = tarpc::serde_transport::new(
-            LengthDelimitedCodec::builder().new_framed(conn),
+            LengthDelimitedCodec::builder()
+                .max_frame_length(boltapi::rpc::MAX_CODEC_FRAME_LENGTH)
+                .new_framed(conn),
             Cbor::default(),
         );
         let (server_t, client_t, in_task, out_task) = rpc_multiplex_twoway(transport);
