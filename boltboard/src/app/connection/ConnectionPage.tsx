@@ -79,7 +79,8 @@ const ConnectionPage = () => {
                     accessorKey: 'destination',
                     size: 150,
                     filterFn: 'regex',
-                    enableColumnFilterModes: false
+                    enableColumnFilterModes: false,
+                    enableColumnActions: false
                 },
                 {
                     header: 'Proto',
@@ -89,18 +90,21 @@ const ConnectionPage = () => {
                     filterFn: 'equals',
                     filterSelectOptions: ['TCP', 'UDP', 'TLS', 'QUIC'],
                     filterVariant: 'select',
+                    enableColumnActions: false
                 },
                 {
                     header: 'Proxy',
                     accessorKey: 'proxy',
                     size: 80,
-                    enableColumnFilterModes: false
+                    enableColumnFilterModes: false,
+                    enableColumnActions: false
                 },
                 {
                     header: 'Inbound',
                     accessorKey: 'inbound',
                     size: 80,
-                    enableColumnFilterModes: false
+                    enableColumnFilterModes: false,
+                    enableColumnActions: false
                 },
                 {
                     header: 'Process',
@@ -130,21 +134,19 @@ const ConnectionPage = () => {
                 {
                     header: 'Upload',
                     accessorKey: 'upload',
-                    size: 70,
-                    // enableSorting: false,
+                    size: 60,
                     sortingFn: (a, b) => sortDataTransfer(a.getValue('upload'), b.getValue('upload')),
                     enableColumnFilter: false,
-                    // enableColumnActions: false
+                    enableColumnActions: false
                 },
                 {
                     header: 'Download',
                     accessorKey: 'download',
-                    size: 70,
+                    size: 60,
 
-                    // enableSorting: false,
                     sortingFn: (a, b) => sortDataTransfer(a.getValue('download'), b.getValue('download')),
                     enableColumnFilter: false,
-                    // enableColumnActions: false
+                    enableColumnActions: false
                 },
                 {
                     header: 'Time',
@@ -155,7 +157,8 @@ const ConnectionPage = () => {
                         let aTime: number = a.getValue('start_time');
                         let bTime: number = b.getValue('start_time');
                         return aTime - bTime < 0 ? -1 : 1;
-                    }
+                    },
+                    enableColumnActions: false
                 }
             ],
             [processFilterSelect, processList]
