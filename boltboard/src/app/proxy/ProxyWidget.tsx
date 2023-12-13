@@ -2,17 +2,9 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 
-import {makeStyles} from '@mui/styles'
 import {Theme} from "@mui/material";
 import {ProxyRpcData} from "./ProxyGroup";
 import {useTheme} from "@mui/material/styles";
-
-const proxyWidgetStyle = makeStyles({
-    selected: {
-        color: '#5580dd'
-    }
-})
-
 
 export interface ProxyWidgetProps {
     proxy: ProxyRpcData,
@@ -53,12 +45,13 @@ function colorizeLatency(theme: Theme, latency: string | null): string {
 
 const ProxyWidget = ({proxy, selected, onClickHandler}: ProxyWidgetProps) => {
     const theme = useTheme()
-    const style = proxyWidgetStyle();
     return (
         <Card elevation={0}>
             <CardContent onClick={() => onClickHandler(proxy.name)} sx={{textAlign: "center", cursor: 'pointer'}}>
                 <Typography gutterBottom component="div" variant='h3'
-                            className={selected ? style.selected : undefined}>
+                            sx={selected ? {
+                                color: '#5580dd'
+                            } : undefined}>
                     {proxy.name}
                 </Typography>
                 <Typography variant="body2" color="textSecondary" component="p">

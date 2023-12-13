@@ -2,26 +2,10 @@ import React, {useEffect, useState} from "react";
 import {Grid} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import {InterceptPayloadBody, InterceptPayloadData} from "./InterceptEntry";
-import {makeStyles} from "@mui/styles";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ToggleButton from "@mui/material/ToggleButton";
 import pako from 'pako'
 import brotliDecompress from 'brotli/decompress'
-
-
-const interceptDataStyle = makeStyles({
-    header: {
-        height: '300px',
-        overflowY: 'scroll',
-        wordBreak: 'break-word'
-    },
-
-    body: {
-        maxHeight: '500px',
-        overflowY: 'scroll',
-        wordBreak: 'break-all'
-    }
-})
 
 
 export interface InterceptDataProps {
@@ -35,7 +19,6 @@ interface PacketProps {
 }
 
 interface DataDisplayProps {
-    className: string,
     compress: string,
     view: PayloadType,
     body: string,
@@ -44,7 +27,7 @@ interface DataDisplayProps {
 
 type PayloadType = 'base64' | 'text' | 'img'
 
-const DataDisplay = ({className, compress, view, body, warning}: DataDisplayProps) => {
+const DataDisplay = ({compress, view, body, warning}: DataDisplayProps) => {
     const [data, setData] = useState(body);
     useEffect(() => {
             if (warning) {
@@ -77,7 +60,11 @@ const DataDisplay = ({className, compress, view, body, warning}: DataDisplayProp
         ,
         [view]
     )
-    return (<Typography variant="body1" className={className}>
+    return (<Typography variant="body1" sx={{
+        maxHeight: '500px',
+        overflowY: 'scroll',
+        wordBreak: 'break-all'
+    }}>
         {data}
     </Typography>)
 }
@@ -85,8 +72,6 @@ const DataDisplay = ({className, compress, view, body, warning}: DataDisplayProp
 const InterceptPacket = ({header, body}: PacketProps) => {
     const [view, setView] = useState<PayloadType>("base64");
     const [compress, setCompress] = useState("");
-    const style = interceptDataStyle();
-
     const viewChangeHandler = (_: any, viewType: PayloadType) => {
         if (viewType === view) {
             return
@@ -110,7 +95,11 @@ const InterceptPacket = ({header, body}: PacketProps) => {
     return (
         <React.Fragment>
             <Grid item xs={12} sm={6}>
-                <Typography variant="body1" className={style.header} component="div">
+                <Typography variant="body1" sx={{
+                    height: '300px',
+                    overflowY: 'scroll',
+                    wordBreak: 'break-word'
+                }} component="div">
                     {header.map((l, idx) => (<div key={idx}>{l}</div>))}
                     {/*{header.join('\na\n')}*/}
                 </Typography>
@@ -130,7 +119,7 @@ const InterceptPacket = ({header, body}: PacketProps) => {
                     </ToggleButton>
                 </ToggleButtonGroup>
                 <br/>
-                <DataDisplay className={style.body} compress={compress} view={view}
+                <DataDisplay compress={compress} view={view}
                              body={body.type == 'body' ? body.content as string : ''}
                              warning={body.type != 'body' ? (body.type == 'warning' ? body.content : '**EMPTY BODY**') : undefined}/>
             </Grid>

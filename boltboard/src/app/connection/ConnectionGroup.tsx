@@ -12,16 +12,8 @@ import {
     TableRow
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import {makeStyles} from '@mui/styles'
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-
-const connGroupStyle = makeStyles({
-    titleBar: {
-        marginTop: '16px',
-        marginBottom: '16px',
-    }
-})
 
 export interface ConnectionGroupProps {
     key: string,
@@ -30,7 +22,6 @@ export interface ConnectionGroupProps {
 }
 
 const ConnectionGroup = ({name, entries}: ConnectionGroupProps) => {
-    const style = connGroupStyle();
     const [open, setOpen] = useState(true);
 
     const [page, setPage] = useState(0);

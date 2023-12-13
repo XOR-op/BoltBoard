@@ -5,7 +5,6 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import InterceptData from "./InterceptData";
 import {apiGetInterceptedPayload} from "../../misc/request";
-import {makeStyles} from "@mui/styles";
 
 export interface InterceptEntryData {
     intercept_id: number,
@@ -34,18 +33,6 @@ export interface InterceptEntryProps {
     data: InterceptEntryData
 }
 
-const useStyles = makeStyles({
-    wrapAnywhere: {
-        overflow: 'hidden',
-        // textOverflow: '',
-        // whiteSpace: 'nowrap'
-        overflowWrap: 'anywhere'
-    },
-    wrapWord: {
-        overflow: 'hidden',
-        overflowWrap: 'break-word'
-    }
-});
 
 function pretty_size(n: number) {
     if (n < 1024) {
@@ -61,7 +48,6 @@ function pretty_size(n: number) {
 
 
 const InterceptEntry = ({data}: InterceptEntryProps) => {
-    const style = useStyles();
     const [open, setOpen] = useState(false);
     const [payload, setPayload] = useState<InterceptPayloadData | undefined>(undefined);
 
@@ -76,12 +62,18 @@ const InterceptEntry = ({data}: InterceptEntryProps) => {
     return (
         <React.Fragment>
             <TableRow>
-                <TableCell className={style.wrapWord}>
+                <TableCell sx={{
+                    overflow: 'hidden',
+                    overflowWrap: 'break-word'
+                }}>
                     <Typography component='div'>
                         {(data.client === undefined) ? 'N/A' : data.client}
                     </Typography>
                 </TableCell>
-                <TableCell className={style.wrapAnywhere}>
+                <TableCell sx={{
+                    overflow: 'hidden',
+                    overflowWrap: 'anywhere'
+                }}>
                     <Typography component='div'>
                         {data.uri}
                     </Typography>

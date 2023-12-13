@@ -2,18 +2,10 @@ import React, {useState} from 'react'
 import {Box, CardActionArea, CardActions, Collapse, Grid} from "@mui/material";
 import ProxyWidget from "./ProxyWidget";
 import Typography from "@mui/material/Typography";
-import {makeStyles} from '@mui/styles'
 import {apiSetProxyFor, apiSpeedtest} from "../../misc/request";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import {Bolt, MoreHoriz} from "@mui/icons-material";
-
-const proxyGroupStyle = makeStyles({
-    titleBar: {
-        marginTop: '16px',
-        marginBottom: '16px',
-    }
-})
 
 export interface ProxyRpcData {
     name: string,
