@@ -1,12 +1,11 @@
 import AdminAppBar from "../../admin/components/AdminAppBar";
 import AdminToolbar from "../../admin/components/AdminToolbar";
-import Grid from "@mui/material/Grid";
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {ConnectionDisplay, ConnectionEntryData, data_to_display} from "./ConnectionEntry";
 import {apiGetAllConnections} from "../../misc/request";
-import MaterialReactTable, {MRT_ColumnDef, MRT_FilterFn} from "material-react-table";
+import {MRT_ColumnDef, MRT_FilterFn, MaterialReactTable, useMaterialReactTable} from "material-react-table";
 import {useTheme} from "@mui/material/styles";
-import {Button, IconButton, MenuItem} from "@mui/material";
+import {IconButton, MenuItem} from "@mui/material";
 import {CachedOutlined} from "@mui/icons-material";
 
 function groupByProcess(list: Array<ConnectionEntryData>): Map<string, Array<any>> {
@@ -80,7 +79,6 @@ const ConnectionPage = () => {
                     size: 150,
                     filterFn: 'regex',
                     enableColumnFilterModes: false,
-                    enableColumnActions: false
                 },
                 {
                     header: 'Proto',
@@ -90,21 +88,18 @@ const ConnectionPage = () => {
                     filterFn: 'equals',
                     filterSelectOptions: ['TCP', 'UDP', 'TLS', 'QUIC'],
                     filterVariant: 'select',
-                    enableColumnActions: false
                 },
                 {
                     header: 'Proxy',
                     accessorKey: 'proxy',
                     size: 80,
                     enableColumnFilterModes: false,
-                    enableColumnActions: false
                 },
                 {
                     header: 'Inbound',
                     accessorKey: 'inbound',
                     size: 80,
                     enableColumnFilterModes: false,
-                    enableColumnActions: false
                 },
                 {
                     header: 'Process',
@@ -137,7 +132,6 @@ const ConnectionPage = () => {
                     size: 60,
                     sortingFn: (a, b) => sortDataTransfer(a.getValue('upload'), b.getValue('upload')),
                     enableColumnFilter: false,
-                    enableColumnActions: false
                 },
                 {
                     header: 'Download',
@@ -146,7 +140,6 @@ const ConnectionPage = () => {
 
                     sortingFn: (a, b) => sortDataTransfer(a.getValue('download'), b.getValue('download')),
                     enableColumnFilter: false,
-                    enableColumnActions: false
                 },
                 {
                     header: 'Time',
@@ -154,65 +147,65 @@ const ConnectionPage = () => {
                     size: 100,
                     enableColumnFilter: false,
                     sortingFn: (a, b) => {
-                        let aTime: number = a.getValue('start_time');
-                        let bTime: number = b.getValue('start_time');
+                        let aTime: number = a.original.start_time;
+                        let bTime: number = b.original.start_time;
                         return aTime - bTime < 0 ? -1 : 1;
                     },
-                    enableColumnActions: false
-                }
+                },
             ],
             [processFilterSelect, processList]
         )
     ;
     const theme = useTheme();
+    const table = useMaterialReactTable({
+        columns,
+        data: displays,
+        // styles
+        muiTableContainerProps: {
+            sx: {
+                backgroundColor: theme.palette.mode === 'dark' ? 'rgb(55, 60, 67)' : 'rgb(218, 223, 228)',
+                scrollbarWidth: "none",
+                overscrollBehavior: "none"
+            }
+        },
+        muiTableProps: {sx: {boxShadow: 'none'}},
+        muiTableHeadRowProps: {sx: {boxShadow: 'none'}},
+        muiTablePaperProps: {sx: {boxShadow: 'none'}},
+        muiTableBodyProps: {
+            sx: {}
+        },
+        // filter
+        enableColumnFilterModes: true,
+        columnFilterDisplayMode: 'popover',
+        filterFns: {
+            regex: regex_filter
+        },
+        localization: {
+            filterContains: 'Select',
+            filterRegex: 'Regex',
+        },
+
+        // configuration
+        enableRowVirtualization: true,
+        enablePagination: false,
+        enableColumnOrdering: true,
+        enableColumnDragging: false,
+        enableColumnActions: false,
+        enableFullScreenToggle: false,
+        renderTopToolbarCustomActions: () => (
+            <IconButton
+                onClick={() => refresh()}><CachedOutlined/></IconButton>
+        ),
+        initialState: {
+            showColumnFilters: true
+        },
+    })
     return (
         <React.Fragment>
             <AdminAppBar>
                 <AdminToolbar title={'Connection'}/>
             </AdminAppBar>
-            <MaterialReactTable
-                // styles
-                muiTableContainerProps={{
-                    sx: {
-                        backgroundColor: theme.palette.mode === 'dark' ? 'rgb(55, 60, 67)' : 'rgb(218, 223, 228)',
-                        scrollbarWidth: "none",
-                        overscrollBehavior: "none"
-                    }
-                }}
-                muiTableProps={{sx: {boxShadow: 'none'}}}
-                muiTableHeadRowProps={{sx: {boxShadow: 'none'}}}
-                muiTablePaperProps={{sx: {boxShadow: 'none'}}}
-                muiTableBodyProps={{
-                    sx: {}
-                }}
-                muiTableHeadCellFilterTextFieldProps={{
-                    // sx: {m: '0.5rem 0 0 0rem', width: '90%'},
-                    // variant: 'outlined',
-                }}
-
-                // data
-                columns={columns}
-                data={displays}
-
-                // filter
-                enableColumnFilterModes
-                filterFns={{
-                    regex: regex_filter
-                }}
-                localization={
-                    {filterContains: 'Select', filterRegex: 'Regex'} as any
-                }
-
-                // configuration
-                enableRowVirtualization
-                enablePagination={false}
-                enableColumnOrdering
-                enableColumnDragging={false}
-                enableFullScreenToggle={false}
-                renderTopToolbarCustomActions={() => <IconButton
-                    onClick={() => refresh()}><CachedOutlined/></IconButton>}
-                initialState={{showColumnFilters: true}}
-            />
+            <MaterialReactTable table={table}/>
         </React.Fragment>
     )
 }
