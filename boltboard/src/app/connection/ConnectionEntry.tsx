@@ -32,11 +32,14 @@ export interface ConnectionEntryProps {
 function pretty_size(n: number) {
     if (n < 1024) {
         return n.toString() + ' B'
-    } else if (n < 1024 * 10) {
+    } else if (n < 1024 * 100) {
         return (n / 1024).toFixed(1).toString() + ' KB'
     } else if (n < 1024 * 1024) {
         return Math.round(n / 1024).toString() + ' KB'
-    } else {
+    } else if (n < 1024 * 1024 * 100) {
+        return (n / 1024 / 1024).toFixed(1).toString() + ' MB'
+    }
+    else {
         return Math.round(n / (1024 * 1024)).toString() + ' MB'
     }
 }

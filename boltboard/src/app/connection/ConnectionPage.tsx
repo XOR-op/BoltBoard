@@ -57,6 +57,21 @@ const ConnectionPage = () => {
                 text: `${key} (${value})`, value: key
             }
         });
+    const sortDataTransfer = (a: string, b: string) => {
+        let process = (a: string) => {
+            if (a.endsWith('KB')) {
+                return parseFloat(a.slice(0, -3)) * 1024;
+            } else if (a.endsWith('MB')) {
+                return parseFloat(a.slice(0, -3)) * 1024 * 1024;
+            } else if (a.endsWith('B')) {
+                return parseFloat(a.slice(0, -2));
+            } else if (a.endsWith('GB')) {
+                return parseFloat(a.slice(0, -3)) * 1024 * 1024 * 1024;
+            }
+            return 0
+        }
+        return process(a) - process(b) < 0 ? -1 : 1;
+    }
 
     const columns = useMemo<MRT_ColumnDef<ConnectionDisplay>[]>(() => [
                 {
@@ -115,18 +130,21 @@ const ConnectionPage = () => {
                 {
                     header: 'Upload',
                     accessorKey: 'upload',
-                    size: 50,
-                    enableSorting: false,
+                    size: 70,
+                    // enableSorting: false,
+                    sortingFn: (a, b) => sortDataTransfer(a.getValue('upload'), b.getValue('upload')),
                     enableColumnFilter: false,
-                    enableColumnActions: false
+                    // enableColumnActions: false
                 },
                 {
                     header: 'Download',
                     accessorKey: 'download',
-                    size: 50,
-                    enableSorting: false,
+                    size: 70,
+
+                    // enableSorting: false,
+                    sortingFn: (a, b) => sortDataTransfer(a.getValue('download'), b.getValue('download')),
                     enableColumnFilter: false,
-                    enableColumnActions: false
+                    // enableColumnActions: false
                 },
                 {
                     header: 'Time',
