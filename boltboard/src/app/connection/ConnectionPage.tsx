@@ -2,36 +2,64 @@ import AdminAppBar from "../../admin/components/AdminAppBar";
 import AdminToolbar from "../../admin/components/AdminToolbar";
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {ConnectionDisplay, ConnectionEntryData, data_to_display} from "./ConnectionEntry";
-import {apiGetAllConnections} from "../../misc/request";
+import {apiGetAllConnections, websocket_url} from "../../misc/request";
 import {MRT_ColumnDef, MRT_FilterFn, MaterialReactTable, useMaterialReactTable} from "material-react-table";
 import {useTheme} from "@mui/material/styles";
-import {IconButton, MenuItem} from "@mui/material";
+import {IconButton, MenuItem, Switch} from "@mui/material";
 import {CachedOutlined} from "@mui/icons-material";
+import useWebSocket from "react-use-websocket";
+import {invoke} from "@tauri-apps/api";
+import {listen} from "@tauri-apps/api/event";
 
-function groupByProcess(list: Array<ConnectionEntryData>): Map<string, Array<any>> {
-    const map = new Map();
-    list.forEach(item => {
-        let realKey = item.process ? item.process.name : 'Unknown Process';
-        const collection = map.get(realKey);
-        if (!collection) {
-            map.set(realKey, [item]);
-        } else {
-            collection.push(item);
-        }
-    })
-    return map
-}
 
 const ConnectionPage = () => {
     const [connList, setConnList] = useState<Array<ConnectionEntryData>>([])
+    const [streamingMode, setStreamingMode] = useState<boolean>(true)
+
+
+    /* #v-ifdef VITE_TAURI */
+    var lastMessage: MessageEvent<any> | null = null;
+    useEffect(() => {
+        invoke('enable_connection_streaming')
+        const unlisten = listen('connection', (e) => {
+            let message = e.payload as Array<ConnectionEntryData>;
+            setConnList(message);
+        });
+        return () => {
+            unlisten.then(f => f())
+            invoke('reset_connection')
+        };
+    }, [])
+
+    /* #v-else */
+    var {lastMessage} = useWebSocket(websocket_url('/ws/connections'))
+    /* #v-endif */
 
     const refresh = useCallback(() => {
-        apiGetAllConnections().then(list => setConnList(list))
-            .catch(e => console.log(e))
+        if (!streamingMode) {
+            apiGetAllConnections().then(list => setConnList(list))
+                .catch(e => console.log(e))
+        }
     }, [])
     useEffect(() => {
-        refresh()
-    }, [refresh]);
+        if (streamingMode && lastMessage != null) {
+            const message = JSON.parse(lastMessage.data);
+            setConnList(message)
+        }
+    }, [refresh, lastMessage, streamingMode]);
+
+    const toggleStreamingMode = () => {
+        if (streamingMode) {
+            setStreamingMode(false)
+            refresh()
+        } else {
+            setStreamingMode(true)
+            if (lastMessage != null) {
+                const message = JSON.parse(lastMessage.data);
+                setConnList(message)
+            }
+        }
+    }
 
     const regex_filter: MRT_FilterFn<ConnectionDisplay> = (item, columnId, filterValue): boolean => {
         const re = new RegExp(filterValue, 'i');
@@ -193,8 +221,11 @@ const ConnectionPage = () => {
         enableColumnActions: false,
         enableFullScreenToggle: false,
         renderTopToolbarCustomActions: () => (
-            <IconButton
-                onClick={() => refresh()}><CachedOutlined/></IconButton>
+            <div>
+                <IconButton
+                    onClick={() => refresh()}><CachedOutlined/></IconButton>
+                <Switch checked={streamingMode} onChange={toggleStreamingMode}/>
+            </div>
         ),
         initialState: {
             showColumnFilters: true

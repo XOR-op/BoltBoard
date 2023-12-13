@@ -71,7 +71,8 @@ export interface ConnectionDisplay {
     upload: string,
     download: string,
     time: string,
-    start_time: number
+    start_time: number,
+    active: boolean
 }
 
 export function data_to_display(data: ConnectionEntryData): ConnectionDisplay {
@@ -85,7 +86,8 @@ export function data_to_display(data: ConnectionEntryData): ConnectionDisplay {
         upload: pretty_size(data.upload),
         download: pretty_size(data.download),
         time: pretty_time(data.start_time),
-        start_time: data.start_time
+        start_time: data.start_time,
+        active: data.active
     }
 }
 
