@@ -23,13 +23,15 @@ const ConnectionPage = () => {
         invoke('enable_connection_streaming')
         const unlisten = listen('connection', (e) => {
             let message = e.payload as Array<ConnectionEntryData>;
-            setConnList(message);
+            if (streamingMode) {
+                setConnList(message);
+            }
         });
         return () => {
             unlisten.then(f => f())
             invoke('reset_connection')
         };
-    }, [])
+    }, [streamingMode])
 
     /* #v-else */
     var {lastMessage} = useWebSocket(websocket_url('/ws/connections'))

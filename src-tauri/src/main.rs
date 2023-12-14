@@ -123,8 +123,10 @@ async fn run() -> anyhow::Result<()> {
             reload_config,
             enable_traffic_streaming,
             enable_logs_streaming,
+            enable_connection_streaming,
             reset_traffic,
             reset_logs,
+            reset_connections,
             reconnect_background,
             quit,
             open_dashboard

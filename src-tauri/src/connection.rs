@@ -26,6 +26,7 @@ static CONTROL_PATH: &str = "/var/run/boltconn.sock";
 struct ClientStreamServer {
     traffic_sender: Arc<RwLock<Option<HandleContextInner>>>,
     logs_sender: Arc<RwLock<Option<HandleContextInner>>>,
+    conn_sender: Arc<RwLock<Option<HandleContextInner>>>,
 }
 
 struct HandleContextInner {
@@ -61,6 +62,16 @@ impl ClientStreamService for ClientStreamServer {
             0
         }
     }
+
+    async fn post_connections(self, _: Context, connections: Vec<ConnectionSchema>) -> u64 {
+        let guard = self.conn_sender.read().await;
+        if let Some(inner) = &*guard {
+            let _ = inner.handle.emit_all("connection", connections);
+            inner.ctx_id
+        } else {
+            0
+        }
+    }
 }
 
 pub struct ConnectionState {
@@ -70,11 +81,12 @@ pub struct ConnectionState {
     pub reloaded: AtomicBool,
     traffic_sender: ArcSwap<RwLock<Option<HandleContextInner>>>,
     logs_sender: ArcSwap<RwLock<Option<HandleContextInner>>>,
+    connection_sender: ArcSwap<RwLock<Option<HandleContextInner>>>,
 }
 
 impl ConnectionState {
     pub async fn new() -> ConnResult<Self> {
-        let (client, t2, l2) = Self::connect(CONTROL_PATH.into()).await?;
+        let (client, t2, l2, c2) = Self::connect(CONTROL_PATH.into()).await?;
         Ok(Self {
             client: ArcSwap::new(Arc::new(client)),
             tun_status: Default::default(),
@@ -82,6 +94,7 @@ impl ConnectionState {
             reloaded: Default::default(),
             traffic_sender: ArcSwap::new(t2),
             logs_sender: ArcSwap::new(l2),
+            connection_sender: ArcSwap::new(c2),
         })
     }
 
@@ -104,10 +117,11 @@ impl ConnectionState {
     }
 
     pub async fn reconnect(&self) -> ConnResult<()> {
-        let (client, t2, l2) = Self::connect(CONTROL_PATH.into()).await?;
+        let (client, t2, l2, c2) = Self::connect(CONTROL_PATH.into()).await?;
         self.client.store(Arc::new(client));
         self.traffic_sender.store(t2);
         self.logs_sender.store(l2);
+        self.connection_sender.store(c2);
         Ok(())
     }
 
@@ -115,6 +129,7 @@ impl ConnectionState {
         bind_addr: PathBuf,
     ) -> ConnResult<(
         ControlServiceClient,
+        Arc<RwLock<Option<HandleContextInner>>>,
         Arc<RwLock<Option<HandleContextInner>>>,
         Arc<RwLock<Option<HandleContextInner>>>,
     )> {
@@ -132,18 +147,21 @@ impl ConnectionState {
         let client = ControlServiceClient::new(Default::default(), client_t).spawn();
         let traffic = Arc::new(RwLock::new(None));
         let logs = Arc::new(RwLock::new(None));
+        let conn = Arc::new(RwLock::new(None));
         let t2 = traffic.clone();
         let l2 = logs.clone();
+        let c2 = conn.clone();
         tauri::async_runtime::spawn(
             BaseChannel::with_defaults(server_t).execute(
                 ClientStreamServer {
                     traffic_sender: traffic,
                     logs_sender: logs,
+                    conn_sender: conn,
                 }
                 .serve(),
             ),
         );
-        Ok((client, t2, l2))
+        Ok((client, t2, l2, c2))
     }
 }
 
@@ -312,6 +330,21 @@ pub async fn enable_logs_streaming(
 }
 
 #[tauri::command]
+pub async fn enable_connection_streaming(
+    app_handle: AppHandle<Wry>,
+    state: tauri::State<'_, ConnectionState>,
+) -> ConnResult<()> {
+    let handle = HandleContextInner::new(app_handle);
+    let _ = state
+        .client
+        .load()
+        .request_connection_stream(Context::current(), handle.ctx_id)
+        .await;
+    *state.connection_sender.load().write().await = Some(handle);
+    Ok(())
+}
+
+#[tauri::command]
 pub async fn reset_traffic(state: tauri::State<'_, ConnectionState>) -> ConnResult<()> {
     *state.traffic_sender.load().write().await = None;
     Ok(())
@@ -320,6 +353,12 @@ pub async fn reset_traffic(state: tauri::State<'_, ConnectionState>) -> ConnResu
 #[tauri::command]
 pub async fn reset_logs(state: tauri::State<'_, ConnectionState>) -> ConnResult<()> {
     *state.logs_sender.load().write().await = None;
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn reset_connections(state: tauri::State<'_, ConnectionState>) -> ConnResult<()> {
+    *state.connection_sender.load().write().await = None;
     Ok(())
 }
 
