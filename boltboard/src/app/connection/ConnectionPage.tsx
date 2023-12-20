@@ -37,23 +37,23 @@ const ConnectionPage = () => {
     var {lastMessage} = useWebSocket(websocket_url('/ws/connections'))
     /* #v-endif */
 
-    const refresh = useCallback(() => {
-        if (!streamingMode) {
+    const refresh = (streaming: boolean) => {
+        if (!streaming) {
             apiGetAllConnections().then(list => setConnList(list))
                 .catch(e => console.log(e))
         }
-    }, [])
+    }
     useEffect(() => {
         if (streamingMode && lastMessage != null) {
             const message = JSON.parse(lastMessage.data);
             setConnList(message)
         }
-    }, [refresh, lastMessage, streamingMode]);
+    }, [lastMessage, streamingMode]);
 
     const toggleStreamingMode = () => {
         if (streamingMode) {
             setStreamingMode(false)
-            refresh()
+            refresh(false)
         } else {
             setStreamingMode(true)
             if (lastMessage != null) {
@@ -225,7 +225,7 @@ const ConnectionPage = () => {
         renderTopToolbarCustomActions: () => (
             <div>
                 <IconButton
-                    onClick={() => refresh()}><CachedOutlined/></IconButton>
+                    onClick={() => refresh(streamingMode)}><CachedOutlined/></IconButton>
                 <Switch checked={streamingMode} onChange={toggleStreamingMode}/>
             </div>
         ),
