@@ -172,7 +172,7 @@ dependencies = [
 [[package]]
 name = "boltapi"
 version = "0.1.0"
-source = "git+https://github.com/XOR-op/BoltConn#ccb3c07cb674cd01ed27cdc38c8338a9d5ded377"
+source = "git+https://github.com/XOR-op/BoltConn#47f9a4994589b3237e93cbc20cd0031ae7441007"
 dependencies = [
  "base64 0.20.0",
  "futures",
